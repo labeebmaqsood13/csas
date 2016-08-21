@@ -6,6 +6,7 @@
 
   <!-- =====Nessus File Upload========= -->
 
+
     {!! Form::open(array('url' => 'nessus/upload', 'enctype' => 'multipart/form-data')) !!}
 
     <div class="col-md-3 pull-left">
