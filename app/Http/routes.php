@@ -10,18 +10,14 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('file_upload', function () {
-    return view('file_upload');
-})->name('file_upload');
+Route::get('file_upload', 'HomeController@file_upload')->name('file_upload');
 
-Route::get('dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+// Route::get('/', function () {
+//     return view('index');
+// })->name('home');
 
 
 // Nessus routes
@@ -37,3 +33,7 @@ Route::get('nmap/pdf','NmapController@pdf')->name('nmap.pdf');
 Route::get('nmap/excel','NmapController@excel')->name('nmap.excel');
 Route::get('nmap/webpage','NmapController@webpage')->name('nmap.webpage');
 Route::post('nmap/upload', 'NmapController@upload')->name('nmap.upload'); 
+
+Route::auth();
+
+Route::get('/', 'HomeController@index');

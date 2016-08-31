@@ -331,7 +331,7 @@
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
               </a>
              
-              <a  href="login.html" data-toggle="tooltip" data-placement="top" title="Logout">
+              <a  href="logout" data-toggle="tooltip" data-placement="top" title="Logout">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div>
