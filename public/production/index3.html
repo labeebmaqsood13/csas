@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title>CSAS !! | </title>
+
+    <!-- Bootstrap -->
+    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- bootstrap-progressbar -->
+    <link href="../vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <!-- PNotify -->
+    <link href="../vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+    <link href="../vendors/pnotify/dist/pnotify.buttons.css" rel="stylesheet">
+    <link href="../vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" media="all" rel="stylesheet" type="text/css">
+    <!-- Custom Theme Style -->
+    <link href="../build/css/custom.min.css" rel="stylesheet">
+     
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+   
+
+    <!-- Inline Style Sheet START -->
+    <style type="text/css">
+
+      .paging-nav {
+        text-align: right;
+        padding-top: 2px;
+      }
+
+      .paging-nav a {
+        margin: auto 1px;
+        text-decoration: none;
+        display: inline-block;
+        padding: 1px 7px;
+        background: #91b9e6;
+        color: white;
+        border-radius: 3px;
+      }
+
+      .paging-nav .selected-page {
+        background: #187ed5;
+        font-weight: bold;
+      }
+
+      .paging-nav,
+     
+      </style>
+
+
+    <style type="text/css">
+        div.content {
+            display: table;
+            width: 100%;
+            border: 1px solid black;
+            
+        }
+        main { display: table-row-group }
+        
+        div.content header, div.content main section {
+            display: table-row;
+            border: 1px solid black;
+        }
+        
+        span.open_port,span.close_port,span.list {
+            display: table-cell;
+            width: 33%;
+            border: 1px solid black;
+        }
+    </style>
+
+    <style type="text/css">
+        .bs-example{
+            margin: 20px;
+        }
+    </style>
+
+    <style type="text/css">
+      #showme{
+        display:none;
+    }
+        <style type="text/css">
+            body { font-family:Arial, Helvetica, Sans-Serif; font-size:0.8em;}
+            #report { border-collapse:collapse;}
+         
+            #report th { background:#7CB8E2 url(header_bkg.png) repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;}
+            #report td { background:white none repeat-x scroll center left; color:#000; padding:7px 15px; }
+          
+        </style>
+
+    </style>
+    
+    <style type="text/css">
+        .Rounded {
+           
+            border-radius:10px 10px 10px 10px;  //rounds corners for other browsers
+            border:solid 3px;
+            color:white;
+           
+            padding:4px;
+        }
+    </style>
+
+    <style>
+     p {
+         white-space: pre-line; /* collapse WS, preserve LB */
+       }
+    </style>
+    
+    <style type="text/css">
+        .bs-example{
+          margin: 20px;
+        }
+        @media screen and (min-width: 768px) {
+            .modal-dialog {
+              width: 700px; /* New width for default modal */
+            }
+            .modal-sm {
+              width: 350px; /* New width for small modal */
+            }
+        }
+        @media screen and (min-width: 1200px) {
+            .modal-lg {
+              width: 1200px; /* New width for large modal */
+            }
+        }
+    </style>
+    
+    <style type="text/css">
+      .divTable{
+      display: table;
+      width: 100%;
+    }
+    .divTableRow {
+      display: table-row;
+    }
+    .divTableHeading {
+      background-color: #EEE;
+      display: table-header-group;
+    }
+    .divTableCell, .divTableHead {
+      border: 1px solid #999999;
+      display: table-cell;
+      padding: 3px 10px;
+    }
+    .divTableHeading {
+      background-color: #EEE;
+      display: table-header-group;
+      font-weight: bold;
+    }
+    .divTableFoot {
+      background-color: #EEE;
+      display: table-footer-group;
+      font-weight: bold;
+    }
+    .divTableBody {
+      display: table-row-group;
+    }
+    </style>
+    <!-- Inline Style Sheet END -->
+
+
+   
+
+
+    <!-- Javascript External Code -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Javascript Internal Code Start -->
+    <script type="text/javascript">
+            $(document).ready(function(){
+                 $("#").click(function(){
+                     $("#").load("users-details.html");
+                 });
+            });
+        </script>
+    <style>
+      td{cursor:pointer;}
+    </style> 
+
+  
+    <script>$(document).ready(function() {
+        $('').click(function(event) {
+            event.preventDefault();
+            $.get(this.href, {}, function(data) {
+              $('#').html(data);
+            });
+        });
+      });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+           $("").click(function(){
+              $("").load("");
+           });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function(){
+            $("mnm").click(function(){
+                $("#div1").load("users-details.html");
+            });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function(){         
+            $("").load("tablee.html");    
+        });
+    </script>
+
+    <!--
+    <style>
+        div.b{
+          box-sizing: border-box;
+            border-color: #DBDEE0;
+            background: white;
+     
+      
+      margin: 0px 0px 30px 0px;
+      float: left;
+      width: 100%;
+      font-size: 14px;
+     
+            
+        }
+        .re{ background: grey; }
+        .gre{ background: grey; }
+        .bl{ background: grey; }
+    </style>
+       
+       -->
+       <!--
+       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
+        <script type="text/javascript">  
+            $(document).ready(function(){
+                $("#report tr:odd").addClass("odd");
+                $("#report tr:not(.odd)").hide();
+                $("#report tr:first-child").show();
+                
+                $("#report tr.odd").click(function(){
+                    $(this).next("tr").toggle();
+                    $(this).find(".arrow").toggleClass("up");
+                });
+                //$("#report").jExpand();
+            });
+        </script> 
+      -->
+
+    
+</head>
+
+
+
+
+ <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="index.html" class="site_title"> CSAS. </a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile">
+              <div class="profile_pic">
+                <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+              </div>
+              <div class="profile_info">
+                <span>Welcome,</span>
+                <h2>Faisal Khan</h2>
+              </div>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <h3>Admin</h3>
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="index.html">Activity</a></li>
+                      <li><a href="index2.html">Analytics</a></li>
+                      <li><a href="index3.html">Analysis</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="admin_user.html">users</a></li>
+                      <li><a href="groups.html">Groups</a></li>
+                      <li><a href="form_validation.html">Organization</a></li>
+                      <li><a href="form_wizards.html">Customization</a></li>
+                      <li><a href="form_upload.html">Threat Source</a></li>
+                      <li><a href="form_buttons.html">Notification</a></li>
+                      <li><a href="calendar.html">Manage Permissions</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-desktop"></i> Create Projects <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      
+                      <li><a href="widgets.html">Step-1</a></li>
+                      <li><a href="invoice.html">Step-2</a></li>
+                      <li><a href="inbox.html">Step-3</a></li>
+                      
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-table"></i> View Projects<span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="tables.html">Projects Status</a></li>
+                      
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-bar-chart-o"></i> Generate Reports</a>
+                   
+                  </li>
+                  <li><a><i class="fa fa-clone"></i>Mytasks <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="fixed_sidebar.html">Completed Tasks</a></li>
+                      <li><a href="fixed_footer.html">Incomplete Tasks</a></li>
+                      <li><a href="fixed_footer.html">All Tasks</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div class="menu_section">
+                     
+              </div>
+
+            </div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons -->
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+             
+              <a  href="login.html" data-toggle="tooltip" data-placement="top" title="Logout">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="images/img.jpg" alt="">Faisal Mahmood
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="javascript:;"> Profile</a></li>
+                    <li>
+                      <a href="javascript:;">
+                        <span class="badge bg-red pull-right">50%</span>
+                        <span>Last Logon | 2/2/2016</span>
+                      </a>
+                    </li>
+                    <li><a href="javascript:;">Admin</a></li>
+                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                  </ul>
+                </li>
+
+                <li role="presentation" class="dropdown">
+                  <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="badge bg-green">6</span>
+                  </a>
+                  <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                    <li>
+                      <a>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>Faisal Khan</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>Faisal Mahmood</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="text-center">
+                        <a>
+                          <strong>See All Alerts</strong>
+                          <i class="fa fa-angle-right"></i>
+                        </a>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- Page content -->
+
+        <div class="right_col" role="main">
+          <div class="container">
+    
+              <div class="row">
+                  <div class="col-md-8 col-sm-8 col-lg-8 ">
+                    <h4>Analaysis Dashboard - Passive Threats</h4>
+                  </div>
+              </div>
+
+
+              <div class="row">
+                  <div class="col-md-8 col-sm-8 col-lg-6 ">
+                      <div class="ccms_form_element cfdiv_custom" id="style_container_div">
+                          <label>Client:</label>
+                          <select size="1" id="beerStyle" class=" validate['required']" title="" type="select" name="style">
+                              <option value="">-Choose A Client-</option>
+                              <option value="Ale">Pepsi /</option>
+                              <option value="Lager">Ebryx</option>
+                              <option value="Hybrid">Intel</option>
+                          </select>
+                          <div class="clear"></div>
+                          <div id="error-message-style"></div>
+                      </div>
+                      
+                      <div id="Ale"  class="style-sub-1" style="display: none;" name="stylesub1" onchange="ChangeDropdowns(this.value)">
+                          <label>Project</label>
+                          <select>
+                            <option value="">-Choose An Project-</option> 
+                            <option value="re">1 xyzyz</option>
+                            <option value="re">2 xyzxyz</option>
+                            <option value="re">3xyzxyz</option>                     
+                          </select>
+                      </div>
+
+                      <div id="Lager"  class="style-sub-1"  style="display: none;" name="stylesub1" onchange="ChangeDropdowns(this.value)">
+                          <label>Project:</label>
+                          <select>
+                            <option value="">-Choose A Project-</option>
+                              <option value="re">1_new</option>
+                              <option value="re">2_bro</option>
+                              <option value="re">3_max</option>       
+                          </select>
+                      </div>
+
+                      <div id="Hybrid"  class="style-sub-1"  style="display: none;" name="stylesub1" onchange="ChangeDropdowns(this.value)">
+                          <label>Project</label> 
+                          <select>
+                          <option value="">-Choose A Project-</option>
+                            <option value="re">1----zip</option>
+                            <option value="re">2----spicy</option>
+                            <option value="re">3-----bravo</option>
+                          </select>
+                      </div><div class="clear"></div><div id="error-message-style-sub-1"></div>
+
+                  </div>  
+              </div>
+
+
+
+
+
+              <div class="b">
+      
+                <table  id="report" class = "table table-bordered">
+
+                  <th>ID</th>
+                  <th>Ip Address</th>
+                  <th>Vulnerablity count</th>
+                  <th>Severity</th>
+                  <th>Threat Source</th>
+
+                  <!-- First Row -->
+                  <tr>
+                    <td><d>1</d></td>
+                    <td><d>192.168.1.23</d></td>
+                    <td><d><div align="center">6</div></d></td>
+                
+                    <td>
+                        <d>
+                          <div align="center" class="container">
+                            <div class="col-md-4 col-sm-4 col-lg-4">
+                              2
+                              <aa class="Rounded" style=" background-color:#FF5B33;">High</aa>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-lg-4">
+                              2
+                              <aa class="Rounded" style=" background-color:#FF7A33;">Medium</aa> 
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-lg-4">
+                              2
+                              <aa  style=" background-color:#3AA432;" class="Rounded">Low</aa>
+                            </div>  
+                          </div> 
+                        </d>
+                    </td>
+
+                    <td>
+                        <d>
+                          <div align="center">
+                            <stronge  class="Rounded" style="color:white;font-family: 'Raleway',sans-serif; font-size: 15px; font-weight: 60;background-color:#3AA432;">Not Available</stronge>
+                          </div>
+                        </d>
+                    </td>
+                  </tr>
+                  <!-- /First Row -->
+
+                  <!-- Second Row -->
+                  <tr>
+                    <td colspan="5">
+                      <d class="col-md-8 col-sm-8 col-lg-12">
+                        <div class="container">
+                          <div class="row">
+                              
+                              <div>
+                                <div class="">
+                                  <h4><u>Destination Meta Details</u></h4>
+                                </div>
+                              </div>
+                     
+                              <div class="col-md-3 col-sm-3 col-lg-3">
+                                   <strong font="3">
+                                   <p>Host-Ip:</p>
+                                   <p>ssh fingerprint:</p>
+                                   <p>MAC Address:</p>
+                                   <p>cpe-1 :</p>
+                                   <p>path symmary total cves :</p> 
+                                   <p>last unauthenticated results :</p> 
+                                   <p>policy-used :</p>
+                                   <p>cpe :</p>
+                                   <p>cpe-0 :</p>
+                                   <p>trace route hope 0 :</p>
+                                   <p>Credentialed Scan :</p>
+                                   <p>operating system full :</p>
+                                   <p>system-type :</p>
+                                   <p>os :</p>
+                                   <p>netbios name  :</p>
+                                   </strong>
+                              </div>
+
+                              <div class="col-md-6 col-sm-6 col-lg-6">
+                                  <p>192.168.1.23</p>
+                                  <p style="color:gray;">N/A</p>
+                                  <p>0A:F7:1A:09:DF:3B</p>
+                                  <p>cpe:/a:microsoft:iis:8.5 </p>
+                                  <p>16</p>
+                                  <p>1462533332 </p>
+                                  <p>Advanced Scan</p>
+                                  <p> cpe:/o:microsoft:windows</p>
+                                  <p>cpe:/o:microsoft:windows_server_2012:r2::datacenter</p>
+                                  <p>172.23.144.5</p>
+                                  <P>false</P>
+                                  <P> Microsoft Windows Server 2012 R2 Datacenter</P>
+                                  <P> general-purpose</P>
+                                  <p>windows</p>
+                                  <p>PKLHODC03 </p>
+                              </div>
+
+                              <div class="col-md-3 col-sm-3 col-lg-3">              
+                                  <button type="button" class="btn btn-primary btn-large" data-toggle="modal" data-target="#myModal">Details</button>
+                              </div>
+
+                          </div>
+                        </div>
+                      </d>
+                    </td>
+                  </tr>
+                  <!-- /Second Row -->
+                </table>
+                                  
+              </div>
+
+          </div>
+        </div>
+
+
+        <div class="bs-example">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="purchaseLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                     <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="purchaseLabel">Report Items</h4>
+                          </div>
+                        <div class="modal-body">              
+
+                         <div id="tableData">
+                            <table  id="report" class = "table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>ID</th>
+                                  <th>Port</th>
+                                  <th>svc_name</th>
+                                  <th>protocol</th>
+                                  <th>severity</th>
+                                  <th>plugiinID</th>
+                                  <th>Plugin Name</th>
+                                  <th>plugin Family</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td><d>1</d></td>
+                                      <td><d>80</d></td>
+                                      <td><d><div align="center">dce-rpc</div></d></td>
+                                      <td>tcp</td>
+                                      <td>0</td>
+                                      <td>10736</td>
+                                      <td>Dce Service Enumeration</td>
+                                      <td>Windows</td>
+                                  </tr>
+
+                                  <tr>
+                                  <td colspan="10">
+                                     <d class="col-md-8 col-sm-8 col-lg-12">
+                                        <div class="container">
+                                          <div class="row">
+                                            <div class="col-md-10 col-sm-10 col-lg-12">
+
+                                              <Label>Description :</Label><br /> <p><description>By sending a Lookup request to the portmapper (TCP 135 or epmapper PIPE) it was possible to enumerate the Distributed Computing Environment (DCE) services running on the remote port. Using this information it is possible to connect and bind to each service by sending an RPC request to the remote port/pipe.</description></p>
+                                              <LABEL>Solution :</LABEL><br /> <p><solution>Fix the reverse DNS or host file.</solution></p>
+                                           
+                                              <label>Risk Factor :</label><p><riskfactor>None</riskfactor></p>
+                                              <label>Plugin Output :</label>
+                                               <p style="overflow-y: scroll;height:160px">
+                                                The remote operating system matched the following CPE : 
+
+                                                  cpe:/o:microsoft:windows_7:::ultimate
+                                                  The following DCERPC services are available on TCP port 1026 :
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : f6beaff7-1e19-4fbb-9f8f-b89e2018337c, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : Event log TCPIP
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 3c4728c5-f0ab-448b-bda1-6ce01eb0a6d6, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : DHCPv6 Client LRPC Endpoint
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 3c4728c5-f0ab-448b-bda1-6ce01eb0a6d5, version 1.0
+                                                Description : DHCP Client Service
+                                                Windows process : svchost.exe
+                                                Annotation : DHCP Client LRPC Endpoint
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 06bba54a-be05-49f9-b0a0-30f790261023, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : Security Center
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 30adc50c-5cbc-46ce-9a0e-91914789e23c, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : NRP server endpoint
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+                                               </p>
+                                            </div>
+                                          </div>
+                                        </div>                         
+                                       </d>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                      <td><d>1</d></td>
+                                      <td><d>80</d></td>
+                                      <td><d><div align="center">dce-rpc</div></d></td>
+                                      <td>tcp</td>
+                                      <td>0</td>
+                                      <td>10736</td>
+                                      <td>Dce Service Enumeration</td>
+                                      <td>Windows</td>
+                                  </tr>
+
+                                  <tr>
+                                  <td colspan="10">
+                                     <d class="col-md-8 col-sm-8 col-lg-12">
+                                        <div class="container">
+                                          <div class="row">
+                                            <div class="col-md-10 col-sm-10 col-lg-12">
+
+                                              <Label>Description :</Label><br /> <p><description>By sending a Lookup request to the portmapper (TCP 135 or epmapper PIPE) it was possible to enumerate the Distributed Computing Environment (DCE) services running on the remote port. Using this information it is possible to connect and bind to each service by sending an RPC request to the remote port/pipe.</description></p>
+                                              <LABEL>Solution :</LABEL><br /> <p><solution>Fix the reverse DNS or host file.</solution></p>
+                                           
+                                              <label>Risk Factor :</label><p><riskfactor>None</riskfactor></p>
+                                              <label>Plugin Output :</label>
+                                               <p style="overflow-y: scroll;height:160px">
+                                                The remote operating system matched the following CPE : 
+
+                                                  cpe:/o:microsoft:windows_7:::ultimate
+                                                  The following DCERPC services are available on TCP port 1026 :
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : f6beaff7-1e19-4fbb-9f8f-b89e2018337c, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : Event log TCPIP
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 3c4728c5-f0ab-448b-bda1-6ce01eb0a6d6, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : DHCPv6 Client LRPC Endpoint
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 3c4728c5-f0ab-448b-bda1-6ce01eb0a6d5, version 1.0
+                                                Description : DHCP Client Service
+                                                Windows process : svchost.exe
+                                                Annotation : DHCP Client LRPC Endpoint
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 06bba54a-be05-49f9-b0a0-30f790261023, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : Security Center
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+
+                                                Object UUID : 00000000-0000-0000-0000-000000000000
+                                                UUID : 30adc50c-5cbc-46ce-9a0e-91914789e23c, version 1.0
+                                                Description : Unknown RPC service
+                                                Annotation : NRP server endpoint
+                                                Type : Remote RPC service
+                                                TCP Port : 1026
+                                                IP : 192.168.1.5
+                                               </p>
+                                            </div>
+                                          </div>
+                                        </div>                         
+                                       </d>
+                                    </td>
+                                  </tr>
+
+   
+                              </tbody>                         
+                            </table>
+                          </div>
+                        </div>
+                
+                  
+
+                           <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                   
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        <!-- Footer Content -->
+        <footer>
+          <div class="pull-right">
+            Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      
+    </div>
+
+
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- jQuery Sparklines -->
+    <script src="../vendors/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+    <!-- morris.js -->
+    <script src="../vendors/raphael/raphael.min.js"></script>
+    <script src="../vendors/morris.js/morris.min.js"></script>
+    <!-- gauge.js -->
+    <script src="../vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- Skycons -->
+    <script src="../vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="../vendors/Flot/jquery.flot.js"></script>
+    <script src="../vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="../vendors/Flot/jquery.flot.time.js"></script>
+    <script src="../vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="../vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="js/flot/jquery.flot.orderBars.js"></script>
+    <script src="js/flot/date.js"></script>
+    <script src="js/flot/jquery.flot.spline.js"></script>
+    <script src="js/flot/curvedLines.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="js/moment/moment.min.js"></script>
+    <script src="js/datepicker/daterangepicker.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
+
+    <script >
+$("#beerStyle").change ( function () {
+    var targID  = $(this).val ();
+    $("div.style-sub-1").hide ();
+    $('#' + targID).show ();
+} )
+</script>
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("select").change(function(){
+        $(this).find("option:selected").each(function(){
+            if($(this).attr("value")=="re"){
+              $("div.b").show ();
+} 
+            
+           
+            else{
+                $("div.b").hide();
+            }
+        });
+    }).change();
+});
+</script>
+
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="paging.js"></script> 
+
+        <script type="text/javascript">
+          $(function() {
+    $("td[colspan=5]").find("d").hide();
+    $("td[colspan=10]").find("d").hide();
+    
+    $("table").click(function(event) {
+       
+        var $target = $(event.target);
+        if ( $target.closest("td").attr("colspan") > 1 ) {
+             $target.closest("tr").next().find("d").hide();
+        } else {
+            $target.closest("tr").next().find("d").slideToggle();
+        }                    
+    });
+});
+        </script>
+        <script>
+function queryParams() {
+    return {
+        type: 'owner',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: 100,
+        page: 1
+    };
+}
+</script>
+
+
+<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="paginathing.js"></script>
+
+               <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="paging.js"></script> 
+<script type="text/javascript">
+            $(document).ready(function() {
+                $('#tableData').paging({limit:10});
+            });
+        </script>
+
+
+
+
+         
+
+
+  </body>
+</html>

@@ -10,6 +10,14 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('file_upload', function () {
+    return view('file_upload');
+})->name('file_upload');
+
+Route::get('dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
 
 Route::get('/', function () {
     return view('index');
