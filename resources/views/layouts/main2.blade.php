@@ -3,6 +3,8 @@
 <head>
 	<!-- Bootstrap -->
 
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
@@ -138,9 +140,9 @@
         }
         @media screen and (min-width: 1200px) {
             .modal-lg {
-              width: 1200px; /* New width for large modal */
+              width: 1200px; /* New width for large modal 
             }
-        }
+        }*/
     </style>
     
     <style type="text/css">
@@ -184,6 +186,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
     <!-- Javascript Internal Code Start -->
+    @yield('scripts')
     <script type="text/javascript">
             $(document).ready(function(){
                  $("#").click(function(){
@@ -196,7 +199,8 @@
     </style> 
 
   
-    <script>$(document).ready(function() {
+    <script>
+      $(document).ready(function() {
         $('').click(function(event) {
             event.preventDefault();
             $.get(this.href, {}, function(data) {
@@ -277,11 +281,13 @@
                       <li><a href="index.html">Activity</a></li>
                       <li><a href="index2.html">Analytics</a></li>
                       <li><a href="/dashboard">Analysis Dashboard</a></li>
+                      <li><a href="/reports">Generate Reports</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="admin_user.html">users</a></li>
+                      <li><a href="invite_user">Invite Users</a></li>
                       <li><a href="file_upload">Upload File</a></li>
                       <li><a href="groups.html">Groups</a></li>
                       <li><a href="form_validation.html">Organization</a></li>
@@ -437,7 +443,7 @@
         <!-- /top navigation -->
 
         <!-- Page Content -->
-
+        
           @if(Session::has('message'))
             <div class="alert alert-info pull-right">
                 {{ Session::get('message') }} 
@@ -533,6 +539,7 @@
       $(function() {
           $("td[colspan=5]").find("d").hide();
           $("td[colspan=10]").find("d").hide();
+
           
           $("table").click(function(event) {
               var $target = $(event.target);

@@ -4,8 +4,11 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use Junaidnasir\Larainvite\InviteTrait;
+
 class User extends Authenticatable
 {
+    use InviteTrait;
     /**
      * The attributes that are mass assignable.
      *
@@ -23,4 +26,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    // public function create(){
+
+    //     User::create([
+    //         'name' =>
+    //         ]);
+
+    // }
 }

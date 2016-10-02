@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVulnerabilitiesDetailTable extends Migration
+class CreateReportfilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,10 @@ class CreateVulnerabilitiesDetailTable extends Migration
      */
     public function up()
     {
-        Schema::create('vulnerabilities_detail', function (Blueprint $table) {
+        Schema::create('reportfiles', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('vulnerability');
-            $table->longText('description');
-            $table->string('solution');
+            $table->string('info');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ class CreateVulnerabilitiesDetailTable extends Migration
      */
     public function down()
     {
-        Schema::drop('vulnerabilities_detail');
+        Schema::drop('reportfiles');
     }
 }

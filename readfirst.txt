@@ -1,0 +1,14 @@
+29th September Commit
+
+Done:
+1) Plugin Id set uploaded. Reportfile and Pluginid model created.
+2) Migrations created for making tables and making foreign key.
+
+Not done/To be experimented or done in next commit:
+1) Invite system implementation
+2) Dbschema implement
+3) Redisdb cache or laravel’s own cache system.
+
+
+To Restore:
+Paste this in /Applications/xampp/htdocs/ and then rename it to “csas” to restore to this version or this commit. 

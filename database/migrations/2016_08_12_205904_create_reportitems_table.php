@@ -14,16 +14,19 @@ class CreateReportitemsTable extends Migration
     {
         Schema::create('reportitems', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('port');
-            $table->string('svc_name');
-            $table->string('protocol');
-            $table->string('severity');
-            $table->string('plugin_id');
+            $table->integer('port');
+            $table->string('svc_name', 15);
+            $table->string('protocol', 10);
+            $table->integer('severity');
+            $table->integer('plugin_id');
             $table->string('plugin_name');
             $table->string('plugin_family');
             $table->string('description');
             $table->string('risk_factor');
             $table->string('solution');
+            $table->string('plugin_output')->nullable();
+            $table->string('synopsis');
+            $table->timestamps();
         });
     }
 

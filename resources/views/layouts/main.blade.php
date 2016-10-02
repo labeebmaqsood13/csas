@@ -37,6 +37,7 @@
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Nessus Parser <span class="caret"></span></a>
           <ul class="dropdown-menu">
             
+            <!-- Change this HTML to html -->
             <li>{{ HTML::linkRoute('nessus.pdf', 'Pdf Report') }}</li>
             <li role="separator" class="divider"></li>
             <li>{{ HTML::linkRoute('nessus.word', 'Word Document') }}</li>

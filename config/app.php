@@ -148,6 +148,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        Anouar\Fpdf\FpdfServiceProvider::class,
+        Junaidnasir\Larainvite\LaraInviteServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -203,7 +205,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,        
+        'Html' => Collective\Html\HtmlFacade::class,
+        'Fpdf' => Anouar\Fpdf\Facades\Fpdf::class,
+        'Invite'  => Junaidnasir\Larainvite\Facades\Invite::class,        
     ],
 
 ];

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMostVulnerableAssetsTable extends Migration
+class CreatePluginidsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,12 +12,9 @@ class CreateMostVulnerableAssetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('most_vulnerable_assets', function (Blueprint $table) {
+        Schema::create('pluginids', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('ip');
-            $table->string('mac');
-            $table->string('asset_type');
-            $table->string('count');
+            $table->integer('plugin_id'); // primary key
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ class CreateMostVulnerableAssetsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('most_vulnerable_assets');
+        Schema::drop('pluginids');
     }
 }
