@@ -52,13 +52,9 @@ class InviteUserController extends Controller
 
             if(date('Y-m-d H:i:s') <= $user->valid_till){
 
-                // User::create($user->email);
                 $user_email = $user->email;
                 $this->code = $code;
-                // LaraInviteModel::where('code', $code)->update(['status' => 'successful']); 
                 return view('register', ['user_email' => $user_email]);
-
-                // return 'Success'; 
 
             }else{
 
@@ -73,13 +69,10 @@ class InviteUserController extends Controller
             return 'Invite token already used';
 
         }
-        // return $user;
 
     }
 
     public function register_user(Request $request){
-
-        // LaraInviteModel::where('code', $code)->update(['status' => 'successful']);
 
         User::create([
             'name' => $request->name,
