@@ -19,218 +19,66 @@
     <link href="{{URL::asset('vendors/bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="{{URL::asset('vendors/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet">
-    <!-- NProgress -->
-    <link href="{{URL::asset('vendors/nprogress/nprogress.css')}}" rel="stylesheet">
-    <!-- iCheck -->
-    <link href="{{URL::asset('vendors/iCheck/skins/flat/green.css')}}" rel="stylesheet">
-    <!-- bootstrap-progressbar -->
-    <link href="{{URL::asset('vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css')}}" rel="stylesheet">
-    <!-- PNotify -->
-    <link href="{{URL::asset('vendors/pnotify/dist/pnotify.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('vendors/pnotify/dist/pnotify.buttons.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('vendors/pnotify/dist/pnotify.nonblock.css')}}" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" media="all" rel="stylesheet" type="text/css">
     <!-- Custom Theme Style -->
     <link href="{{URL::asset('build/css/custom.min.css')}}" rel="stylesheet">
      
     <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-   
-
-    <!-- Inline Style Sheet START -->
-    <style type="text/css">
-
-      .paging-nav {
-        text-align: right;
-        padding-top: 2px;
-      }
-
-      .paging-nav a {
-        margin: auto 1px;
-        text-decoration: none;
-        display: inline-block;
-        padding: 1px 7px;
-        background: #91b9e6;
-        color: white;
-        border-radius: 3px;
-      }
-
-      .paging-nav .selected-page {
-        background: #187ed5;
-        font-weight: bold;
-      }
-
-      .paging-nav,
-     
-      </style>
+     <script type='text/javascript' src="http://vitalets.github.io/angular-xeditable/dist/js/xeditable.js"></script>
 
 
-    <style type="text/css">
-        div.content {
-            display: table;
-            width: 100%;
-            border: 1px solid black;
-            
-        }
-        main { display: table-row-group }
-        
-        div.content header, div.content main section {
-            display: table-row;
-            border: 1px solid black;
-        }
-        
-        span.open_port,span.close_port,span.list {
-            display: table-cell;
-            width: 33%;
-            border: 1px solid black;
+
+
+
+    <link rel="stylesheet" type="text/css" href="http://vitalets.github.io/angular-xeditable/dist/css/xeditable.css">
+
+
+    <style type='text/css'>
+        div[ng-app] {
+            margin: 50px;
         }
     </style>
 
-    <style type="text/css">
-        .bs-example{
-            margin: 20px;
-        }
-    </style>
+    <script type='text/javascript'>
+        var app = angular.module("app", ["xeditable"]);
 
-    <style type="text/css">
-      #showme{
-        display:none;
-    }
-        <style type="text/css">
-            body { font-family:Arial, Helvetica, Sans-Serif; font-size:0.8em;}
-            #report { border-collapse:collapse;}
-         
-            #report th { background:#7CB8E2 url(header_bkg.png) repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;}
-            #report td { background:white none repeat-x scroll center left; color:#000; padding:7px 15px; }
-          
-        </style>
+        app.run(function (editableOptions)
+        {
+            editableOptions.theme = 'bs3';
+        });
 
-    </style>
-    
-    <style type="text/css">
-        .Rounded {
-           
-            border-radius:10px 10px 10px 10px;  //rounds corners for other browsers
-            border:solid 3px;
-            color:white;
-           
-            padding:4px;
-        }
-    </style>
+        app.controller('Ctrl', function ($scope, $filter)
+        {
+            $scope.useAll = true;
+            $scope.sup= [true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true];
+        });
+        app.controller('Ctrlr', function ($scope, $filter)
+        {
+            $scope.useAll = true;
+            $scope.sup= [true,false,true,true,true,true,false,false,false,true,false,true,true,true,true,true,false];
+        });
 
-    <style>
-     p {
-         white-space: pre-line; /* collapse WS, preserve LB */
-       }
-    </style>
-    
-    <style type="text/css">
-        .bs-example{
-          margin: 20px;
-        }
-        @media screen and (min-width: 768px) {
-            .modal-dialog {
-              width: 700px; /* New width for default modal */
-            }
-            .modal-sm {
-              width: 350px; /* New width for small modal */
-            }
-        }
-        @media screen and (min-width: 1200px) {
-            .modal-lg {
-              width: 1200px; /* New width for large modal 
-            }
-        }*/
-    </style>
-    
-    <style type="text/css">
-      .divTable{
-      display: table;
-      width: 100%;
-    }
-    .divTableRow {
-      display: table-row;
-    }
-    .divTableHeading {
-      background-color: #EEE;
-      display: table-header-group;
-    }
-    .divTableCell, .divTableHead {
-      border: 1px solid #999999;
-      display: table-cell;
-      padding: 3px 10px;
-    }
-    .divTableHeading {
-      background-color: #EEE;
-      display: table-header-group;
-      font-weight: bold;
-    }
-    .divTableFoot {
-      background-color: #EEE;
-      display: table-footer-group;
-      font-weight: bold;
-    }
-    .divTableBody {
-      display: table-row-group;
-    }
-    </style>
-    <!-- Inline Style Sheet END -->
+
+
+   </script>
 
 
    
+    
+
+    <!--
+     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+   -->
 
 
-    <!-- Javascript External Code -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
 
     <!-- Javascript Internal Code Start -->
     @yield('scripts')
-    <script type="text/javascript">
-            $(document).ready(function(){
-                 $("#").click(function(){
-                     $("#").load("users-details.html");
-                 });
-            });
-        </script>
-    <style>
-      td{cursor:pointer;}
-    </style> 
-
   
-    <script>
-      $(document).ready(function() {
-        $('').click(function(event) {
-            event.preventDefault();
-            $.get(this.href, {}, function(data) {
-              $('#').html(data);
-            });
-        });
-      });
-    </script>
-
-    <script>
-        $(document).ready(function(){
-           $("").click(function(){
-              $("").load("");
-           });
-        });
-    </script>
     
-    <script>
-        $(document).ready(function(){
-            $("mnm").click(function(){
-                $("#div1").load("users-details.html");
-            });
-        });
-    </script>
-    
-    <script>
-        $(document).ready(function(){         
-            $("").load("tablee.html");    
-        });
-    </script>
 
 	<title>CSAS - @yield('title')</title>
 </head>
@@ -278,31 +126,29 @@
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="index.html">Activity</a></li>
-                      <li><a href="index2.html">Analytics</a></li>
+                      <li><a href="/index_activity">Activity</a></li>
+                      <li><a href="/analytics_dashboard">Analytics</a></li>
                       <li><a href="/dashboard">Analysis Dashboard</a></li>
-                      <li><a href="/reports">Generate Reports</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="admin_user.html">users</a></li>
+                      <li><a href="/users">Users</a></li>
                       <li><a href="invite_user">Invite Users</a></li>
                       <li><a href="file_upload">Upload File</a></li>
-                      <li><a href="groups.html">Groups</a></li>
+                      <li><a href="/groups">Groups</a></li>
                       <li><a href="form_validation.html">Organization</a></li>
                       <li><a href="form_wizards.html">Customization</a></li>
                       <li><a href="form_upload.html">Threat Source</a></li>
                       <li><a href="form_buttons.html">Notification</a></li>
-                      <li><a href="calendar.html">Manage Permissions</a></li>
+                      <li><a href="/permissions">Manage Permissions</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-desktop"></i> Create Projects <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       
-                      <li><a href="widgets.html">Step-1</a></li>
-                      <li><a href="invoice.html">Step-2</a></li>
-                      <li><a href="inbox.html">Step-3</a></li>
+                      <li><a href="/create_project">Wizard</a></li>
+                 
                       
                     </ul>
                   </li>
@@ -312,8 +158,13 @@
                       
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-bar-chart-o"></i> Generate Reports</a>
-                   
+                  <li><a><i class="fa fa-bar-chart-o"></i> Generate Reports<span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                     <li><a href="nessus/updated_pdf">Pdf Report</a></li>
+                     <li><a href="nessus/updated_word">Word Report</a></li>
+                     
+
+                    </ul>
                   </li>
                   <li><a><i class="fa fa-clone"></i>Mytasks <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
@@ -462,122 +313,28 @@
           <div class="clearfix"></div>
         </footer>
         <!-- /footer content -->
-      
-    </div>
+      </div>
+      </div>
+    
 
-
+ <!-- Javascript External Code -->
+   
     <!-- jQuery -->
     <script src="{{ URL::asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <!-- Bootstrap -->
     <script src="{{ URL::asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    <!-- FastClick -->
-    <script src="{{ URL::asset('vendors/fastclick/lib/fastclick.js') }}"></script>
-    <!-- NProgress -->
-    <script src="{{ URL::asset('vendors/nprogress/nprogress.js') }}"></script>
-    <!-- Chart.js -->
-    <script src="{{ URL::asset('vendors/Chart.js/dist/Chart.min.js') }}"></script>
-    <!-- jQuery Sparklines -->
-    <script src="{{ URL::asset('vendors/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
-    <!-- morris.js -->
-    <script src="{{ URL::asset('vendors/raphael/raphael.min.js') }}"></script>
-    <script src="{{URL::asset('vendors/morris.js/morris.min.js') }}"></script>
-    <!-- gauge.js -->
-    <script src="{{ URL::asset('vendors/gauge.js/dist/gauge.min.js') }}"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="{{ URL::asset('vendors/bootstrap-progressbar/bootstrap-progressbar.min.js') }}"></script>
-    <!-- Skycons -->
-    <script src="URL::asset('vendors/skycons/skycons.js') }}"></script>
-    <!-- Flot -->
-    <script src="{{ URL::asset('vendors/Flot/jquery.flot.js') }}"></script>
-    <script src="{{ URL::asset('vendors/Flot/jquery.flot.pie.js') }}"></script>
-    <script src="{{ URL::asset('vendors/Flot/jquery.flot.time.js') }}"></script>
-    <script src="{{ URL::asset('vendors/Flot/jquery.flot.stack.js') }}"></script>
-    <script src="{{ URL::asset('vendors/Flot/jquery.flot.resize.js') }}"></script>
-    <!-- Flot plugins -->
-    <script src="{{ URL::asset('production/js/flot/jquery.flot.orderBars.js') }}"></script>
-    <script src="{{ URL::asset('production/js/flot/date.js') }}"></script>
-    <script src="{{ URL::asset('production/js/flot/jquery.flot.spline.js') }}"></script>
-    <script src="{{ URL::asset('production/js/flot/curvedLines.js') }}"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="{{ URL::asset('production/js/moment/moment.min.js') }}"></script>
-    <script src="{{ URL::asset('production/js/datepicker/daterangepicker.js') }}"></script>
+           <script src="{{ URL::asset('build/js/custom.min.js') }}"></script>
 
-    <!-- Custom Theme Scripts -->
-    <script src="{{ URL::asset('build/js/custom.min.js') }}"></script>
 
-    <script >
-      $("#beerStyle").change ( function () {
-          var targID  = $(this).val ();
-          $("div.style-sub-1").hide ();
-          $('#' + targID).show ();
-      } )
-    </script>
-    
-    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function(){
-          $("select").change(function(){
-              $(this).find("option:selected").each(function(){
-                  if($(this).attr("value")=="re"){
-                    $("div.b").show ();
-                  } 
-                  else{
-                      $("div.b").hide();
-                  }
-              });
-          }).change();
+  
+@yield('scripts_create')
+   <script>
+  $(document).ready(function(){
+      $("mnm").click(function(){
+          $("#div1").load("/userDetails.blade.php");
       });
-    </script>
-
-
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{{ URL::asset('production/paging.js') }}"></script> 
-
-    <script type="text/javascript">
-      $(function() {
-          $("td[colspan=5]").find("d").hide();
-          $("td[colspan=10]").find("d").hide();
-
-          
-          $("table").click(function(event) {
-              var $target = $(event.target);
-              if ( $target.closest("td").attr("colspan") > 1 ) {
-                   $target.closest("tr").next().find("d").hide();
-              } else {
-                  $target.closest("tr").next().find("d").slideToggle();
-              }                    
-          });
-      });
-    </script>
-    
-    <script>
-        function queryParams() {
-            return {
-                type: 'owner',
-                sort: 'updated',
-                direction: 'desc',
-                per_page: 100,
-                page: 1
-            };
-        }
-    </script>
-
-
-    <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="{{ URL::asset('production/paging.js') }}"></script>
-
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{{ URL::asset('production/paging.js') }}"></script> 
-    <script type="text/javascript">
-      $(document).ready(function() {
-          $('#tableData').paging({limit:10});
-      });
-    </script>
-
-
+  });
+  </script>   
 
 
          

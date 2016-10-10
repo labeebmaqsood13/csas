@@ -12,6 +12,7 @@
   <div class="container container-fluid">
 
     <div class="row">
+          <p>{{$pluginid_count}} Plugin Id's are in Pluginid model</p>
 
           <!-- ========= Nessus File Upload ======== -->
           {!! Form::open(array('url' => 'nessus/upload', 'enctype' => 'multipart/form-data')) !!}

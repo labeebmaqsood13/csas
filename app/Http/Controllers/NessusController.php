@@ -37,7 +37,7 @@ class NessusController extends Controller
             // var_dump($display);
             // echo "</pre>";
 
-            // $this->save_reporthosts_and_reportitems($nessus_content); 
+            $this->save_reporthosts_and_reportitems($nessus_content); 
 
             return \Redirect::route('file_upload')->with('message', 'Nessus File Parsed and Stored in Database');
 
@@ -52,19 +52,26 @@ class NessusController extends Controller
             $xml    = simplexml_load_string($nessus);
             $json   = json_encode($xml);
             $nessus = json_decode($json,TRUE);
-
+     
+           $pluginid_count = Pluginid::count('id');
 
             foreach($nessus['Policy']['Preferences']['ServerPreferences']['preference'] as $something){
+               
                 if($something['name'] == 'plugin_set'){
+                  
                     $plugin_id_array = explode(';',$something['value']);
-                    
                     array_pop($plugin_id_array);
                     // echo '<pre>';
                     // print_r($plugin_id_array);
                     // echo '</pre>';
-                    $pluginid = new Pluginid();
-                    $pluginid->store($plugin_id_array);
+                    if(sizeof($plugin_id_array) != $pluginid_count){
+    
+                        Pluginid::store($plugin_id_array);
+
+                    }
+    
                 }
+    
             }
 
             // // $pluginid = new Pluginid();
@@ -89,7 +96,7 @@ class NessusController extends Controller
             // Loop through each Reporthost (IP)
             foreach($reporthosts[1] as $reporthost){
                     
-                return $this->parse_data($reporthost);
+                $this->parse_data($reporthost);
                 
             }
 

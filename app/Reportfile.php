@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reportfile extends Model
 {
 	protected $table = 'reportfiles';
-    protected $fillable = ['info','name'];
+    protected $fillable = ['info','name','user_id'];
 
     public function Pluginid(){
 

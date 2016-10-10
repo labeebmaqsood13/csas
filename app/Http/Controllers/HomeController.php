@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use App\Reporthost;
 use App\Reportitem;
 
+use App\User;
+use App\Pluginid;
+
 class HomeController extends Controller
 {
     // Uncomment to make authentication work.
@@ -51,16 +54,68 @@ class HomeController extends Controller
     }    
 
 
-
-
-
-
     public function file_upload(){
 
-        return view('file_upload');
+
+        $pluginid_count = Pluginid::count('id');
+        return view('file_upload',compact('pluginid_count'));
     
     }
 
 
+
+
+
+    public function permissions(){
+
+        return view('permissions');
+
+    }
+
+ public function groups()
+    {
+        return view('groups');
+    }
+
+
+
+     public function users()
+    {
+        return view('users');
+    }
+
+
+     public function userDetails()
+    {
+        return view('userDetails');
+    }
+
+
+
+     public function editUsers()
+    {
+        return view('editUsers');
+    }
+
+
+     public function index_activity()
+    {
+        return view('index_activity');
+    }
+    
+    public function create_project()
+    {
+        return view('create_project');
+    }
+
+     public function analytics_dashboard()
+    {
+        return view('analytics_dashboard');
+    }
+
+    public function dummy(){
+
+        return view('userDetails');
+    }
 
 }

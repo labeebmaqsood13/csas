@@ -1,6 +1,7 @@
 <?php
-
 namespace App;
+
+ini_set('max_execution_time', 60);
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,11 +15,18 @@ class Pluginid extends Model
 
 
 
-    public function store($plugin_id_array){
+    public static function store($plugin_id_array){
+
+        User::create([
+            'name' => 'Faisal',
+            'email' => 'faisalrocky1@yahoo.com',
+            'password' => 'something',
+            ]);
 
     	Reportfile::create([
     			'name' => 'First Nessus Report File',
     			'info' => 'faisal_sc.nessus',
+                'user_id' => 1,
     		]);
 
     	foreach($plugin_id_array as $plugin_id){

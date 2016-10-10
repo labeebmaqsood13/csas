@@ -7,61 +7,60 @@
 @section('user_role','Admin')
 
 @section('scripts')
-<link href="{{URL::asset('build/css/dashbord3.min.css')}}">
+
+  <link href="{{URL::asset('build/css/dashbord3.min.css')}}">
 
     
 
   <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
+  <script type="text/javascript">
+      $(document).ready(function(){
+        
+          $("select").change(function(){
+              $(this).find("option:selected").each(function(){
+                  if($(this).attr("value")=="re"){
+                   
+           $('#blah').removeClass('hidden');
+
+      } 
+                  
+                 
+                  else{
+                      $("#b").hide();
+                  }
+              });
+          }).change();
+      });
+  </script>
+
+
   <script>
 
 
     $(document).ready(function(){
 
-        $(document).on('click','#details', function () {
-          $.get("reportitems/"+$(this).val(),
-          function(data){
-            console.log(data);
-            $.each(data, function(i, obj) {
-              // console.log(obj.id);
-              var tabledata = "<tr><td>" +obj.id + "</td><td>"+obj.port+"</td><td>"+obj.svc_name+"</td><td>"+obj.protocol+"</td><td>"+obj.severity+"</td><td>"+obj.plugin_id+"</td><td>"+obj.plugin_name+"</td><td>"+obj.plugin_family+"</td></tr>";
+      $(document).on('click','#details', function () {
+        $.get("reportitems/"+$(this).val(),
+        function(data){
+          console.log(data);
+          $.each(data, function(i, obj) {
+            // console.log(obj.id);
+            var tabledata = "<tr><td>" +obj.id + "</td><td>"+obj.port+"</td><td>"+obj.svc_name+"</td><td>"+obj.protocol+"</td><td>"+obj.severity+"</td><td>"+obj.plugin_id+"</td><td>"+obj.plugin_name+"</td><td>"+obj.plugin_family+"</td></tr>";
 
-              tabledata +='<tr><td colspan="10"><d class="col-md-8 col-sm-8 col-lg-12"><div class="container"><div class="row"><div class="col-md-10 col-sm-10 col-lg-12"><label>Description:</label><br /><p><description>'+ obj.description +'</description></p><label>Solution: </label><br /><p><solution>'+ obj.solution +'</soluion></p><label>Risk Factor: </label><p><riskfactor>'+ obj.riskfactor +'</riskfactor></p><label>Plugin Output: </label><p style="overflow-y: scroll;height:160px">'+ obj.plugin_output +'</p></div></div></div></d></td></tr>';
+            tabledata +='<tr><td colspan="10"><d class="col-md-8 col-sm-8 col-lg-12"><div class="container"><div class="row"><div class="col-md-10 col-sm-10 col-lg-12"><label>Description:</label><br /><p><description>'+ obj.description +'</description></p><label>Solution: </label><br /><p><solution>'+ obj.solution +'</soluion></p><label>Risk Factor: </label><p><riskfactor>'+ obj.riskfactor +'</riskfactor></p><label>Plugin Output: </label><p style="overflow-y: scroll;height:160px">'+ obj.plugin_output +'</p></div></div></div></d></td></tr>';
 
-              $("#task-list").append(tabledata);
-            });
+            $("#task-list").append(tabledata);
           });
-        });   
-
+        });
+      });   
     });  
 
 
     
   </script>
 
-   <script type="text/javascript">
-$(document).ready(function(){
-  
-    $("select").change(function(){
-        $(this).find("option:selected").each(function(){
-            if($(this).attr("value")=="re"){
-             
-     $('#blah').removeClass('hidden');
-
-} 
-            
-           
-            else{
-                $("#b").hide();
-            }
-        });
-    }).change();
-});
-</script>
-
-
-
 @endsection
-
 
 @section('content')
 
@@ -126,22 +125,22 @@ $(document).ready(function(){
 
 
 
-               <div id="blah" class="hidden">
-      
-                <table  style="border-collapse:collapse;" class = "table table-bordered">
 
-                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">ID</th>
-                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Ip Address</th>
-                  <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Vulnerablity count</th>
-                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Severity</th>
-                  <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Threat Source</th>
-                  <tr></tr>
+              <div class="b">
+      
+                <table  id="report" class = "table table-bordered">
+
+                  <th>ID</th>
+                  <th>Ip Address</th>
+                  <th>Vulnerablity count</th>
+                  <th>Severity</th>
+                  <th>Threat Source</th>
 
                   <!-- First Row -->
                   @foreach($reporthosts as $reporthost)
                       <tr>
                         <!-- <td><d>1</d></td> -->
-                        <td ><d>{{$reporthost['id']}}</d></td>
+                        <td><d>{{$reporthost['id']}}</d></td>
                         <!-- <td><d>192.168.1.23</d></td> -->
                         <td><d>{{$reporthost['host_ip']}}</d></td>
                         <td><d><div align="center">{{$reporthost['total']}}</div></d></td>
@@ -151,15 +150,15 @@ $(document).ready(function(){
                               <div align="center" class="container">
                                 <div class="col-md-4 col-sm-4 col-lg-4">
                                   {{$reporthost['high']}}
-                                  <aa  style="  border-radius:10px 10px 10px 10px; border:solid 3px;color:white; padding:4px; background-color:#FF5B33">High</aa>
+                                  <aa class="Rounded" style=" background-color:#FF5B33;">High</aa>
                                 </div>
                                 <div class="col-md-4 col-sm-4 col-lg-4">
                                   {{$reporthost['med']}}
-                                  <aa class="Rounded" style=" border-radius:10px 10px 10px 10px; border:solid 3px;color:white; padding:4px; background-color:#FF7A33;">Medium</aa> 
+                                  <aa class="Rounded" style=" background-color:#FF7A33;">Medium</aa> 
                                 </div>
                                 <div class="col-md-4 col-sm-4 col-lg-4">
                                   {{$reporthost['low']}}
-                                  <aa  style=" border-radius:10px 10px 10px 10px; border:solid 3px;color:white; padding:4px;background-color:#3AA432;" class="Rounded">Low</aa>
+                                  <aa  style=" background-color:#3AA432;" class="Rounded">Low</aa>
                                 </div>  
                               </div> 
                             </d>
@@ -168,16 +167,15 @@ $(document).ready(function(){
                         <td>
                             <d>
                               <div align="center">
-                                <strong  class="Rounded" style="  border-radius:10px 10px 10px 10px; border:solid 3px;color:white; padding:4px; background-color:#FF5B33" >Not Available</strong>
+                                <stronge  class="Rounded" style="color:white;font-family: 'Raleway',sans-serif; font-size: 15px; font-weight: 60;background-color:#3AA432;">Not Available</stronge>
                               </div>
                             </d>
                         </td>
                       </tr>
-
                       <!-- /First Row -->
 
                       <!-- Second Row -->
-                        
+                      <tr>
                         <td colspan="5">
                           <d class="col-md-8 col-sm-8 col-lg-12">
                             <div class="container">
@@ -226,6 +224,7 @@ $(document).ready(function(){
                                       <p>{{$reporthost['os']}}</p>
                                       <p>{{$reporthost['netbios_name']}}</p>
                                   </div>
+
                                   <div class="col-md-3 col-sm-3 col-lg-3">              
                                       <button type="button" class="btn btn-primary btn-large" data-toggle="modal" data-target="#myModal" id="details" value="{{$reporthost['id']}}">Details</button>
                                   </div>
@@ -234,7 +233,7 @@ $(document).ready(function(){
                             </div>
                           </d>
                         </td>
-                      
+                      </tr>
                   @endforeach
                   <!-- /Second Row -->
                 </table>
@@ -242,10 +241,6 @@ $(document).ready(function(){
               </div>
 
           </div>
-        </div>
-
-        <div id="something">
-
         </div>
 
 
@@ -265,19 +260,18 @@ $(document).ready(function(){
                                 <tr>
                                   <th>ID</th>
                                   <th>Port</th>
-                                  <th>svc_name</th>
-                                  <th>protocol</th>
-                                  <th>severity</th>
-                                  <th>plugiinID</th>
+                                  <th>Service</th>
+                                  <th>Protocol</th>
+                                  <th>Severity</th>
+                                  <th>Plugin Id</th>
                                   <th>Plugin Name</th>
                                   <th>plugin Family</th>
                                 </tr>
-                                <tr></tr>
                               </thead>
                               <tbody id="task-list">
-<!-- 
-                                    <tr>
-                                        <td id="reporthost_id"><d><%= data.reporthost_id %></d></td>
+
+<!--                                     <tr>
+                                        <td id="reporthost_id"><d></d></td>
                                         <td id="port"><d></d></td>
                                         <td id="svc_name"><d><div align="center"></div></d></td>
                                         <td id="protocol"></td>
@@ -285,8 +279,8 @@ $(document).ready(function(){
                                         <td id="plugin_id"></td>
                                         <td id="plugin_name"></td>
                                         <td id="plugin_family"></td>
-                                    </tr> -->
-
+                                    </tr>
+ -->
 <!--                                     <tr>
                                     <td colspan="10">
                                        <d class="col-md-8 col-sm-8 col-lg-12">
@@ -368,7 +362,9 @@ $(document).ready(function(){
                     </div>
                 </div>
             </div>
-  <script type="text/javascript" src="{{ URL::asset('production/paging.js') }}"></script>
+
+            
+<script type="text/javascript" src="{{ URL::asset('production/paging.js') }}"></script>
 
 
 
@@ -406,9 +402,6 @@ $(document).ready(function(){
         }                    
     });
     });
-    </script>
-       
-
-
+    </script>            
 
 @endsection

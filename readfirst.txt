@@ -1,13 +1,17 @@
-29th September Commit
+10th October Commit
 
 Done:
-1) Plugin Id set uploaded. Reportfile and Pluginid model created.
-2) Migrations created for making tables and making foreign key.
+1) Users.blade.php edit worked ajax.
+2) Dashboard merged removed errors.
+3) Editusers.blade.php worked ajax.
+4) Invite users integrated
+5) Generate Reports created in left sidebar.
+ 
 
 Not done/To be experimented or done in next commit:
-1) Invite system implementation
-2) Dbschema implement
-3) Redisdb cache or laravel’s own cache system.
+
+1) Dbschema implement
+2) Redisdb cache or laravel’s own cache system.
 
 
 To Restore:

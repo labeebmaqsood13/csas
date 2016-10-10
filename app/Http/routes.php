@@ -10,6 +10,34 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+// Faisal Routes start here //
+
+
+Route::get('permissions', 'HomeController@permissions')->name('permissions');
+
+
+Route::get('create_project', 'HomeController@create_project')->name('create_project');
+
+Route::get('index_activity', 'HomeController@index_activity')->name('index_activity');
+
+Route::get('users', 'HomeController@users')->name('users');
+
+Route::get('userDetails', 'HomeController@userDetails')->name('userDetails');
+
+Route::get('editUsers', 'HomeController@editUsers')->name('editUsers');
+
+
+Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
+
+
+Route::get('groups', 'HomeController@groups')->name('groups');
+
+
+Route::get('dummy', 'HomeController@dummy')->name('dummy');
+
+
+// Faisal Routes end here //
+
 Route::get('file_upload', 'HomeController@file_upload')->name('file_upload');
 
 Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');

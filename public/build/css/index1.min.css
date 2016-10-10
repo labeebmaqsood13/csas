@@ -1,0 +1,118 @@
+@charset "UTF-8";
+  .message-item {
+margin-top: 15px;
+margin-bottom: 15px;
+margin-left: 10px;
+position: relative;
+}
+.message-item .message-inner {
+background: #f7f9fa;
+border: 1px solid ;
+border-radius: 3px;
+padding: 10px;
+position: relative;
+}
+.message-item .message-inner:before {
+border-right: 5px solid #eff2f3;
+border-style: solid;
+border-width: 5px;
+color: rgba(0,0,0,0);
+content: "";
+display: block;
+height: 0;
+position: absolute;
+left: -10px;
+top: 10px;
+width: 0;
+}
+.message-item .message-inner:after {
+border-right: 2px solid ;
+border-style: solid;
+border-width: 5px;
+color: rgba(0,0,0,0);
+content: "";
+display: block;
+height: 0;
+position: absolute;
+left: -9px;
+top: 10px;
+width: 0;
+}
+.message-item:before {
+background: #eff2f3;
+border-radius: 1px;
+bottom: -28px;
+content: "";
+height: 100%;
+left: -14px;
+position: absolute;
+width: 1px;
+}
+.message-item:after {
+background: #fff;
+border: 3px solid #2e9df7;
+border-radius: 50%;
+content: "";
+height: 11px;
+left: -19px;
+position: absolute;
+top: 10px;
+width: 11px;
+}
+.clearfix:before, .clearfix:after {
+content: " ";
+display: table;
+}
+.message-item .message-head {
+border-bottom: 1px solid #eee;
+margin-bottom: 8px;
+padding-bottom: 8px;
+}
+.message-item .message-head .message-icon {
+background-color: #8560a8;
+padding: 10px 12px;
+margin-right: 10px;
+border-radius: 30%;
+-o-border-radius: 30%;
+-ms-border-radius: 30%;
+-moz-border-radius: 30%;
+-webkit-border-radius: 30%;
+}
+.message-item .message-head .message-icon a i{
+color: #fff;
+font-size: 1.3em;
+}
+.message-item .message-head .user-detail {
+overflow: hidden;
+}
+.message-item .message-head .user-detail h5 {
+font-size: 1.2em;
+color: #585b5e;
+margin: 0;
+margin-bottom: 0px;
+}
+.message-item .message-head .post-type >p {
+color: #8560a8;
+font-weight: bold;
+text-transform: uppercase;
+font-size: .7em;
+margin: 0;
+line-height: 10px;
+}
+.message-item .message-head .post-time {
+float: left;
+}
+.message-item .message-head .post-time >p {
+color: black;
+text-transform: uppercase;
+letter-spacing: 1px;
+font-size: .7em;
+line-height: 10px;
+margin: 0;
+}
+.message-item .qa-message-content p {
+text-align: center;
+color: #585b5e;
+font-size: 1em;
+margin: 0;
+}
