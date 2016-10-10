@@ -73,17 +73,7 @@ class NessusController extends Controller
                 }
     
             }
-
-            // // $pluginid = new Pluginid();
-            // foreach($plugin_id_array as $each){
-
-            //     Pluginid::create([
-            //     'reportfile_id' =>  1,
-            //     'plugin_id'     =>  $each,
-            //     ]);
-            //     // $pluginid->store($each);
-
-            // }    
+            
 
     }
 
