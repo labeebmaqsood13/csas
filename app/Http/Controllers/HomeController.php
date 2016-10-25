@@ -11,26 +11,26 @@ use App\Reporthost;
 use App\Reportitem;
 
 use App\User;
+use App\Role;
 use App\Pluginid;
 
 class HomeController extends Controller
 {
-    // Uncomment to make authentication work.
-    // /**
-    //  * Create a new controller instance.
-    //  *
-    //  * @return void
-    //  */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
-    // /**
-    //  * Show the application dashboard.
-    //  *
-    //  * @return \Illuminate\Http\Response
-    //  */
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         return view('welcome');
@@ -72,18 +72,36 @@ class HomeController extends Controller
 
     }
 
- public function groups()
+ public function roles()
     {
-        return view('groups');
+        // return response()->view('errors.503');
+        // abort(403, 'Unauthorized action.');
+        $roles = Role::all();
+        $users = User::all();
+        return view('roles', compact('users','roles'));
     }
 
 
 
-     public function users()
+    public function users()
     {
-        return view('users');
+        $users = User::all();
+        return view('users', compact('users'));
     }
 
+    public function user_delete($id)
+    {
+        $user = User::find($id);
+        $user->role()->detach();
+
+        $user->delete();
+        return \Redirect::route('users')->with('success', 'Success! User Deleted');   
+    }
+
+    public function dummy(){
+
+        return view('userDetails');
+    }
 
      public function userDetails()
     {
@@ -111,11 +129,6 @@ class HomeController extends Controller
      public function analytics_dashboard()
     {
         return view('analytics_dashboard');
-    }
-
-    public function dummy(){
-
-        return view('userDetails');
     }
 
 }

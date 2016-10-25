@@ -12,39 +12,36 @@
 */
 // Faisal Routes start here //
 
-
 Route::get('permissions', 'HomeController@permissions')->name('permissions');
-
 
 Route::get('create_project', 'HomeController@create_project')->name('create_project');
 
 Route::get('index_activity', 'HomeController@index_activity')->name('index_activity');
 
 Route::get('users', 'HomeController@users')->name('users');
+Route::delete('users/{user_id}','HomeController@user_delete')->name('users_delete');
+
+Route::get('dummy', 'HomeController@dummy')->name('dummy');
 
 Route::get('userDetails', 'HomeController@userDetails')->name('userDetails');
 
 Route::get('editUsers', 'HomeController@editUsers')->name('editUsers');
 
-
 Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
 
-
-Route::get('groups', 'HomeController@groups')->name('groups');
-
-
-Route::get('dummy', 'HomeController@dummy')->name('dummy');
+// Route::get('roles', 'HomeController@roles')->name('roles');
+Route::resource('roles','RoleController', ['except'=> ['create'] ]);
 
 
-// Faisal Routes end here //
+// File upload route
 
 Route::get('file_upload', 'HomeController@file_upload')->name('file_upload');
 
+// Analysis Dashboard routes
 Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
-
 Route::get('reportitems/{reporthost_id}', 'HomeController@reportitems')->name('reportitems');
 
-
+// Invite User routes
 Route::get('invite_user',function(){
 	return view('invite_user');
 });
@@ -53,11 +50,12 @@ Route::get('check_status/{code?}', 'InviteUser\InviteUserController@check_status
 Route::post('register_user', 'InviteUser\InviteUserController@register_user');
 
 
+// Old View developed for generating reports
+// Route::get('/', function () {
+//     return view('index');
+// })->name('home');
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
-
+Route::get('create_user','NessusController@create_user');
 
 
 // Nessus routes
@@ -78,6 +76,6 @@ Route::get('nmap/webpage','NmapController@webpage')->name('nmap.webpage');
 Route::post('nmap/upload', 'NmapController@upload')->name('nmap.upload'); 
 
 
-// Uncomment to make authentication work.
-// Route::auth();
-// Route::get('/', 'HomeController@index');
+// Authentication routes
+Route::auth();
+Route::get('/', 'HomeController@index');

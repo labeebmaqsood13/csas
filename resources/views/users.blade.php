@@ -2,12 +2,14 @@
 
 @section('title','Activity Dashboard')
 
-@section('user_name','Labeeb')
+@section('user_name')
+	{{ Auth::user()->name }}
+@endsection
 
 @section('user_role','Admin')
 
 @section('scripts')
- <link href="{{URL::asset('build/css/user_style.min.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('build/css/user_style.min.css')}}" rel="stylesheet">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -60,7 +62,7 @@
 
                      <div class="page-title">
 		              <div class="title_left">
-		                <h3>Users Info!</h3>
+		                <h3>Users Information</h3>
 		              </div>
 
 		              <div class="title_right">
@@ -68,7 +70,7 @@
 		                  <div class="input-group">
 		                    <input type="text" class="form-control" placeholder="Search for...">
 		                    <span class="input-group-btn">
-		                      <button class="btn btn-default" type="button">Go!</button>
+		                      <button class="btn btn-default" type="button">Go</button>
 		                    </span>
 		                  </div>
 		                  <br>
@@ -190,81 +192,45 @@
 							    <tr>
 							      <th>#</th>
 							      <th >Name</th>
-							      <th>Email-Id</th>
-							      <th>Permission</th>
-							      <th>Group</th>
+							      <th>Email Id</th>
+							      <th>Role</th>
+							      <!-- <th>Permission</th> -->
 							      <th>Action</th>
 							    </tr>
 							  </thead>
 							  <tbody>
-							    <tr >
+								  @foreach($users as $user)
+								    
+								    <tr >
+								      <th scope="row">{{ $user->id }}</th>
+							          <td id="name">{{ $user->name }}</a></td>
+			                          <td>{{ $user->email }}</td>
 
-							      <th scope="row" >1</th>
-						          <td id="name"> Faisal Khan</a></td>
-		                          <td>Faisalrocky1@yahoo.com</td>
-							      <td>Admin</td>
-							      <td>Manager</td>
-							      <td><mnm class="btn btn-primary btn-sm"> Edit Details</mnm></td>
-							    </tr>
-							    <tr>
-							      <th scope="row">2</th>
-							      <td id="name">Labeeb Maqsood</a></td>
-							      <td>labeebmaqsood13@gmail.com</td>
-							      <td>Default</td>
-							      <td>Analyst</td>
-							      <td><mnm class="btn btn-primary btn-sm"> Edit Details </mnm></td>
-							    </tr>
-		                         <th scope="row" >3</th>
-		                         <td id="name"> Faisal Khan</a></td>
+								      <td>
+								      	<select multiple class="form-control" style="height:50px;" disabled>
+										    @foreach( $user->role()->get() as $role)
+												<option>{{ $role->name }}</option>
+											@endforeach
+										</select>
+									  </td>
 
-		                          
-		                          <td>Faisalrocky1@yahoo.com</td>
-		                          <td>Admin</td>
-		                          <td>Manager</td>
-		                          <td><mnm class="btn btn-primary btn-sm"> Edit Details</mnm></td>
-		                        </tr>
-		                          <th scope="row" >4</th>
-		                          <td id="name"> Faisal Khan</a></td>
+								      
 
-		                          
-		                          <td>Faisalrocky1@yahoo.com</td>
-		                          <td>Admin</td>
-		                          <td>Manager</td>
-		                          <td><mnm class="btn btn-primary btn-sm"> Edit Details</mnm></td>
-		                        </tr>
 
-							    <tr>
-							      <th scope="row">5</th>
-							      <td id="name">Larry</a></td>
-							      <td>something@yahoo.com</td>
-							      <td>observer</td>
-							      <td>Client Rep.</td>
-							      <td><mnm class="btn btn-primary btn-sm"> Edit Details </mnm></td>
-							    </tr>
-		                        <tr>
-		                          <th scope="row">6</th>
-		                          <td id="name">Labeeb Maqsood</a></td>
-		                          <td>labeebmaqsood13@gmail.com</td>
-		                          <td>Default</td>
-		                          <td>Analyst</td>
-		                          <td><mnm class="btn btn-primary btn-sm"> Edit Details </mnm></td>
-		                        </tr>
-		                        <tr>
-		                          <th scope="row">7</th>
-		                          <td id="name">Larry</a></td>
-		                          <td>something@yahoo.com</td>
-		                          <td>observer</td>
-		                          <td>Client Rep.</td>
-		                          <td><mnm class="btn btn-primary btn-sm"> Edit Details </mnm></td>
-		                        </tr>
-		                        <tr>
-		                          <th scope="row">8</th>
-		                          <td id="name">Labeeb Maqsood</a></td>
-		                          <td>labeebmaqsood13@gmail.com</td>
-		                          <td>Default</td>
-		                          <td>Analyst</td>
-		                          <td><mnm class="btn btn-primary btn-sm"> Edit Details </mnm></td>
-		                        </tr>
+								      <!-- <td>Admin</td> -->
+								      <td>
+								      	<mnm class="btn btn-primary btn-sm pull-left"> Edit</mnm>
+									    @if(Auth::user()->id != $user->id)
+									      	{!! Form::open(array('method' => 'DELETE', 'route' => ['users_delete',$user->id])) !!}
+						                      <button type="submit" class="btn btn-danger btn-sm pull-left">Delete</a>
+						                    {!! Form::close() !!} 
+								      	<!-- <mnm class="btn btn-danger btn-sm"> Delete</mnm> -->
+								      	@endif
+								      </td>
+								    </tr>
+								  
+								  @endforeach
+							    
 							  </tbody>
 							   
 							</table> 
