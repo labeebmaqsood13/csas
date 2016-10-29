@@ -31,19 +31,19 @@ class NessusController extends Controller
 {
     public function create_user(){
 
-        Role::create([
-            'name' => 'Admin',
-            ]);
-        Role::create([
-            'name' => 'Pentester',
-            ]);
-        Role::create([
-            'name' => 'Reverse Engineer',
-            ]);
+        // Role::create([
+        //     'name' => 'Admin',
+        //     ]);
+        // Role::create([
+        //     'name' => 'Pentester',
+        //     ]);
+        // Role::create([
+        //     'name' => 'Reverse Engineer',
+        //     ]);
 
         User::create([
-            'name'      => 'Labeeb',
-            'email'     => 'labeeb@yahoo.com',
+            'name'      => 'Muhammad',
+            'email'     => 'muhammad@yahoo.com',
             'password'  => 'something',
             // 'role_id'   =>  1,
             ]);

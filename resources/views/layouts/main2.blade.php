@@ -297,7 +297,8 @@
         
           @if(Session::has('message'))
             <div class="alert alert-info pull-right">
-                {{ Session::get('message') }} 
+                {{ Session::get('message') }}
+                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             </div>
           @endif
           @yield('content')

@@ -10,6 +10,7 @@ use Session;
 
 use App\User;
 use App\Role;
+use App\Userinvitation;
 
 class RoleController extends Controller
 {
@@ -26,7 +27,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::orderBy('id','DESC')->paginate(5);
         $users = User::all();
         return view('roles', compact('users','roles'));
     }
@@ -58,11 +59,12 @@ class RoleController extends Controller
             'name' => $request->name,
             ]);
 
-        foreach($request->users as $user){
-            $user = User::find($user);
-            $user->role()->attach($role->id);
-        }
-
+        if(!is_null($request->users)){
+            foreach($request->users as $user){
+                $user = User::find($user);
+                $user->role()->attach($role->id);
+            }
+        }    
         return \Redirect::route('roles.index')->with('success', 'Success! Role Created');
 
     }
@@ -110,13 +112,80 @@ class RoleController extends Controller
     public function destroy($id)
     {
         $role = Role::find($id);
-        $users = $role->user()->get();
-
-        foreach($users as $user){
-            $user->role()->detach($role->id);
-        }
 
         $role->delete();
-        return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');   
+        die();
+
+
+
+
+
+
+        // Testing above;
+
+
+        $role = Role::find($id);
+
+        $roles_userinvited = $role->user_invitation()->get();
+        $roles_user = $role->user()->get();
+     
+        if(!is_null($roles_userinvited) && !is_null($roles_user)){
+            
+            foreach($roles_userinvited as $role){
+                $user_invited = Userinvitation::find($role->pivot->userinvitation_id);
+                $user_invited->role()->detach($role->pivot->role_id);
+            }
+
+            foreach($roles_user as $role){
+                $user = User::find($role->pivot->user_id);
+                $user->role()->detach($role->pivot->role_id);
+            }
+
+            $role->delete();
+            return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
+
+        }
+            
+        // elseif(!is_null($roles_user) && is_null($roles_userinvited)){
+        //     foreach($roles_user as $role){
+
+        //         $user = User::find($role->pivot->user_id);
+        //         $user->role()->detach($role->pivot->role_id);
+
+        //     }
+     
+        //     $role->delete();
+        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
+        // } 
+
+        // elseif(is_null($roles_user)){
+        //     $role->delete();
+        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
+        // }
+           
+        
+
+
+        // return $role->user()->get();
+
+        // if($role->user()->get() == ' '){
+        
+        //     $role->delete();
+        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');   
+
+        // }
+        // elseif($role->user()->first()){
+
+        //     return $role;
+        //     $users = $role->user()->get();
+        //     foreach($users as $user){
+        //         $user->role()->detach($role->id);
+        //     }
+        //     $role->delete();
+        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
+
+        // }
+        
+
     }
 }

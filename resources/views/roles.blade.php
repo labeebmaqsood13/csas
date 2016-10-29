@@ -9,12 +9,18 @@
 @section('scripts')
  <link href="{{URL::asset('build/css/groups.min.css')}}" rel="stylesheet">
 <!-- Can be used for prompting after deletion inserting and editing(updating) -->
+
+<!-- //JQUERY SCRIPT TAG ADD HERE ATIF SUGGESTION -->
+
+
 @if(Session::has('success'))
    <script type='text/javascript'>
         // alert('Here');
+
+        // DELETE Window.load from here and only try $('#myMod') wali line
         $(window).load(function(){
             console.log('Another Here');
-            $('myMod').modal('show');
+            $('#myMod').modal('show');
         });
   </script>
 @endif
@@ -24,7 +30,7 @@
 @section('content')
  <!-- page content -->
 
-        <div class="right_col" role="main">
+        <div class="right_col" role="">
           
             <div class="page-title">
               <div class="title_left">
@@ -90,7 +96,7 @@
                           @foreach($users as $user)
                             <input type="checkbox" name="users[]" value="{{$user->id}}"> <label>  {{$user->name}} ({{$user->email}})</label><br />
                           @endforeach
-                        
+                          
                         </div>
                       </div>
                     </div>
@@ -179,13 +185,13 @@
   				        <td id="name"> {{$role->name}} </a></td>
                   <td> {{$role->user()->where('role_id',$role->id)->count()}} </td>
                   <td clas>
-                  
+
                     <a href="#editModal" value="{{$role->id}}" value="{{ $role->id }}" class="btn btn btn-primary btn-sm pull-left" data-toggle="modal">Edit</a>
-                    
-                    {!! Form::open(array('method' => 'DELETE', 'route' => ['roles.destroy',$role->id]),'class' => 'foo') !!}
+                  
+                    {!! Form::open(array('method' => 'DELETE', 'route' => ['roles.destroy',$role->id])) !!}
                       <button type="submit" class="btn btn-danger btn-sm pull-left">Delete</a><!-- <a href="#deleteModal" value="{{ $role->id }}" class="btn btn-primary" data-toggle="modal">Delete Role</a> -->
                     {!! Form::close() !!}  
-                  
+
                   </td>
   					    </tr>
               @endforeach
@@ -193,12 +199,18 @@
 					  </tbody>
 					   
 					</table> 
-						</div>
+  					</div>
 	            <div class="row">
 	              <div class="col-lg-6">
 	                <a  href="#myModal" class="btn btn btn-primary" data-toggle="modal">Add Role</a>
 	              </div>
 	            </div>
+            
+            <!-- Pagination Render -->
+            <div class="text-center">
+              {!! $roles->render() !!}
+            </div>
+
 	        
 	        </div> 
 	        </div>

@@ -12,7 +12,7 @@ class AddUserIdToUserInvitationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('user_invitations', function (Blueprint $table) {
+        Schema::table('userinvitations', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
         });
@@ -25,8 +25,8 @@ class AddUserIdToUserInvitationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_invitations', function (Blueprint $table) {
-            $table->dropForeign('user_invitations_user_id_foreign');
+        Schema::table('userinvitations', function (Blueprint $table) {
+            $table->dropForeign('userinvitations_user_id_foreign');
         });
     }
 }

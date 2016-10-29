@@ -6,11 +6,8 @@ use Hash;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-use Junaidnasir\Larainvite\InviteTrait;
-
 class User extends Authenticatable
 {
-    use InviteTrait;
     /**
      * The attributes that are mass assignable.
      *
@@ -42,6 +39,13 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Role');
 
     }
+
+    public function user_invitation(){
+
+        return $this->hasMany('App\Userinvitation');
+    
+    }
+
 
     public function setPasswordAttribute($pass){
 

@@ -76,7 +76,8 @@ class HomeController extends Controller
     {
         // return response()->view('errors.503');
         // abort(403, 'Unauthorized action.');
-        $roles = Role::all();
+        // $roles = Role::all();
+        $roles = Role::paginate(5);
         $users = User::all();
         return view('roles', compact('users','roles'));
     }
@@ -85,8 +86,9 @@ class HomeController extends Controller
 
     public function users()
     {
-        $users = User::all();
-        return view('users', compact('users'));
+        $users = User::orderBy('id','DESC')->paginate(5);
+        $roles = Role::all();
+        return view('users', compact('users','roles'));
     }
 
     public function user_delete($id)
@@ -95,11 +97,11 @@ class HomeController extends Controller
         $user->role()->detach();
 
         $user->delete();
-        return \Redirect::route('users')->with('success', 'Success! User Deleted');   
+        return \Redirect::route('users')->with('message', 'Success! User Deleted');   
     }
 
     public function dummy(){
-
+        // $user = $user_data;
         return view('userDetails');
     }
 

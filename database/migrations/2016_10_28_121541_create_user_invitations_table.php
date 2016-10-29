@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInvitationUserTable extends Migration
+class CreateUserInvitationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,15 @@ class CreateInvitationUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_invitations', function (Blueprint $table) {
-            $table->BigIncrements('id');
+        Schema::create('userinvitations', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('code')->index();
             $table->string('email');
-            // $table->BigInteger('user_id')->unsigned();
             $table->enum('status', ['pending', 'successful','canceled','expired']);
             $table->datetime('valid_till');
             $table->timestamps();
         });
+    
     }
 
     /**
@@ -30,7 +30,6 @@ class CreateInvitationUserTable extends Migration
      */
     public function down()
     {
-
-        Schema::drop('user_invitations');
+        Schema::drop('userinvitations');
     }
 }

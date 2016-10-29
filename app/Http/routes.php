@@ -10,72 +10,82 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-// Faisal Routes start here //
+// -------------- Faisal Routes start here ----------------- //
 
-Route::get('permissions', 'HomeController@permissions')->name('permissions');
+	Route::get('permissions', 'HomeController@permissions')->name('permissions');
 
-Route::get('create_project', 'HomeController@create_project')->name('create_project');
+	Route::get('create_project', 'HomeController@create_project')->name('create_project');
 
-Route::get('index_activity', 'HomeController@index_activity')->name('index_activity');
+	Route::get('index_activity', 'HomeController@index_activity')->name('index_activity');
 
-Route::get('users', 'HomeController@users')->name('users');
-Route::delete('users/{user_id}','HomeController@user_delete')->name('users_delete');
+	Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
 
-Route::get('dummy', 'HomeController@dummy')->name('dummy');
+// ------------------- ROLES ----------------------- //
 
-Route::get('userDetails', 'HomeController@userDetails')->name('userDetails');
-
-Route::get('editUsers', 'HomeController@editUsers')->name('editUsers');
-
-Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
-
-// Route::get('roles', 'HomeController@roles')->name('roles');
-Route::resource('roles','RoleController', ['except'=> ['create'] ]);
+	// Route::get('roles', 'HomeController@roles')->name('roles');
+	Route::resource('roles','RoleController', ['except'=> ['create'] ]);
 
 
-// File upload route
+// ------------ File upload route ---------------------- //
+	
+	Route::get('file_upload', 'HomeController@file_upload')->name('file_upload');
 
-Route::get('file_upload', 'HomeController@file_upload')->name('file_upload');
+// --------------Analysis Dashboard routes -----------------//
 
-// Analysis Dashboard routes
-Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
-Route::get('reportitems/{reporthost_id}', 'HomeController@reportitems')->name('reportitems');
+	Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
+	Route::get('reportitems/{reporthost_id}', 'HomeController@reportitems')->name('reportitems');
 
-// Invite User routes
-Route::get('invite_user',function(){
-	return view('invite_user');
-});
-Route::post('invite_user','InviteUser\InviteUserController@invite_user');
-Route::get('check_status/{code?}', 'InviteUser\InviteUserController@check_status');
-Route::post('register_user', 'InviteUser\InviteUserController@register_user');
+// ------------------- USERS ----------------------- //
 
+	// Ajax Call from USER EDIT Button 
+	Route::get('dummy/', 'HomeController@dummy')->name('dummy');
 
-// Old View developed for generating reports
-// Route::get('/', function () {
-//     return view('index');
-// })->name('home');
+	// Display Users
+	Route::get('users', 'HomeController@users')->name('users');
 
-Route::get('create_user','NessusController@create_user');
+	// Invite User routes
+	// Route::get('invite_user', function(){ return view('invite_user');}); // Separate view for email input 
+	Route::post('invite_user','InviteUser\InviteUserController@invite_user');
+	Route::get('check_status/{code}', 'InviteUser\InviteUserController@check_status');
+	Route::post('register_user', 'InviteUser\InviteUserController@register_user');
 
+	// Edit Users
+	//Route::get('userDetails', 'HomeController@userDetails')->name('userDetails');
+	Route::get('editUsers', 'HomeController@editUsers')->name('editUsers');
 
-// Nessus routes
-Route::get('nessus/word','NessusController@word')->name('nessus.word');
-Route::get('nessus/pdf','NessusController@pdf')->name('nessus.pdf');
-Route::get('nessus/excel','NessusController@excel')->name('nessus.excel');
-Route::get('nessus/webpage','NessusController@webpage')->name('nessus.webpage');
-Route::post('nessus/upload', 'NessusController@upload')->name('nessus.upload');
-Route::get('reports', 'NessusController@reports')->name('nessus.reports'); 
-Route::get('nessus/updated_word','NessusController@updated_word')->name('nessus.updated_word');
-Route::get('nessus/updated_pdf','NessusController@updated_pdf')->name('nessus.updated_pdf');
+	// Delete Users
+	Route::delete('users/{user_id}','HomeController@user_delete')->name('users_delete');
 
-// Nmap routes
-Route::get('nmap/word','NmapController@word')->name('nmap.word');
-Route::get('nmap/pdf','NmapController@pdf')->name('nmap.pdf');
-Route::get('nmap/excel','NmapController@excel')->name('nmap.excel');
-Route::get('nmap/webpage','NmapController@webpage')->name('nmap.webpage');
-Route::post('nmap/upload', 'NmapController@upload')->name('nmap.upload'); 
+    // Dummy users and roles creation 
+	Route::get('create_user','NessusController@create_user');
+
+	// Old View developed for generating reports
+	// Route::get('/', function () {
+	//     return view('index');
+	// })->name('home');
 
 
-// Authentication routes
-Route::auth();
-Route::get('/', 'HomeController@index');
+// ------------ Nessus routes ----------------- //
+	
+	Route::get('nessus/word','NessusController@word')->name('nessus.word');
+	Route::get('nessus/pdf','NessusController@pdf')->name('nessus.pdf');
+	Route::get('nessus/excel','NessusController@excel')->name('nessus.excel');
+	Route::get('nessus/webpage','NessusController@webpage')->name('nessus.webpage');
+	Route::post('nessus/upload', 'NessusController@upload')->name('nessus.upload');
+	Route::get('reports', 'NessusController@reports')->name('nessus.reports'); 
+	Route::get('nessus/updated_word','NessusController@updated_word')->name('nessus.updated_word');
+	Route::get('nessus/updated_pdf','NessusController@updated_pdf')->name('nessus.updated_pdf');
+
+// --------------- Nmap routes ----------------- //
+	
+	Route::get('nmap/word','NmapController@word')->name('nmap.word');
+	Route::get('nmap/pdf','NmapController@pdf')->name('nmap.pdf');
+	Route::get('nmap/excel','NmapController@excel')->name('nmap.excel');
+	Route::get('nmap/webpage','NmapController@webpage')->name('nmap.webpage');
+	Route::post('nmap/upload', 'NmapController@upload')->name('nmap.upload'); 
+
+
+// --------------- Authentication routes -------------- //
+	
+	Route::auth();
+	Route::get('/', 'HomeController@index');

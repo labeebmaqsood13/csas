@@ -11,9 +11,10 @@ use Illuminate\Http\Response;
 
 use Invite;
 use App\User;
-
-use Junaidnasir\Larainvite\Models\LaraInviteModel;
+use App\Userinvitation;
+use Hash;
 use Mail;
+use Auth;
 
 class InviteUserController extends Controller
 {
@@ -21,33 +22,41 @@ class InviteUserController extends Controller
     
     public function invite_user(Request $request){
 
-        if(is_null(User::where('name','Labeeb')->first())){
-            User::create([
-                'name' => 'Labeeb',
-                'email' => 'labeebmaqsood@yahoo.com',
-                'password' => 'something',
-                ]);
-        }
+        $user_id = Auth::user()->id;
 
-        $user = User::where('name', 'Labeeb')->first();
+        $code = Hash::make(str_random(8));
 
-        $invite_email = $request->email;
-        $refCode = Invite::invite($invite_email, $user->id , date("Y-m-d H:i:s", strtotime('+1 hours')));
+        $email = $request->email;
 
-        $data = ['code' => $refCode, 'email' => $invite_email , 'name' => $user->name];
+        $user_invited = Userinvitation::create([
+            'code'       => $code,
+            'email'      => $email,
+            'status'     => 'pending',
+            'valid_till' => date("Y-m-d H:i:s", strtotime('+1 hours')),
+            'user_id'    => $user_id,
+            ]);
+
+        if(!is_null($request->roles)){
+            foreach($request->roles as $role_id){   
+                $user_invited->role()->attach($role_id);
+            }
+        }    
+
+        $data = ['code' => $code, 'email' => $email , 'name' => 'Soemthing'];
         Mail::send('emails.register', $data, function($message) use($data){
             $message->from('labeebmaqsood13@gmail.com');
             $message->to($data['email']);
             $message->subject('This is an invitation email');
         });
-        // return $refCode;
-        return \Redirect::route('dashboard')->with('message', $invite_email.' has been invited.');
+
+        return \Redirect::route('dashboard')->with('message', $email.' has been invited.');
 
     }
 
     public function check_status($code){
 
-        $user = LaraInviteModel::where('code', $code)->first();
+        $code = htmlspecialchars($code);
+        $user = Userinvitation::where('code', $code)->first();
         if($user->status == "pending"){
 
             if(date('Y-m-d H:i:s') <= $user->valid_till){
@@ -74,14 +83,22 @@ class InviteUserController extends Controller
 
     public function register_user(Request $request){
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
             ]);
 
-        LaraInviteModel::where('code', $this->code)->update(['status' => 'successful']); 
-        return \Redirect::route('dashboard')->with('message', 'New User has been registered successfully');
+        $user_invited = Userinvitation::where('email',$request->email)->first();
+
+        $role_ids = $user_invited->role()->get();
+
+        foreach($role_ids as $role_id){
+            $user->role()->attach($role_id->pivot->role_id);
+        }
+
+        $user_invited->update(['status' => 'successful']); 
+        return \Redirect::route('users')->with('success', 'New User has been registered successfully');
 
 
     }
