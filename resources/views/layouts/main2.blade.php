@@ -134,9 +134,9 @@
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/users">Users</a></li>
-                      <li><a href="invite_user">Invite Users</a></li>
-                      <li><a href="file_upload">Upload File</a></li>
                       <li><a href="/roles">Roles</a></li>
+                      <!-- <li><a href="invite_user">Invite Users</a></li> -->
+                      <li><a href="file_upload">Upload File</a></li>
                       <li><a href="form_validation.html">Organization</a></li>
                       <li><a href="form_wizards.html">Customization</a></li>
                       <li><a href="form_upload.html">Threat Source</a></li>
@@ -144,7 +144,7 @@
                       <li><a href="/permissions">Manage Permissions</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-desktop"></i> Create Projects <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-desktop"></i> Create Project <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       
                       <li><a href="/create_project">Wizard</a></li>
