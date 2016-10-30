@@ -113,92 +113,47 @@ class RoleController extends Controller
     {
         $role = Role::find($id);
 
-        // if($role->user()->get()){
-            foreach($role->user()->get() as $role){
-                echo $role;
-                // $user_id = $role->pivot->user_id;
-                // $user = User::find($user_id);
-                // $user->role()->detach($role->pivot->role_id);
-                // $user = User::find($role->pivot->user_id);
-                
-                // $user->role()->detach($role->pivot->role_id);
-            }
-            die();
-        // }
-        $role->delete();
-        return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
-        // die();
+    // if($role->user()->get()){
+        //Destroy role_user associations
+        foreach($role->user()->get() as $role){
+            // echo $role->pivot->role_id;
+            // $user_id = $role->pivot->user_id;
+            // $user = User::find($user_id);
+            // $user->role()->detach($role->pivot->role_id);
+            $user = User::find($role->pivot->user_id);
+            $user->role()->detach($role->pivot->role_id);
+        }
 
+        $this->destroy_role_userinvitation($id);
+        $this->destroy_role($id);
+        return \Redirect::route('roles.index');
+        // return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
+    
 
+    }    
 
-
-
-
-        // Testing above;
-
+    public function destroy_role_userinvitation($id){
 
         $role = Role::find($id);
-
-        $roles_userinvited = $role->user_invitation()->get();
-        $roles_user = $role->user()->get();
-     
-        if(!is_null($roles_userinvited) && !is_null($roles_user)){
-        
-            foreach($roles_userinvited as $role){
-                $user_invited = Userinvitation::find($role->pivot->userinvitation_id);
-                $user_invited->role()->detach($role->pivot->role_id);
-            }
-
-            foreach($roles_user as $role){
-                $user = User::find($role->pivot->user_id);
-                $user->role()->detach($role->pivot->role_id);
-            }
-
-            $role->delete();
-            return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
-
+        foreach($role->user_invitation()->get() as $role){
+            // echo $role->pivot->role_id;
+            // $user_id = $role->pivot->userinvitation_id;
+            // $user = User::find($user_id);
+            // $user->role()->detach($role->pivot->role_id);
+            $user_invited = Userinvitation::find($role->pivot->userinvitation_id);
+            $user_invited->role()->detach($role->pivot->role_id);
         }
-            
-        // elseif(!is_null($roles_user) && is_null($roles_userinvited)){
-        //     foreach($roles_user as $role){
 
-        //         $user = User::find($role->pivot->user_id);
-        //         $user->role()->detach($role->pivot->role_id);
+    } 
 
-        //     }
-     
-        //     $role->delete();
-        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
-        // } 
+    public function destroy_role($id){
 
-        // elseif(is_null($roles_user)){
-        //     $role->delete();
-        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
-        // }
-           
-        
+        $role = Role::find($id);
+        $role->delete();
+
+    }    
 
 
-        // return $role->user()->get();
 
-        // if($role->user()->get() == ' '){
-        
-        //     $role->delete();
-        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');   
-
-        // }
-        // elseif($role->user()->first()){
-
-        //     return $role;
-        //     $users = $role->user()->get();
-        //     foreach($users as $user){
-        //         $user->role()->detach($role->id);
-        //     }
-        //     $role->delete();
-        //     return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
-
-        // }
-        
-
-    }
+    
 }

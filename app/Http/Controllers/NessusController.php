@@ -54,8 +54,8 @@ class NessusController extends Controller
             // 'role_id'   =>  2,
             ]);
         User::create([
-            'name'      => 'Ishaq',
-            'email'     => 'ishaq@yahoo.com',
+            'name'      => 'Labeeb',
+            'email'     => 'labeeb@yahoo.com',
             'password'  => 'something',
             // 'role_id'   =>  2,
             ]);
