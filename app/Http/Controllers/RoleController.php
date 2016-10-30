@@ -113,8 +113,21 @@ class RoleController extends Controller
     {
         $role = Role::find($id);
 
+        // if($role->user()->get()){
+            foreach($role->user()->get() as $role){
+                echo $role;
+                // $user_id = $role->pivot->user_id;
+                // $user = User::find($user_id);
+                // $user->role()->detach($role->pivot->role_id);
+                // $user = User::find($role->pivot->user_id);
+                
+                // $user->role()->detach($role->pivot->role_id);
+            }
+            die();
+        // }
         $role->delete();
-        die();
+        return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
+        // die();
 
 
 
@@ -130,7 +143,7 @@ class RoleController extends Controller
         $roles_user = $role->user()->get();
      
         if(!is_null($roles_userinvited) && !is_null($roles_user)){
-            
+        
             foreach($roles_userinvited as $role){
                 $user_invited = Userinvitation::find($role->pivot->userinvitation_id);
                 $user_invited->role()->detach($role->pivot->role_id);

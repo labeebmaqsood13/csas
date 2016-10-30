@@ -22,7 +22,7 @@
 <!-- <script src="{{URL::asset('sweet_alerts/dist/sweetalert.min.js')}}"></script> -->
 <!-- @endif -->
 
-    <link href="{{URL::asset('build/css/user_style.min.css')}}" rel="stylesheet">
+    <!-- <link href="{{URL::asset('build/css/user_style.min.css')}}" rel="stylesheet"> -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -31,10 +31,10 @@
 	<style type='text/css'>
 	a.previous { display: none; }
 	.demo { width:960px; margin:50px auto;}
-	span {
+	/*span {
 	  display: none;
 	  
-	}
+	}*/
 
 	table tr { display: none; }
 

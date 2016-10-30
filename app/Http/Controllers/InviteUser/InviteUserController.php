@@ -24,7 +24,8 @@ class InviteUserController extends Controller
 
         $user_id = Auth::user()->id;
 
-        $code = Hash::make(str_random(8));
+        // $code = Hash::make(str_random(8));
+        $code = md5(uniqid());
 
         $email = $request->email;
 
