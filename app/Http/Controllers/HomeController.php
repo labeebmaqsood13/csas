@@ -13,6 +13,9 @@ use App\Reportitem;
 use App\User;
 use App\Role;
 use App\Pluginid;
+use App\Client;
+
+use Auth;
 
 class HomeController extends Controller
 {
@@ -125,12 +128,25 @@ class HomeController extends Controller
     
     public function create_project()
     {
-        return view('create_project');
+        $clients = Client::all();    
+        return view('create_project',compact('clients'));
     }
 
      public function analytics_dashboard()
     {
         return view('analytics_dashboard');
+    }
+
+    public function create_client(Request $request){
+
+        $client = Client::create([
+            'name'    => $request->name,
+            'user_id' => Auth::user()->id,
+            ]);
+        $clients = Client::all();
+        // return view('create_project',compact('clients'))-with('message', $client . ' - Client Created');
+        return \Redirect::route('create_project')->withInput(['clients'])->with('message', $client->name . ' - client created');
+
     }
 
 }

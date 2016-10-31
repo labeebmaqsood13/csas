@@ -65,6 +65,13 @@
 	// })->name('home');
 
 
+// ------------- Client routes ------------------ //
+
+
+	Route::post('create_client','HomeController@create_client')->name('clients.create');
+
+
+
 // ------------ Nessus routes ----------------- //
 	
 	Route::get('nessus/word','NessusController@word')->name('nessus.word');
