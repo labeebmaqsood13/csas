@@ -1,8 +1,10 @@
 @extends('layouts.main2')
 
-@section('title','Dashboard')
+@section('title','Welcome')
 
-@section('user_name','Labeeb')
+@section('user_name')
+    {{Auth::user()->name}}
+@endsection
 
 @section('user_role','Admin')
 

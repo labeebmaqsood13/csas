@@ -10,6 +10,10 @@ use App\Reporthost;
 
 use App\Reportitem;
 
+use App\User;
+
+use App\Role;
+
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -25,6 +29,44 @@ use Fpdf;
 
 class NessusController extends Controller
 {
+    public function create_user(){
+
+        // Role::create([
+        //     'name' => 'Admin',
+        //     ]);
+        // Role::create([
+        //     'name' => 'Pentester',
+        //     ]);
+        // Role::create([
+        //     'name' => 'Reverse Engineer',
+        //     ]);
+
+        User::create([
+            'name'      => 'Muhammad',
+            'email'     => 'muhammad@yahoo.com',
+            'password'  => 'something',
+            // 'role_id'   =>  1,
+            ]);
+        User::create([
+            'name'      => 'Faisal',
+            'email'     => 'faisal@yahoo.com',
+            'password'  => 'something',
+            // 'role_id'   =>  2,
+            ]);
+        User::create([
+            'name'      => 'Labeeb',
+            'email'     => 'labeeb@yahoo.com',
+            'password'  => 'something',
+            // 'role_id'   =>  2,
+            ]);
+        User::create([
+            'name'      => 'Mustafa',
+            'email'     => 'mustafa@yahoo.com',
+            'password'  => 'something',
+            // 'role_id'   =>  3,
+            ]);
+
+    }
 
     public function upload(UploadNessusRequest $request){
 
@@ -484,6 +526,11 @@ class NessusController extends Controller
 
     public function updated_word(){
 
+        if(Reporthost::all() == '[]'){
+            return \Redirect::route('file_upload')->with('message', 'Please upload a nessus report file first');;
+
+        }
+        else{
 
             // ---------------- PHPWord ---------------------- //    
             
@@ -751,13 +798,20 @@ class NessusController extends Controller
                 readfile($file);
                 unlink($file); // deletes the temporary file
                 exit;
-        
+
+        }
 
     }
 
 
 
     public function updated_pdf(){
+
+        if(Reporthost::all() == '[]'){
+            return \Redirect::route('file_upload')->with('message', 'Please upload a nessus report file first');;
+
+        }
+        else{
 
             // ---------------- Fpdf Addpage ---------------------- //              
                 Fpdf::AddPage();            
@@ -928,7 +982,8 @@ class NessusController extends Controller
                 Fpdf::Output();
                 exit;
 
-
+            
+        }        
 
 
     }

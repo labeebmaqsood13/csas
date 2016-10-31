@@ -134,9 +134,9 @@
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/users">Users</a></li>
-                      <li><a href="invite_user">Invite Users</a></li>
+                      <li><a href="/roles">Roles</a></li>
+                      <!-- <li><a href="invite_user">Invite Users</a></li> -->
                       <li><a href="file_upload">Upload File</a></li>
-                      <li><a href="/groups">Groups</a></li>
                       <li><a href="form_validation.html">Organization</a></li>
                       <li><a href="form_wizards.html">Customization</a></li>
                       <li><a href="form_upload.html">Threat Source</a></li>
@@ -144,7 +144,7 @@
                       <li><a href="/permissions">Manage Permissions</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-desktop"></i> Create Projects <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-desktop"></i> Create Project <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       
                       <li><a href="/create_project">Wizard</a></li>
@@ -231,7 +231,7 @@
                   <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -243,7 +243,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>Faisal Khan</span>
                           <span class="time">3 mins ago</span>
@@ -255,7 +255,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>Faisal Mahmood</span>
                           <span class="time">3 mins ago</span>
@@ -267,7 +267,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -297,7 +297,8 @@
         
           @if(Session::has('message'))
             <div class="alert alert-info pull-right">
-                {{ Session::get('message') }} 
+                {{ Session::get('message') }}
+                 <a href="#" class="close" data-dismiss="alert" aria-label="close">' '.&times;</a>
             </div>
           @endif
           @yield('content')

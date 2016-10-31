@@ -72,67 +72,32 @@
                   <div class="modal-dialog">
                       <div class="modal-content">
                           <div class="modal-header">
-                             
-                              <h4 class="modal-title">INVITE USER</h4>
+                             <h4 class="modal-title">INVITE USER</h4>
                           </div>
+                          {!! Form::open(array('method' => 'POST', 'route' => 'clients.create','class' => 'form-horizontal form-label-left')) !!}
                           <div class="modal-body">
-                              <form class="form-horizontal form-label-left">
-
-                               
-                                <div class="form-group">
-                                  <label class="control-label col-md-3 col-sm-3 col-xs-3">Email</label>
-                                  <div class="col-md-9 col-sm-9 col-xs-9">
-                                            <input type="txt"></input>
-                                   
-                                  </div>
+                            <!-- <form class="form-horizontal form-label-left"> -->
+                              <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-3">Client Name</label>
+                                <div class="col-md-9 col-sm-9 col-xs-9">
+                                   <input type="txt" style="width: 70%;" name="name" class="form-horizontal form-control" placeholder="Client Name">   
                                 </div>
-                                <div class="form-group">
-                                  <label class="control-label col-md-3 col-sm-3 col-xs-3">Permission</label>
-                                  <div class="col-md-9 col-sm-9 col-xs-9">
-
-                                 <div class="radio">
-                                    <label><input type="radio" name="optradio">Admin</label>
-                                  </div>
-                                  <div class="radio">
-                                    <label><input type="radio" name="optradio">Default</label>
-                                  </div>
-                                  <div class="radio">
-                                    <label><input type="radio" name="optradio">Observer</label>
-                                  </div>
-                                  <div class="radio">
-                                    <label class="text-danger"><input type="radio" name="optradio" class="text-danger"> Master Admin</label>
-                                  </div> 
-                                  </div>
-                                </div>
-                                <div class="form-group">
-                                  <label class="control-label col-md-3 col-sm-3 col-xs-3">Group</label>
-                                  <div class="col-md-9 col-sm-9 col-xs-9">
-                                      
-                                      <select class="selectpicker">
-                                        <option>Manager</option>
-                                        <option>Analyst</option>
-                                        <option>Pentester</option>
-                                        <option>Client.Rep</option>
-                                      </select>
-                                   
-                                  </div>
-                                  </div>
-                               </form>
-                              
+                              </div>
+                            <!-- </form> -->
                           </div>
-
                           <div class="modal-footer">
-                              <b type="button" class="btn btn-default" data-dismiss="modal">Close</b>
-                              
-                              <b type="button" class="btn btn-info" data-toggle="modal" data-target="#myMod" data-dismiss="modal">Send Invite</b>
+                            <b type="button" class="btn btn-default" data-dismiss="modal">Close</b>
+                            <!-- <b type="submit" class="btn btn-info" data-toggle="modal" data-target="#myMod" data-dismiss="modal">Send Invite</b> -->
+                            <input type="submit" value="Send Invite" class="btn btn-info">
                           </div>
+                          {!! Form::close() !!}  
                       </div>
                   </div>
                 </div>
             </div>
 
 
-                <div >
+                <div>
  
               <div id="mod" class="modal fade" >
                   <div class="modal-dialog">
@@ -246,8 +211,8 @@
             <form role="form">
                 <div class="tab-content">
                     <div class="tab-pane active" role="tabpanel" id="step1">
-                        <h4>Entery</h4>
-
+                        <h4>Entry</h4>
+                          <div  style="padding-right: 130px;">
 
                              <div class="row mar_ned">
                                 <div class="col-md-4 col-xs-3">
@@ -255,7 +220,7 @@
                                 </div>
                                 <div class="col-md-8 col-xs-9">
                                     <select name="highest_qualification" id="highest_qualification" class="dropselectsec">
-                                        <option value=""> Select Client</option>
+                                     <!--    <option value=""> Select Client</option>
                                         <option value="1">Ebryx</option>
                                         <option value="2">Cola</option>
                                         <option value="3">Hbl</option>
@@ -263,10 +228,13 @@
                                         <option value="5">DiPlsW</option>
                                         <option value="6">Intweaxc </option>
                                         <option value="7">Sewef</option>
-                                        <option value="8">Oqwtcs</option>
+                                        <option value="8">Oqwtcs</option> -->
+                                          @foreach($clients as $key => $client)
+                                            <option value="{{$key}}">{{ $client->name }}</option>
+                                          @endforeach 
                                     </select>
 
-                     <a  href="#myModal" class="btn btn btn-primary" data-toggle="modal">Invite Client/User</a>
+                     <a  href="#myModal" class="btn btn btn-primary" data-toggle="modal">Create Client</a>
                                </div>
                             </div>
 
@@ -393,7 +361,7 @@
                             <li><button type="button" class="btn btn-primary next-step">continue</button></li>
                         </ul>
                     </div>
-
+                    </div>
 
                     <div class="tab-pane" role="tabpanel" id="step2">
                         <h4>Assign Tasks</h4>

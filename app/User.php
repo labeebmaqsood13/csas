@@ -2,13 +2,12 @@
 
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Hash;
 
-use Junaidnasir\Larainvite\InviteTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use InviteTrait;
     /**
      * The attributes that are mass assignable.
      *
@@ -34,4 +33,28 @@ class User extends Authenticatable
     //         ]);
 
     // }
+
+    public function role(){
+
+        return $this->belongsToMany('App\Role');
+
+    }
+
+    public function user_invitation(){
+
+        return $this->hasMany('App\Userinvitation');
+    
+    }
+
+    public function client(){
+
+        return $this->hasMany('App\Client');
+    
+    }
+
+    public function setPasswordAttribute($pass){
+
+        $this->attributes['password'] = Hash::make($pass);
+
+    }
 }

@@ -60,9 +60,6 @@
 
   </head>
   
-
-
-
 	<div class="row">
               <!-- form input mask -->
               <div  class="col-md-6 col-sm-12 col-xs-12">
