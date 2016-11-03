@@ -231,7 +231,7 @@
                                         <option value="8">Oqwtcs</option> -->
                                           @foreach($clients as $key => $client)
                                             <option value="{{$key}}">{{ $client->name }}</option>
-                                          @endforeach 
+                                          @endforeach
                                     </select>
 
                      <a  href="#myModal" class="btn btn btn-primary" data-toggle="modal">Create Client</a>
@@ -358,7 +358,7 @@
 
 
                         <ul class="list-inline pull-right">
-                            <li><button type="button" class="btn btn-primary next-step">continue</button></li>
+                            <li><button type="button" class="btn btn-primary next-step" onclick=()>continue</button></li>
                         </ul>
                     </div>
                     </div>

@@ -68,9 +68,10 @@
 @section('content')
 
  <!-- page content -->
-    <div class="right_col" role="main">
+           
+        <div class="right_col" role="main">
         <div class="container" style="min-height: 1000px;">
-          <div class="row">
+          <div class="row">w
          <div class="col-md-8 col-sm-8 col-lg-8 ">
 
            <h4>ANALYTICS DASHBOARD</h4>
@@ -170,9 +171,20 @@
 
 
 
-            <div class="row">
+          
 
 
+
+
+
+
+
+               </div>
+               </div>
+               <br />
+                 <div class="row">
+
+                <div class="clearfix"></div>
               <div class="col-md-4 col-sm-6 col-lg-6">
                 <div class="x_panel">
                   <div class="x_title">
@@ -199,17 +211,117 @@
                   </div>
                 </div>
               </div>
+
+              <div class="col-md-4 col-sm-6 col-lg-6">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Common open Ports <small>Sessions</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <canvas id="canvasDoughnut"></canvas>
+                  </div>
+                </div>
+              </div>
+                <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Line graph<small>Sessions</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <canvas id="lineChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+    <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Bar graph <small>Sessions</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <canvas id="mybarChart"></canvas>
+                  </div>
+                </div>
+              </div>
             </div>
-
-
-
-
-
-
-
-               </div>
-               </div>
-               <br />
+            </div>
+               <div class="col-md-6 col-sm-6 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Pie Area Graph <small>Sessions</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <canvas id="polarArea"></canvas>
+                  </div>
+                </div>
+              </div>
                </div>
                </div>
               
@@ -223,15 +335,13 @@
 
         <!-- footer content -->
         <footer>
-          <div class="pull-right">
-            Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-          </div>
-          <div class="clearfix"></div>
+         
         </footer>
         <!-- /footer content -->
       </div>
       </div>
       </div>
+
       <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 
 <script type="text/javascript">
@@ -261,347 +371,167 @@ $(document).ready(function(){
       } )
 
     </script>
+ 
+   
  <script>
-        function queryParams() {
-            return {
-                type: 'owner',
-                sort: 'updated',
-                direction: 'desc',
-                per_page: 100,
-                page: 1
-            };
+    
+       var ctx = document.getElementById("pieChart");
+      var data = {
+        datasets: [{
+          data: [120, 50, 140, 180, 100],
+          backgroundColor: [
+            "#455C73",
+            "#9B59B6",
+            "#BDC3C7",
+            "#26B99A",
+            "#3498DB"
+          ],
+          label: 'My dataset' // for legend
+        }],
+        labels: [
+          "High",
+          "Medium",
+          "Low",
+          "V.Low",
+          "Unknown"
+        ]
+      };
+
+      var pieChart = new Chart(ctx, {
+        data: data,
+        type: 'pie',
+        otpions: {
+          legend: false
         }
-    </script>
-   <script>
-      $(document).ready(function() {
-        //define chart clolors ( you maybe add more colors if you want or flot will add it automatic )
-        var chartColours = ['#96CA59', '#3F97EB', '#72c380', '#6f7a8a', '#f7cb38', '#5a8022', '#2c7282'];
+      });
 
-        //generate random number for charts
-        randNum = function() {
-          return (Math.floor(Math.random() * (1 + 40 - 20))) + 20;
-        };
 
-        var d1 = [];
-        //var d2 = [];
+      // PolarArea chart
+       var ctx = document.getElementById("canvasDoughnut");
+      var data = {
+        labels: [
+          "x port",
+          "Smtp port",
+          "xt port",
+          "vp port",
+          "zwe port"
+        ],
+        datasets: [{
+          data: [120, 50, 140, 180, 100],
+          backgroundColor: [
+            "#455C73",
+            "#9B59B6",
+            "#BDC3C7",
+            "#26B99A",
+            "#3498DB"
+          ],
+          hoverBackgroundColor: [
+            "#34495E",
+            "#B370CF",
+            "#CFD4D8",
+            "#36CAAB",
+            "#49A9EA"
+          ]
 
-        //here we generate data for chart
-        for (var i = 0; i < 30; i++) {
-          d1.push([new Date(Date.today().add(i).days()).getTime(), randNum() + i + i + 10]);
-          //    d2.push([new Date(Date.today().add(i).days()).getTime(), randNum()]);
+        }]
+      };
+
+      var canvasDoughnut = new Chart(ctx, {
+        type: 'doughnut',
+        tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+        data: data
+      });
+       var ctx = document.getElementById("lineChart");
+      var lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["January", "February", "March", "April", "May", "June", "July"],
+          datasets: [{
+            label: "My First dataset",
+            backgroundColor: "rgba(38, 185, 154, 0.31)",
+            borderColor: "rgba(38, 185, 154, 0.7)",
+            pointBorderColor: "rgba(38, 185, 154, 0.7)",
+            pointBackgroundColor: "rgba(38, 185, 154, 0.7)",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointBorderWidth: 1,
+            data: [31, 74, 6, 39, 20, 85, 7]
+          }, {
+            label: "My Second dataset",
+            backgroundColor: "rgba(3, 88, 106, 0.3)",
+            borderColor: "rgba(3, 88, 106, 0.70)",
+            pointBorderColor: "rgba(3, 88, 106, 0.70)",
+            pointBackgroundColor: "rgba(3, 88, 106, 0.70)",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(151,187,205,1)",
+            pointBorderWidth: 1,
+            data: [82, 23, 66, 9, 99, 4, 2]
+          }]
+        },
+      });
+
+      // Bar chart
+      var ctx = document.getElementById("mybarChart");
+      var mybarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ["January", "February", "March", "April", "May", "June", "July"],
+          datasets: [{
+            label: '# of Votes',
+            backgroundColor: "#26B99A",
+            data: [51, 30, 40, 28, 92, 50, 45]
+          }, {
+            label: '# of Votes',
+            backgroundColor: "#03586A",
+            data: [41, 56, 25, 48, 72, 34, 12]
+          }]
+        },
+
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
+      });
+       // PolarArea chart
+      var ctx = document.getElementById("polarArea");
+      var data = {
+        datasets: [{
+          data: [120, 50, 140, 180, 100],
+          backgroundColor: [
+            "#455C73",
+            "#9B59B6",
+            "#BDC3C7",
+            "#26B99A",
+            "#3498DB"
+          ],
+          label: 'My dataset'
+        }],
+        labels: [
+          "Dark Gray",
+          "Purple",
+          "Gray",
+          "Green",
+          "Blue"
+        ]
+      };
 
-        var chartMinDate = d1[0][0]; //first day
-        var chartMaxDate = d1[20][0]; //last day
-
-        var tickSize = [1, "day"];
-        var tformat = "%d/%m/%y";
-
-        //graph options
-        var options = {
-          grid: {
-            show: true,
-            aboveData: true,
-            color: "#3f3f3f",
-            labelMargin: 10,
-            axisMargin: 0,
-            borderWidth: 0,
-            borderColor: null,
-            minBorderMargin: 5,
-            clickable: true,
-            hoverable: true,
-            autoHighlight: true,
-            mouseActiveRadius: 100
-          },
-          series: {
-            lines: {
-              show: true,
-              fill: true,
-              lineWidth: 2,
-              steps: false
-            },
-            points: {
-              show: true,
-              radius: 4.5,
-              symbol: "circle",
-              lineWidth: 3.0
+      var polarArea = new Chart(ctx, {
+        data: data,
+        type: 'polarArea',
+        options: {
+          scale: {
+            ticks: {
+              beginAtZero: true
             }
-          },
-          legend: {
-            position: "ne",
-            margin: [0, -25],
-            noColumns: 0,
-            labelBoxBorderColor: null,
-            labelFormatter: function(label, series) {
-              // just add some space to labes
-              return label + '&nbsp;&nbsp;';
-            },
-            width: 40,
-            height: 1
-          },
-          colors: chartColours,
-          shadowSize: 0,
-          tooltip: true, //activate tooltip
-          tooltipOpts: {
-            content: "%s: %y.0",
-            xDateFormat: "%d/%m",
-            shifts: {
-              x: -30,
-              y: -50
-            },
-            defaultTheme: false
-          },
-          yaxis: {
-            min: 0
-          },
-          xaxis: {
-            mode: "time",
-            minTickSize: tickSize,
-            timeformat: tformat,
-            min: chartMinDate,
-            max: chartMaxDate
           }
-        };
-        var plot = $.plot($("#placeholder33x"), [{
-          label: "Email Sent",
-          data: d1,
-          lines: {
-            fillColor: "rgba(150, 202, 89, 0.12)"
-          }, //#96CA59 rgba(150, 202, 89, 0.42)
-          points: {
-            fillColor: "#fff"
-          }
-        }], options);
+        }
       });
-    </script>
-    <!-- /Flot -->
-
-    <!-- jQuery Sparklines -->
-
-
-
-    <script>
-      $(document).ready(function() {
-        $(".sparkline_one").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5, 4, 5, 4, 5, 4, 3, 4, 5, 6, 7, 5, 4, 3, 5, 6], {
-          type: 'bar',
-          height: '125',
-          barWidth: 13,
-          colorMap: {
-            '7': '#a1a1a1'
-          },
-          barSpacing: 2,
-          barColor: '#26B99A'
-        });
-
-        $(".sparkline11").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 6, 2, 4, 3, 4, 5, 4, 5, 4, 3], {
-          type: 'bar',
-          height: '40',
-          barWidth: 8,
-          colorMap: {
-            '7': '#a1a1a1'
-          },
-          barSpacing: 2,
-          barColor: '#26B99A'
-        });
-
-        $(".sparkline22").sparkline([2, 4, 3, 4, 7, 5, 4, 3, 5, 6, 2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 6], {
-          type: 'line',
-          height: '40',
-          width: '200',
-          lineColor: '#26B99A',
-          fillColor: '#ffffff',
-          lineWidth: 3,
-          spotColor: '#34495E',
-          minSpotColor: '#34495E'
-        });
-      });
-    </script>
-    <!-- /jQuery Sparklines -->
-
-    <!-- Doughnut Chart -->
-    <script>
-      $(document).ready(function() {
-        var canvasDoughnut,
-            options = {
-              legend: false,
-              responsive: false
-            };
-
-        new Chart(document.getElementById("canvas1i"), {
-          type: 'doughnut',
-          tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-          data: {
-            labels: [
-              "Symbian",
-              "Blackberry",
-              "Other",
-              "Android",
-              "IOS"
-            ],
-            datasets: [{
-              data: [15, 20, 30, 10, 30],
-              backgroundColor: [
-                "#BDC3C7",
-                "#9B59B6",
-                "#E74C3C",
-                "#26B99A",
-                "#3498DB"
-              ],
-              hoverBackgroundColor: [
-                "#CFD4D8",
-                "#B370CF",
-                "#E95E4F",
-                "#36CAAB",
-                "#49A9EA"
-              ]
-
-            }]
-          },
-          options: options
-        });
-
-        new Chart(document.getElementById("canvas1i2"), {
-          type: 'doughnut',
-          tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-          data: {
-            labels: [
-              "Symbian",
-              "Blackberry",
-              "Other",
-              "Android",
-              "IOS"
-            ],
-            datasets: [{
-              data: [15, 20, 30, 10, 30],
-              backgroundColor: [
-                "#BDC3C7",
-                "#9B59B6",
-                "#E74C3C",
-                "#26B99A",
-                "#3498DB"
-              ],
-              hoverBackgroundColor: [
-                "#CFD4D8",
-                "#B370CF",
-                "#E95E4F",
-                "#36CAAB",
-                "#49A9EA"
-              ]
-
-            }]
-          },
-          options: options
-        });
-
-        new Chart(document.getElementById("canvas1i3"), {
-          type: 'doughnut',
-          tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-          data: {
-            labels: [
-              "Symbian",
-              "Blackberry",
-              "Other",
-              "Android",
-              "IOS"
-            ],
-            datasets: [{
-              data: [15, 20, 30, 10, 30],
-              backgroundColor: [
-                "#BDC3C7",
-                "#9B59B6",
-                "#E74C3C",
-                "#26B99A",
-                "#3498DB"
-              ],
-              hoverBackgroundColor: [
-                "#CFD4D8",
-                "#B370CF",
-                "#E95E4F",
-                "#36CAAB",
-                "#49A9EA"
-              ]
-
-            }]
-          },
-          options: options
-        });
-      });
-    </script>
-    <!-- /Doughnut Chart -->
-
-    <!-- bootstrap-daterangepicker -->
-    <script type="text/javascript">
-      $(document).ready(function() {
-
-        var cb = function(start, end, label) {
-          console.log(start.toISOString(), end.toISOString(), label);
-          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        };
-
-        var optionSet1 = {
-          startDate: moment().subtract(29, 'days'),
-          endDate: moment(),
-          minDate: '01/01/2012',
-          maxDate: '12/31/2015',
-          dateLimit: {
-            days: 60
-          },
-          showDropdowns: true,
-          showWeekNumbers: true,
-          timePicker: false,
-          timePickerIncrement: 1,
-          timePicker12Hour: true,
-          ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
-          opens: 'left',
-          buttonClasses: ['btn btn-default'],
-          applyClass: 'btn-small btn-primary',
-          cancelClass: 'btn-small',
-          format: 'MM/DD/YYYY',
-          separator: ' to ',
-          locale: {
-            applyLabel: 'Submit',
-            cancelLabel: 'Clear',
-            fromLabel: 'From',
-            toLabel: 'To',
-            customRangeLabel: 'Custom',
-            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            firstDay: 1
-          }
-        };
-        $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
-        $('#reportrange').daterangepicker(optionSet1, cb);
-        $('#reportrange').on('show.daterangepicker', function() {
-          console.log("show event fired");
-        });
-        $('#reportrange').on('hide.daterangepicker', function() {
-          console.log("hide event fired");
-        });
-        $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
-          console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
-        });
-        $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
-          console.log("cancel event fired");
-        });
-        $('#options1').click(function() {
-          $('#reportrange').data('daterangepicker').setOptions(optionSet1, cb);
-        });
-        $('#options2').click(function() {
-          $('#reportrange').data('daterangepicker').setOptions(optionSet2, cb);
-        });
-        $('#destroy').click(function() {
-          $('#reportrange').data('daterangepicker').remove();
-        });
-      });
-    </script>
-
+      </script>
     
 @endsection
 

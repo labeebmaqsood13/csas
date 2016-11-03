@@ -67,6 +67,26 @@ class HomeController extends Controller
 
 
 
+    public function update(Request $request, $id)
+    {
+        $test = Dummy::find($id);
+         Dummy::create([
+            'name' => 'faisal',
+            ]);
+        $column_name = Input::get('name');
+       
+        
+        if( Input::has('name')) {
+            $test = Dummy::select()
+                ->where('id', '=', $id)
+                ->update([$column_name]);
+            return response()->json([ 'code'=>200], 200);
+        }
+        
+        return response()->json([ 'error'=> 400, 'message'=> 'Not enought params' ], 400);
+    }  
+
+
 
 
     public function permissions(){
