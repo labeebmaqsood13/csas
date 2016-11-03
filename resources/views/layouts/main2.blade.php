@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- Bootstrap -->
+  <!-- Bootstrap -->
 
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     
@@ -24,44 +24,15 @@
     <!-- Custom Theme Style -->
     <link href="{{URL::asset('build/css/custom.min.css')}}" rel="stylesheet">
      
-    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
-     <script type='text/javascript' src="http://vitalets.github.io/angular-xeditable/dist/js/xeditable.js"></script>
-
-
-
-
-
-    <link rel="stylesheet" type="text/css" href="http://vitalets.github.io/angular-xeditable/dist/css/xeditable.css">
-
-
+  <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    
     <style type='text/css'>
         div[ng-app] {
             margin: 50px;
         }
     </style>
 
-    <script type='text/javascript'>
-        var app = angular.module("app", ["xeditable"]);
-
-        app.run(function (editableOptions)
-        {
-            editableOptions.theme = 'bs3';
-        });
-
-        app.controller('Ctrl', function ($scope, $filter)
-        {
-            $scope.useAll = true;
-            $scope.sup= [true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true];
-        });
-        app.controller('Ctrlr', function ($scope, $filter)
-        {
-            $scope.useAll = true;
-            $scope.sup= [true,false,true,true,true,true,false,false,false,true,false,true,true,true,true,true,false];
-        });
-
-
-
-   </script>
+   
 
 
    
@@ -80,7 +51,7 @@
   
     
 
-	<title>CSAS - @yield('title')</title>
+  <title>CSAS - @yield('title')</title>
 </head>
 
 
@@ -144,7 +115,7 @@
                       <li><a href="/permissions">Manage Permissions</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-desktop"></i> Create Project <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-desktop"></i> Create Projects <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       
                       <li><a href="/create_project">Wizard</a></li>
@@ -231,7 +202,7 @@
                   <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
                     <li>
                       <a>
-                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -243,7 +214,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
                         <span>
                           <span>Faisal Khan</span>
                           <span class="time">3 mins ago</span>
@@ -255,7 +226,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
                         <span>
                           <span>Faisal Mahmood</span>
                           <span class="time">3 mins ago</span>
@@ -267,7 +238,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -300,6 +271,10 @@
                 {{ Session::get('message') }}
                  <a href="#" class="close" data-dismiss="alert" aria-label="close">' '.&times;</a>
             </div>
+
+            <!-- <div class="alert alert-info pull-right">
+                {{ Session::get('message') }} 
+            </div> -->
           @endif
           @yield('content')
 
@@ -321,7 +296,6 @@
  <!-- Javascript External Code -->
    
     <!-- jQuery -->
-    <script src="{{ URL::asset('vendors/jquery/dist/jquery.min.js') }}"></script>
     <!-- Bootstrap -->
     <script src="{{ URL::asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
            <script src="{{ URL::asset('build/js/custom.min.js') }}"></script>

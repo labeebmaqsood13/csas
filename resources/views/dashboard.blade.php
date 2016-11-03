@@ -12,31 +12,11 @@
     
 
   <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
-  <script>
 
 
-    $(document).ready(function(){
-
-        $(document).on('click','#details', function () {
-          $.get("reportitems/"+$(this).val(),
-          function(data){
-            console.log(data);
-            $.each(data, function(i, obj) {
-              // console.log(obj.id);
-              var tabledata = "<tr><td>" +obj.id + "</td><td>"+obj.port+"</td><td>"+obj.svc_name+"</td><td>"+obj.protocol+"</td><td>"+obj.severity+"</td><td>"+obj.plugin_id+"</td><td>"+obj.plugin_name+"</td><td>"+obj.plugin_family+"</td></tr>";
-
-              tabledata +='<tr><td colspan="10"><d class="col-md-8 col-sm-8 col-lg-12"><div class="container"><div class="row"><div class="col-md-10 col-sm-10 col-lg-12"><label>Description:</label><br /><p><description>'+ obj.description +'</description></p><label>Solution: </label><br /><p><solution>'+ obj.solution +'</soluion></p><label>Risk Factor: </label><p><riskfactor>'+ obj.riskfactor +'</riskfactor></p><label>Plugin Output: </label><p style="overflow-y: scroll;height:160px">'+ obj.plugin_output +'</p></div></div></div></d></td></tr>';
-
-              $("#task-list").append(tabledata);
-            });
-          });
-        });   
-
-    });  
 
 
-    
-  </script>
+
 
    <script type="text/javascript">
 $(document).ready(function(){
@@ -57,6 +37,7 @@ $(document).ready(function(){
     }).change();
 });
 </script>
+
 
 
 
@@ -90,7 +71,7 @@ $(document).ready(function(){
                           <div id="error-message-style"></div>
                       </div>
                       
-                      <div id="Ale"  class="style-sub-1" style="display: none;" name="stylesub1" onchange="ChangeDropdowns(this.value)">
+                      <div id="Ale"  class="style-sub-1" style="display: none;" name="stylesub1" >
                           <label>Project</label>
                           <select>
                             <option value="">-Choose An Project-</option> 
@@ -100,7 +81,7 @@ $(document).ready(function(){
                           </select>
                       </div>
 
-                      <div id="Lager"  class="style-sub-1"  style="display: none;" name="stylesub1" onchange="ChangeDropdowns(this.value)">
+                      <div id="Lager"  class="style-sub-1"  style="display: none;" name="stylesub1" >
                           <label>Project:</label>
                           <select>
                             <option value="">-Choose A Project-</option>
@@ -110,7 +91,7 @@ $(document).ready(function(){
                           </select>
                       </div>
 
-                      <div id="Hybrid"  class="style-sub-1"  style="display: none;" name="stylesub1" onchange="ChangeDropdowns(this.value)">
+                      <div id="Hybrid"  class="style-sub-1"  style="display: none;" name="stylesub1" >
                           <label>Project</label> 
                           <select>
                           <option value="">-Choose A Project-</option>
@@ -128,14 +109,17 @@ $(document).ready(function(){
 
                <div id="blah" class="hidden">
       
-                <table  style="border-collapse:collapse;" class = "table table-bordered">
-
+                <table  id="ta" style="border-collapse:collapse;" class = "table table-bordered">
+                    <thead>
                   <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">ID</th>
                   <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Ip Address</th>
                   <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Vulnerablity count</th>
                   <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Severity</th>
                   <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Threat Source</th>
                   <tr></tr>
+                 </thead>
+                 <tbody>
+                
 
                   <!-- First Row -->
                   @foreach($reporthosts as $reporthost)
@@ -235,9 +219,16 @@ $(document).ready(function(){
                           </d>
                         </td>
                       
+                      
                   @endforeach
                   <!-- /Second Row -->
+                  </tbody>
                 </table>
+
+                <!-- Pagination Render -->
+                <div class="text-center">
+                  {!! $users->render() !!}
+                </div>
                                   
               </div>
 
@@ -251,7 +242,7 @@ $(document).ready(function(){
 
         <div class="bs-example">
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="purchaseLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
+                <div class="modal-dialog modal-lg" style=" width: 1000px;">
                      <div class="modal-content">
                           <div class="modal-header">
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -263,14 +254,15 @@ $(document).ready(function(){
                             <table  id="report" class = "table table-bordered">
                               <thead>
                                 <tr>
-                                  <th>ID</th>
-                                  <th>Port</th>
-                                  <th>svc_name</th>
-                                  <th>protocol</th>
-                                  <th>severity</th>
-                                  <th>plugiinID</th>
-                                  <th>Plugin Name</th>
-                                  <th>plugin Family</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">ID</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Port</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">svc_name</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">protocol</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">severity</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">plugiinID</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Plugin Name</th>
+                                  <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">plugin Family</th>
+
                                 </tr>
                                 <tr></tr>
                               </thead>
@@ -368,15 +360,6 @@ $(document).ready(function(){
                     </div>
                 </div>
             </div>
-  <script type="text/javascript" src="{{ URL::asset('production/paging.js') }}"></script>
-
-
-
- <script type="text/javascript">
-      $(document).ready(function() {
-          $('#tableData').paging({limit:10});
-      });
-    </script>
 
     <script >
       $("#beerStyle").change ( function () {
@@ -387,13 +370,85 @@ $(document).ready(function(){
 
     </script>
 
+
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+
+
+ <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script> 
+
+  <script>
+
+
+    $(document).ready(function(){
+
+      
    
 
+
+    
+  
+
+        
+
+        $(document).on('click','#details', function () {
+          $.get("reportitems/"+$(this).val(),
+          function(data){
+            console.log(data);
+            $.each(data, function(i, obj) {
+              // console.log(obj.id);
+
+
+           
+            var tabledata = "<tr><td>" +obj.id + "</td><td>"+obj.port+"</td><td>"+obj.svc_name+"</td><td>"+obj.protocol+"</td><td>"+obj.severity+"</td><td>"+obj.plugin_id+"</td><td>"+obj.plugin_name+"</td><td>"+obj.plugin_family+"</td></tr>";
+
+              tabledata +='<tr><td colspan="10"><d class="col-md-8 col-sm-8 col-lg-12"><div class="container"><div class="row"><div class="col-md-10 col-sm-10 col-lg-12"><label>Description:</label><br /><p><description>'+ obj.description +'</description></p><label>Solution: </label><br /><p><solution>'+ obj.solution +'</soluion></p><label>Risk Factor: </label><p><riskfactor>'+ obj.riskfactor +'</riskfactor></p><label>Plugin Output: </label><p style="overflow-y: scroll;height:160px">'+ obj.plugin_output +'</p></div></div></div></d></td></tr>';
+
+              $("#task-list").append(tabledata); 
+
+
+
+
+                      $(function() {
+
+   
+    $("td[colspan=10]").find("d").hide();
+
+    
+    $("table").click(function(event) {
+       
+        var $target = $(event.target);
+        if ( $target.closest("td").attr("colspan") > 9 ) {
+           $target.closest("tr").next().find("d").hide();
+           
+        } else {
+            $target.closest("tr").next().find("d").show();
+        } 
+
+    });
+
+       
+    });
+
+            });
+
+    $('#report').DataTable()
+  
+          });
+ 
+        });  
+
+
+    });  
+
+
+    
+  </script>
     <script type="text/javascript">
           $(function() {
+
+
     $("td[colspan=5]").find("d").hide();
-    $("td[colspan=10]").find("d").hide();
+ 
     
     $("table").click(function(event) {
        
@@ -407,6 +462,8 @@ $(document).ready(function(){
     });
     });
     </script>
+   
+
        
 
 

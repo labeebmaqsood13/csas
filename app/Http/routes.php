@@ -11,6 +11,8 @@
 |
 */
 // -------------- Faisal Routes start here ----------------- //
+	
+	Route::post('update/{id}',['as' => 'update', 'uses' => 'HomeController@update']);
 
 	Route::get('permissions', 'HomeController@permissions')->name('permissions');
 

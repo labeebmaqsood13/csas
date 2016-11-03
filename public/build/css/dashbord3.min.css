@@ -61,7 +61,7 @@
         }
          @media screen and (min-width: 1200px) {
         .modal-lg {
-          width: 1200px; /* New width for large modal */
+          width: 2200px; /* New width for large modal */
         }
         } 
 
