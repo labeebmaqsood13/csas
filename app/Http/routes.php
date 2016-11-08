@@ -16,8 +16,6 @@
 
 	Route::get('permissions', 'HomeController@permissions')->name('permissions');
 
-	Route::get('create_project', 'HomeController@create_project')->name('create_project');
-
 	Route::get('index_activity', 'HomeController@index_activity')->name('index_activity');
 
 	Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
@@ -67,11 +65,18 @@
 	// })->name('home');
 
 
-// ------------- Client routes ------------------ //
+// ------------- Project Wizard routes ------------------ //
 
+	// Project wizard main page
+	Route::get('project_wizard', 'ProjectWizard\ProjectClientController@project_wizard')->name('project_wizard');
 
-	Route::post('create_client','HomeController@create_client')->name('clients.create');
+	// Create client
+	Route::post('create_client','ProjectWizard\ProjectClientController@create_client')->name('clients.create');
 
+	// Create Project
+	Route::post('create_project_and_allocate_tasks', 'ProjectWizard\ProjectClientController@create_project_and_allocate_tasks')->name('create_project_and_allocate_tasks');
+
+	// Create Tasks
 
 
 // ------------ Nessus routes ----------------- //
@@ -98,3 +103,24 @@
 	
 	Route::auth();
 	Route::get('/', 'HomeController@index');
+
+// ---------------- Xeditable experiment -------------- //
+
+	Route::get('test', ['uses' => 'TestController@index']);
+	Route::post('test/update/{id}','TestController@update')->name('test/update');
+	Route::post('test/bulk_update', ['as' => 'test/bulk_update', 'uses' => 'TestController@bulk_update']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

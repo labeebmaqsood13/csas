@@ -226,9 +226,9 @@ $(document).ready(function(){
                 </table>
 
                 <!-- Pagination Render -->
-                <div class="text-center">
-                  {!! $users->render() !!}
-                </div>
+                <!-- <div class="text-center"> -->
+                  <?php /*{!! $users->render() !!} */?>
+                <!-- </div> -->
                                   
               </div>
 

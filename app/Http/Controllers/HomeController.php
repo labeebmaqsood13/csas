@@ -17,6 +17,10 @@ use App\Client;
 
 use Auth;
 
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+
 class HomeController extends Controller
 {
     /**
@@ -39,16 +43,38 @@ class HomeController extends Controller
         return view('welcome');
     }
 
+
     public function dashboard()
     {
         $reporthost = new Reporthost();
         $reporthosts = $reporthost->read();
+        // $reporthosts = json_decode(json_encode($reporthosts));
+        // $reporthosts = (object) $reporthosts;
+        // echo '<pre>';
+        // print_r($reporthosts);
+        // echo '</pre>';
+        // die();
+        // return $reporthosts;
 
+        // $reporthosts = $reporthosts->paginate(5);
+        $count = sizeof($reporthosts);
+        // $reporthosts = new \Illuminate\Pagination\LengthAwarePaginator($reporthosts,$count,1);
         return view('dashboard',compact('reporthosts'));
     }
 
     public function reportitems($id){
           
+        // $created_task = Task::create([
+        //     'name'=> $request->input('name')
+        //     ]);
+        // $users  = User::all();
+        // $create_task = {name:'faisal', phase:'enagement',users:''}
+        // return $created_task;
+
+
+
+
+
         $reporthost_id = $id;
         $reportitems = new Reportitem();
         $result = $reportitems->read($reporthost_id);
@@ -146,27 +172,11 @@ class HomeController extends Controller
         return view('index_activity');
     }
     
-    public function create_project()
-    {
-        $clients = Client::all();    
-        return view('create_project',compact('clients'));
-    }
-
      public function analytics_dashboard()
     {
         return view('analytics_dashboard');
     }
 
-    public function create_client(Request $request){
-
-        $client = Client::create([
-            'name'    => $request->name,
-            'user_id' => Auth::user()->id,
-            ]);
-        $clients = Client::all();
-        // return view('create_project',compact('clients'))-with('message', $client . ' - Client Created');
-        return \Redirect::route('create_project')->withInput(['clients'])->with('message', $client->name . ' - client created');
-
-    }
+    
 
 }

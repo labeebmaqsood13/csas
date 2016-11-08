@@ -52,6 +52,10 @@ class Reporthost extends Model
 
 		// return Reporthost::all();
         $reporthosts = DB::table('reporthosts')
+
+        $reporthost = Reporthost::first();
+        $reporthost->reporitem()->get();
+
             ->join('reportitems', 'reporthosts.id', '=', 'reportitems.reporthost_id')
             ->select('reporthosts.*', 'reporthosts.id', 
             		DB::raw('count(reportitems.plugin_name) as total')

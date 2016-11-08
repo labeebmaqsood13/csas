@@ -20,7 +20,7 @@
     height: 3px;
     background: #e0e0e0;
     position: absolute;
-    width: 60%;
+    width: 50%;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -90,7 +90,7 @@ span.round-tab:hover {
 .wizard li.active:after {
     content: " ";
     position: absolute;
-    left: 79%;
+    left: 85%;
     opacity: 1;
     margin: 0 auto;
     bottom: 0px;

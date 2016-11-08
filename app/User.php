@@ -52,6 +52,10 @@ class User extends Authenticatable
     
     }
 
+    public function project(){
+        return $this->belongsToMany('App\Project');
+    }
+
     public function setPasswordAttribute($pass){
 
         $this->attributes['password'] = Hash::make($pass);

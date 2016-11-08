@@ -7,23 +7,19 @@
 @section('user_role','Admin')
 
 @section('scripts')
- <link href="{{URL::asset('build/css/groups.min.css')}}" rel="stylesheet">
-<!-- Can be used for prompting after deletion inserting and editing(updating) -->
 
-<!-- //JQUERY SCRIPT TAG ADD HERE ATIF SUGGESTION -->
+@endsection
 
+@section('scripts_create')
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script> -->
 
-@if(Session::has('success'))
-   <script type='text/javascript'>
-        // alert('Here');
+  @if(Session::has('success'))
+     <script type='text/javascript'>
+              console.log('Another Here');
+              $('#success').modal('show');
 
-        // DELETE Window.load from here and only try $('#myMod') wali line
-        $(window).load(function(){
-            console.log('Another Here');
-            $('#myMod').modal('show');
-        });
-  </script>
-@endif
+    </script>
+  @endif
 
 @endsection
 
@@ -53,6 +49,26 @@
               </div>
             </div>
                  
+  <div id="success" class="modal fade">  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+      </div>
+      <div class="modal-body">
+        <strong>Role Created</strong>
+      </div>
+      <div class="modal-footer">
+        <a href="/roles" type="button" class="btn btn-secondary" >Close</a>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 
             <div class="bs-example">
@@ -138,27 +154,7 @@
     <!-- End Delete Modal HTML -->
       
 
-   <div id="myMod" class="modal fade">  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-      </div>
-      <div class="modal-body">
-        <strong>Role Created</strong>
-      </div>
-      <div class="modal-footer">
-        <a href="/roles" type="button" class="btn btn-secondary" >Close</a>
-       
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
+ 
 
 </div>
             <div id="div1" class="">

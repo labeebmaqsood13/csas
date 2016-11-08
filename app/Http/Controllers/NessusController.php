@@ -14,6 +14,8 @@ use App\User;
 
 use App\Role;
 
+use App\Task;
+
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -31,39 +33,67 @@ class NessusController extends Controller
 {
     public function create_user(){
 
-        // Role::create([
-        //     'name' => 'Admin',
-        //     ]);
-        // Role::create([
-        //     'name' => 'Pentester',
-        //     ]);
-        // Role::create([
-        //     'name' => 'Reverse Engineer',
-        //     ]);
-
         User::create([
             'name'      => 'Muhammad',
             'email'     => 'muhammad@yahoo.com',
             'password'  => 'something',
-            // 'role_id'   =>  1,
             ]);
         User::create([
             'name'      => 'Faisal',
             'email'     => 'faisal@yahoo.com',
             'password'  => 'something',
-            // 'role_id'   =>  2,
             ]);
         User::create([
             'name'      => 'Labeeb',
             'email'     => 'labeeb@yahoo.com',
             'password'  => 'something',
-            // 'role_id'   =>  2,
             ]);
         User::create([
             'name'      => 'Mustafa',
             'email'     => 'mustafa@yahoo.com',
             'password'  => 'something',
-            // 'role_id'   =>  3,
+            ]);
+
+        Role::create([
+            'name' => 'Manager',
+            ]);
+
+        Role::create([
+            'name' => 'Analyst',
+            ]);
+
+        Role::create([
+            'name' => 'Client Representative',
+            ]);
+
+        Task::create([
+            'name' => 'Scope',
+            'phase' => 'pre-engagement'
+            ]);
+
+        Task::create([
+            'name' => 'Documentation',
+            'phase' => 'pre-engagement'
+            ]);
+
+        Task::create([
+            'name' => 'Arp Scan',
+            'phase' => 'pre-engagement'
+            ]);
+
+        Task::create([
+            'name' => 'Idle scanning',
+            'phase' => 'engagement'
+            ]);
+
+        Task::create([
+            'name' => 'OS detection',
+            'phase' => 'engagement'
+            ]);
+
+        Task::create([
+            'name' => 'Services',
+            'phase' => 'engagement'
             ]);
 
     }

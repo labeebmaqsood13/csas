@@ -2,8 +2,10 @@
 <html>
 <head>
   <!-- Bootstrap -->
+  <meta name="_token" content="{{ csrf_token() }}" />
+    <!-- <meta name="csrf-token" content="{{ csrf_token() }}"> -->
+    <!-- <meta name="_token" content="{{ csrf_token() }}"> -->
 
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
     
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -99,7 +101,7 @@
                     <ul class="nav child_menu">
                       <li><a href="/index_activity">Activity</a></li>
                       <li><a href="/analytics_dashboard">Analytics</a></li>
-                      <li><a href="/dashboard">Analysis Dashboard</a></li>
+                      <li><a href="dashboard">Analysis Dashboard</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
@@ -115,12 +117,15 @@
                       <li><a href="/permissions">Manage Permissions</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-desktop"></i> Create Projects <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-desktop"></i> Client & Projects <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       
-                      <li><a href="/create_project">Wizard</a></li>
-                 
-                      
+                      <li><a href="/project_wizard">Wizard</a></li>
+                      <li><a href="/clients">Clients</a></li>
+                      <li><a href="/projects">Projects</a></li>
+                      <li><a href="/manage_tasks">Manage Tasks</a></li>
+                       <!-- should have button to ask if you want to use the default tasks and on that click tasks table should be populated with the default set of tasks and further it should also allow to edit those -->
+
                     </ul>
                   </li>
                   <li><a><i class="fa fa-table"></i> View Projects<span class="fa fa-chevron-down"></span></a>
@@ -202,7 +207,7 @@
                   <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -214,7 +219,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>Faisal Khan</span>
                           <span class="time">3 mins ago</span>
@@ -226,7 +231,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>Faisal Mahmood</span>
                           <span class="time">3 mins ago</span>
@@ -238,7 +243,7 @@
                     </li>
                     <li>
                       <a>
-                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span class="image"><img src="{{URL::asset('production/images/img.jpg')}}" alt="Profile Image" /></span>
                         <span>
                           <span>John Smith</span>
                           <span class="time">3 mins ago</span>
@@ -294,7 +299,14 @@
     
 
  <!-- Javascript External Code -->
-   
+    <script type="text/javascript">
+       $.ajaxSetup({
+           headers: {
+               'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+           }
+       });
+    </script>
+
     <!-- jQuery -->
     <!-- Bootstrap -->
     <script src="{{ URL::asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}"></script>
@@ -303,12 +315,19 @@
 
   
 @yield('scripts_create')
-   <script>
-  $(document).ready(function(){
-      $("mnm").click(function(){
-          $("#div1").load("/userDetails.blade.php");
-      });
-  });
+
+  <script type="text/javascript">
+
+  $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+          }
+        });
+    $(document).ready(function(){
+        $("mnm").click(function(){
+            $("#div1").load("/userDetails.blade.php");
+        });
+    });  
   </script>   
 
 
