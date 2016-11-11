@@ -12,6 +12,7 @@ use App\Client;
 use App\Project;
 use App\Task;
 use App\User;
+use App\Assignment;
 use Auth;
 
 
@@ -40,74 +41,87 @@ class ProjectClientController extends Controller
     }
 
     public function create_project_and_allocate_tasks(Request $request){
-    	
+
     	// return sizeof($request->due_date_task);
+        // foreach($request->task as $task){
+        //     echo $task;
+        // }
+        // die();
 
-    	$client_name  = $request->client_name;
-    	$project_name = $request->project_name;
-		$subnet_from  = $request->subnet_from;
-		$subnet_to    = $request->subnet_to;
-		$location     = $request->location;
-		$due_date     = $request->due_date_project;
-		$description  = $request->description_project;
+    	$client_id           = $request->client_name;
+    	$project_name        = $request->project_name;
+		$subnet_from         = $request->subnet_from;
+		$subnet_to           = $request->subnet_to;
+		$location            = $request->location;
+		$due_date_project    = $request->due_date_project;
+		$description_project = $request->description_project;
 
-		foreach($request->member as $key => $member){
+    	// die();
 
-			echo $member;
-    		// $member[$key] = $member;	
+    	// foreach($request->due_date_task as $key => $task){
+
+    	// 	$due_date_task[$key] = $task;	
     	
-    	}
-    	die();
-
-    	foreach($request->due_date_task as $key => $task){
-
-    		$due_date_task[$key] = $task;	
+    	// }
     	
-    	}
-    	
-    	foreach($request->description_task as $key => $description){
+    	// foreach($request->description_task as $key => $description){
 
-    		$description_task[$key] = $description;	
+    	// 	$description_task[$key] = $description;	
     	
-    	}
-    	// $due_date_project = $request->due_date_task[1];
-    	echo '<pre>';
-    	// print_r($due_date_task);
-    	var_dump($member);
-    	// print_r($description_task);
-    	echo '</pre>';
-    	exit;
+    	// }
+    	// // $due_date_project = $request->due_date_task[1];
+    	// echo '<pre>';
+    	// // print_r($due_date_task);
+    	// var_dump($members);
+    	// // print_r($description_task);
+    	// echo '</pre>';
+    	// die();
 
         // $reporthost_id = $id;
         // $reportitems = new Reportitem();
         // $result = $reportitems->read($reporthost_id);
         // return response()->json($result);
 
-		$client_name = $request->input('client_name');
-		$project_name = $request->input('project_name');
-		$subnet_from = $request->input('subnet_from');
-		$subnet_to = $request->input('subnet_to');
-		$location = $request->input('location');
-		$due_date = $request->input('due_date');
-		$description = $request->input('description');
+		// $client_name = $request->input('client_name');
+		// $project_name = $request->input('project_name');
+		// $subnet_from = $request->input('subnet_from');
+		// $subnet_to = $request->input('subnet_to');
+		// $location = $request->input('location');
+		// $due_date = $request->input('due_date');
+		// $description = $request->input('description');
 
 		$project = Project::create([
-			'name' => $project_name,
+			'name'        => $project_name,
 			'subnet_from' => $subnet_from,
-			'subnet_to' => $subnet_to,
-			'location' => $location,
-			'due_date' => $due_date,
-			'description' => $description,
-			'status' => 'in progress',
-			'client_id' => $client_name,
-			'user_type' => 'manager',
+			'subnet_to'   => $subnet_to,
+			'location'    => $location,
+			'due_date'    => $due_date_project,
+			'description' => $description_project,
+			'status'      => 'in progress',
+			'client_id'   => $client_id,
 			]);
-		$user = Auth::user();
 
-		$user->attach()->project($project);
+        $user = Auth::user();
+        // $user->role()->attach($role->id, 'is_manager'=>1);
+        $user->project()->attach([$project->id => ['is_manager' => 1]]);
 
-		$data = 'success';
-		return response()->json($data);
+        foreach($request->member as $key => $member){
+
+            Assignment::create([
+                'user_id'     => $member, 
+                'due_date'    => $request->due_date_task[$key],
+                'description' => $request->description_task[$key],                
+                'task_id'     => $request->task[$key],
+                'project_id'  => $project->id,
+                ]);
+            // echo $request->due_date_task[$key];   
+            // echo $request->description_task[$key]; 
+            // echo $project->id;
+            // echo '<br>';
+        
+        }
+
+        return \Redirect::route('project_wizard')->with('message', 'Projct Created');
 
     }
 

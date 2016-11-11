@@ -9,7 +9,7 @@ class Task extends Model
 	protected $table = 'tasks';
     protected $fillable = ['name', 'phase'];
 
-    public function detailstask(){
-    	return $this->hasMany('App\Detailstask');
+    public function assignment(){
+    	return $this->hasMany('App\Assignment');
     }
 }

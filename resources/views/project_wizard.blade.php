@@ -405,11 +405,11 @@
                                 <div class="col-md-8 col-xs-9">
                                     <select name="client_name" id="client_name" class="dropselectsec">
                                           @foreach($clients as $key => $client)
-                                            <option value="{{$client->name}}" name="client_name">{{ $client->name }}</option>
+                                            <option value="{{$client->id}}" name="client_name">{{ $client->name }}</option>
                                           @endforeach
                                     </select>
 
-                     <a  href="#myModal" class="glyphicon glyphicon-plus" data-toggle="modal">Create</a>
+                     <a href="#myModal" class="glyphicon glyphicon-plus" data-toggle="modal">Create</a>
                                </div>
                             </div>
 
@@ -552,13 +552,14 @@
                               <div class="row mar_ned">
                                 <div class="col-md-2">
                                     <h5 align="center"><strong>{{$task->name}}</strong></h5>
+                                    <input type="hidden" name="task[{{$task->id}}]" value="{{$task->id}}">
                                 </div>
                                
                                 <div class="col-md-3">
                                     <select align="center" name="member[{{$task->id}}]" id="member" class="dropselectsec1 form-control">
                                       <option value="0">Choose Member</option>
                                       @foreach($users as $user)
-                                        <option value="{{$user->name}}">{{$user->name}}</option>
+                                        <option value="{{$user->id}}">{{$user->name}}</option>
                                       @endforeach
                                     </select>
                                 </div>

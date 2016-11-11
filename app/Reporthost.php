@@ -50,12 +50,10 @@ class Reporthost extends Model
 
 	public function read(){
 
-		// return Reporthost::all();
+		// $reporthost = Reporthost::first();
+        // $reporthost->reporitem()->get();
+
         $reporthosts = DB::table('reporthosts')
-
-        $reporthost = Reporthost::first();
-        $reporthost->reporitem()->get();
-
             ->join('reportitems', 'reporthosts.id', '=', 'reportitems.reporthost_id')
             ->select('reporthosts.*', 'reporthosts.id', 
             		DB::raw('count(reportitems.plugin_name) as total')

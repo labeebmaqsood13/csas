@@ -19,6 +19,8 @@ class CreateProjectUserTable extends Migration
             
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
+
+            $table->enum('is_manager', [1,0]);
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateProjectUserTable extends Migration
      */
     public function down()
     {
-        Schema::drop('role_user');
+        Schema::drop('project_user');
     }
 }

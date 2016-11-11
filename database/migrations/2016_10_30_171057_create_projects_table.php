@@ -24,7 +24,8 @@ class CreateProjectsTable extends Migration
             $table->string('description');
             $table->enum('status', ['in progress', 'finished']);
             
-            $table->enum('user_type',['manager','not_manager']);
+            $table->integer('client_id')->unsigned();
+            $table->foreign('client_id')->references('id')->on('clients');
             $table->timestamps();
         });
     }
@@ -36,6 +37,10 @@ class CreateProjectsTable extends Migration
      */
     public function down()
     {
+        Schema::table('projects', function (Blueprint $table) {
+            $table->dropForeign('projects_client_id_foreign');
+        });
+
         Schema::drop('projects');
     }
 }
