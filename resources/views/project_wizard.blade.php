@@ -592,7 +592,7 @@
                         </ul>
                         </div>
                     </div>
-                    
+                    </div>
 
                     <div class="tab-pane" role="tabpanel" id="step3">
                         <h3>Summary</h3><br />

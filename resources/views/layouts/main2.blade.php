@@ -101,7 +101,9 @@
                     <ul class="nav child_menu">
                       <li><a href="/index_activity">Activity</a></li>
                       <li><a href="/analytics_dashboard">Analytics</a></li>
-                      <li><a href="dashboard">Analysis Dashboard</a></li>
+                      <li><a href="{{ url('/dashboard') }}" id="abc">Analysis Dashboard</a></li>
+                        <!--  <li>{{ link_to_action('HomeController@dashboard','Analysis Dashboard', array(null)) }}</li> -->
+
                     </ul>
                   </li>
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
@@ -164,7 +166,7 @@
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
               </a>
              
-              <a  href="logout" data-toggle="tooltip" data-placement="top" title="Logout">
+              <a  href="/logout" data-toggle="tooltip" data-placement="top" title="Logout">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div>
@@ -195,7 +197,7 @@
                       </a>
                     </li>
                     <li><a href="javascript:;">Admin</a></li>
-                    <li><a href="logout"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
                 </li>
 

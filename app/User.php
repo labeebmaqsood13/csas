@@ -53,7 +53,11 @@ class User extends Authenticatable
     }
 
     public function project(){
-        return $this->belongsToMany('App\Project');
+        return $this->belongsToMany('App\Project')->withPivot('is_manager');
+    }
+    
+    public function reportfile(){
+        return $this->hasMany('App\Reportfile');
     }
 
     public function setPasswordAttribute($pass){

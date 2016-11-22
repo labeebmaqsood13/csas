@@ -14,10 +14,14 @@ class Project extends Model
     }
 
     public function user(){
-    	return $this->belongsToMany('App\User');
+    	return $this->belongsToMany('App\User')->withPivot('is_manager');
     }
 
     public function assignment(){
     	return $this->hasMany('App\Assignment');
+    }
+
+    public function reportfile(){
+        return $this->hasMany('App\Reportfile');
     }
 }

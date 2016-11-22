@@ -11,10 +11,10 @@ class Reporthost extends Model
     protected $table = 'reporthosts';
     protected $hidden = [];
 
-    protected $fillable = ['cpe_1','ssh_fingerprint','host_end','last_unauthenticated_results','credentialed_scan','policy_name','total_cves','cpe','os','cpe_0','system_type','operating_system','mac','traceroute_hop_4','traceroute_hop_3','traceroute_hop_2','traceroute_hop_1','traceroute_hop_0','host_fqdn','host_ip','netbios_name','host_start'];
+    protected $fillable = ['cpe_1','ssh_fingerprint','host_end','last_unauthenticated_results','credentialed_scan','policy_name','total_cves','cpe','os','cpe_0','system_type','operating_system','mac','traceroute_hop_4','traceroute_hop_3','traceroute_hop_2','traceroute_hop_1','traceroute_hop_0','host_fqdn','host_ip','netbios_name','host_start', 'reportfile_id'];
     
 
-    public function store($reporthost_metadata){
+    public function store($reporthost_metadata, $reportfile_id){
 
     	$reporthost = Reporthost::create([
 		    			'cpe_1' 		 				=>  $reporthost_metadata['cpe_1'],
@@ -39,6 +39,7 @@ class Reporthost extends Model
 		    			'host_ip'						=>  $reporthost_metadata['host_ip'],
 		    			'netbios_name'					=>  $reporthost_metadata['netbios_name'],
 		    			'host_start'					=>  $reporthost_metadata['host_start'],
+		    			'reportfile_id'					=> 	$reportfile_id,
 
 
 		    					]);
@@ -48,9 +49,8 @@ class Reporthost extends Model
     }
 
 
-	public function read(){
+	public static function read($reporthost_id){
 
-		// $reporthost = Reporthost::first();
         // $reporthost->reporitem()->get();
 
         $reporthosts = DB::table('reporthosts')
@@ -61,8 +61,9 @@ class Reporthost extends Model
             		// DB::raw('count(reportitems.plugin_name) as high FROM reportitems WHERE reportitems.reporthost_id = reporthosts.id WHERE severity = 2 ')
             		)
             // ->where('reportitems.severity','4')
-            ->groupBy('reporthosts.host_ip')
+            ->whereIn('reporthosts.reportfile_id', array_flatten([$reporthost_id]))
             ->orderBy('total','DESC')       
+            ->groupBy('reporthosts.host_ip')
             ->get();
 
         // Converting Std Object into Simple Array    
@@ -157,6 +158,10 @@ class Reporthost extends Model
 
 		return Reporthost::where('id', $reporthost_id)->get();
 
+	}
+
+	public function reportfile(){
+		return $this->belongsTo('App\Reportfile');
 	}
 
     public function reportitem(){

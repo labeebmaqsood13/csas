@@ -24,7 +24,7 @@ class UploadNessusRequest extends Request
     public function rules()
     {
         return [
-            'nessus_file_upload' => 'required',
+            // 'nessus_file_upload' => 'required',
         ];
     }
 }

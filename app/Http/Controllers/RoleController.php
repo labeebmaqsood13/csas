@@ -154,6 +154,13 @@ class RoleController extends Controller
     }    
 
 
+    public function edit_role(Request $request){
+        $role_name = $request->input('role_name');
+        $role = Role::where('name', $role_name)->first();
+        $role->user->name;
+    }
+
+
 
     
 }

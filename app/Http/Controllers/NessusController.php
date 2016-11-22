@@ -16,6 +16,8 @@ use App\Role;
 
 use App\Task;
 
+use App\Reportfile;
+
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -27,6 +29,8 @@ use phpoffice\phpword;
 use Session;
 
 use Fpdf;
+
+use Auth;
 
 
 class NessusController extends Controller
@@ -100,22 +104,24 @@ class NessusController extends Controller
 
     public function upload(UploadNessusRequest $request){
 
-            $nessus_file_upload = $request->file('nessus_file_upload');
-            $nessus_content = File::get($nessus_file_upload);
+            $reportfile = Reportfile::store($request->name, $request->project, $request->information, Auth::user()->id);
 
-            $this->save_plugin_id($nessus_content); 
+            $nessus_file_upload = $request->file('nessus_file_upload');
+            $nessus_content = File::get($request->file('nessus_file_upload'));
+
+            $this->save_plugin_id($nessus_content, $reportfile->id); 
 
             // echo "<pre>";
             // var_dump($display);
             // echo "</pre>";
 
-            $this->save_reporthosts_and_reportitems($nessus_content); 
+            $this->save_reporthosts_and_reportitems($nessus_content, $reportfile->id); 
 
             return \Redirect::route('file_upload')->with('message', 'Nessus File Parsed and Stored in Database');
 
     }
 
-    public function save_plugin_id($nessus_content){
+    public function save_plugin_id($nessus_content, $reportfile_id){
 
 
         //----------------------- Report Plugin Id set Parsing ---------------------------// 
@@ -138,7 +144,7 @@ class NessusController extends Controller
                     // echo '</pre>';
                     if(sizeof($plugin_id_array) != $pluginid_count){
     
-                        Pluginid::store($plugin_id_array);
+                        Pluginid::store($plugin_id_array, $reportfile_id);
 
                     }
     
@@ -149,7 +155,7 @@ class NessusController extends Controller
 
     }
 
-    public function save_reporthosts_and_reportitems($nessus_content){
+    public function save_reporthosts_and_reportitems($nessus_content, $reportfile_id){
 
             $reading = $nessus_content;
 
@@ -158,7 +164,7 @@ class NessusController extends Controller
             // Loop through each Reporthost (IP)
             foreach($reporthosts[1] as $reporthost){
                     
-                $this->parse_data($reporthost);
+                $this->parse_data($reporthost, $reportfile_id);
                 
             }
 
@@ -166,7 +172,7 @@ class NessusController extends Controller
     }
 
     
-    public function parse_data($reporthost){
+    public function parse_data($reporthost, $reportfile_id){
 
 
         //----------------------- ReportHost Metadata Parsing ---------------------------//
@@ -442,7 +448,7 @@ class NessusController extends Controller
 
             
             $ReportHost = new Reporthost();
-            $lastinsertedid = $ReportHost->store($reporthost_metadata);
+            $lastinsertedid = $ReportHost->store($reporthost_metadata, $reportfile_id);
 
 
             // return $reporthost_metadata;

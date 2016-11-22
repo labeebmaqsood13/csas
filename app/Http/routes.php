@@ -1,5 +1,7 @@
 <?php
-
+use App\User;
+use App\Role;
+use App\Client;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -24,6 +26,7 @@
 
 	// Route::get('roles', 'HomeController@roles')->name('roles');
 	Route::resource('roles','RoleController', ['except'=> ['create'] ]);
+	Route::post('edit_role','RoleController@edit_role');
 
 
 // ------------ File upload route ---------------------- //
@@ -32,7 +35,10 @@
 
 // --------------Analysis Dashboard routes -----------------//
 
-	Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
+	Route::get('dashboard/{client_id?}/{project_id?}', 'HomeController@dashboard')->name('dashboard');
+	
+	Route::post('dashboard3_get_projects','HomeController@dashboard3_get_projects')->name('dashboard3_get_projects');
+
 	Route::get('reportitems/{reporthost_id}', 'HomeController@reportitems')->name('reportitems');
 
 // ------------------- USERS ----------------------- //
@@ -111,10 +117,17 @@
 	Route::post('test/bulk_update', ['as' => 'test/bulk_update', 'uses' => 'TestController@bulk_update']);
 
 
+// -------------- TESTING ------------ //
+	Route::get('testing',function(){
+		$users = User::all();
+		$roles =  Role::paginate(5);
+		return view('edit_Roles',compact('users','roles'));
+	});
 
 
 
-
+// -------------- Project wizard test page jo faisal nay bnaya us say routes and main2 ki file update kro and action and view dekho -----------//
+Route::get('projects_tasks', 'HomeController@projects_tasks')->name('projects_tasks');
 
 
 
