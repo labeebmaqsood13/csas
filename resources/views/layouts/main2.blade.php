@@ -101,7 +101,7 @@
                     <ul class="nav child_menu">
                       <li><a href="/index_activity">Activity</a></li>
                       <li><a href="/analytics_dashboard">Analytics</a></li>
-                      <li><a href="{{ url('/dashboard') }}" id="abc">Analysis Dashboard</a></li>
+                      <li><a href="{{ url('/dashboard') }}" id="abc" onchange="window.location.href = '/dashboard/'">Analysis Dashboard</a></li>
                         <!--  <li>{{ link_to_action('HomeController@dashboard','Analysis Dashboard', array(null)) }}</li> -->
 
                     </ul>

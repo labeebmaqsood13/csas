@@ -20,7 +20,6 @@ use App\Client;
 
 	Route::get('index_activity', 'HomeController@index_activity')->name('index_activity');
 
-	Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
 
 // ------------------- ROLES ----------------------- //
 
@@ -32,6 +31,13 @@ use App\Client;
 // ------------ File upload route ---------------------- //
 	
 	Route::get('file_upload', 'HomeController@file_upload')->name('file_upload');
+
+
+// --------------Analytics Dashboard routes -----------------//
+
+
+	Route::get('analytics_dashboard', 'HomeController@analytics_dashboard')->name('analytics_dashboard');
+
 
 // --------------Analysis Dashboard routes -----------------//
 

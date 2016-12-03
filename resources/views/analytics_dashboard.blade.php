@@ -71,7 +71,7 @@
            
         <div class="right_col" role="main">
         <div class="container" style="min-height: 1000px;">
-          <div class="row">w
+          <div class="row">
          <div class="col-md-8 col-sm-8 col-lg-8 ">
 
            <h4>ANALYTICS DASHBOARD</h4>
@@ -148,7 +148,7 @@
            
 
            
-            <div id="blah" class="hidden">
+            <div id="blah" class="">
             <div class="row">
               <div class="">
 
@@ -188,7 +188,7 @@
               <div class="col-md-4 col-sm-6 col-lg-6">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Vulnerability Severity <small>Sessions</small></h2>
+                    <h2>Top 10 (Potential) Vulnerabilities <small>Sessions</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -215,7 +215,7 @@
               <div class="col-md-4 col-sm-6 col-lg-6">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Common open Ports <small>Sessions</small></h2>
+                    <h2>Vulnerabilities Summary <small>Sessions</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -241,7 +241,7 @@
                 <div class="clearfix"></div>
 
             <div class="row">
-              <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
                     <h2>Line graph<small>Sessions</small></h2>
@@ -268,10 +268,10 @@
                 </div>
               </div>
 
-    <div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Bar graph <small>Sessions</small></h2>
+                    <h2>Top 10 (Potential) Vulnerabilities <small>Sessions</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -410,14 +410,13 @@ $(document).ready(function(){
        var ctx = document.getElementById("canvasDoughnut");
       var data = {
         labels: [
-          "x port",
-          "Smtp port",
-          "xt port",
-          "vp port",
-          "zwe port"
+          "critical",
+          "high",
+          "medium",
+          "low"
         ],
         datasets: [{
-          data: [120, 50, 140, 180, 100],
+          data: [ {{ $reportitems_critical}}, {{$reportitems_high}}, {{$reportitems_med}}, {{$reportitems_low}} ],
           backgroundColor: [
             "#455C73",
             "#9B59B6",
@@ -470,20 +469,18 @@ $(document).ready(function(){
         },
       });
 
-      // Bar chart
+      // Top 10 Vulnerabilities Bar chart
       var ctx = document.getElementById("mybarChart");
       var mybarChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'horizontalBar',
         data: {
-          labels: ["January", "February", "March", "April", "May", "June", "July"],
+          labels: {!! $top_ten_vuln_names !!} ,
+          // labels: ["January", "February", "March", "April", "May", "June", "July", "Jusad","dsafsad","asd"],
           datasets: [{
-            label: '# of Votes',
+            label: '# of Vulnerabilities count',
             backgroundColor: "#26B99A",
-            data: [51, 30, 40, 28, 92, 50, 45]
-          }, {
-            label: '# of Votes',
-            backgroundColor: "#03586A",
-            data: [41, 56, 25, 48, 72, 34, 12]
+            data: {{$top_ten_vuln_count}}
+            // data: ["January", "February", "March", "April", "May", "June", "July", "Jusad","dsafsad","asd"]
           }]
         },
 
@@ -491,12 +488,44 @@ $(document).ready(function(){
           scales: {
             yAxes: [{
               ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                barOptions_stacked: true
               }
             }]
           }
         }
       });
+
+      // Top Compromised machines Bar chart
+      var ctx = document.getElementById("mybarChart");
+      var mybarChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+          labels: {!! $top_ten_vuln_names !!} ,
+          // labels: ["January", "February", "March", "April", "May", "June", "July", "Jusad","dsafsad","asd"],
+          datasets: [{
+            label: '# of Vulnerabilities count',
+            backgroundColor: "#26B99A",
+            data: {{$top_ten_vuln_count}}
+            // data: ["January", "February", "March", "April", "May", "June", "July", "Jusad","dsafsad","asd"]
+          }]
+        },
+
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                barOptions_stacked: true
+              }
+            }]
+          }
+        }
+      });
+
+
+
+
        // PolarArea chart
       var ctx = document.getElementById("polarArea");
       var data = {

@@ -21,6 +21,8 @@ use App\Reportfile;
 use Session;
 use Auth;
 
+use DB;
+
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -50,6 +52,7 @@ class HomeController extends Controller
     // default client_id and project_id null if not passed in parameter of route 
     public function dashboard($client_id=null, $project_id=null)
     {
+        $user = Auth::user();
 
         // When redirected by js window.location.href ..it will enter this if and wont have any session so this first part will get true and redirect now to same page with parameters and session.    
         
@@ -305,20 +308,97 @@ class HomeController extends Controller
 
 
 
-     public function editUsers()
+    public function editUsers()
     {
         return view('editUsers');
     }
 
 
-     public function index_activity()
+    public function index_activity()
     {
         return view('index_activity');
     }
     
-     public function analytics_dashboard()
+    public function analytics_dashboard()
     {
-        return view('analytics_dashboard');
+
+        
+
+        // ------------------- Vulnerabilities Summary -------------------- //
+
+            $user = Auth::user();
+            // Fetching reportfiles by project_id
+            $reportfiles = Reportfile::where('project_id',1)->where('user_id', $user->id)->get();
+
+            // Fetching all reporthost_id in all those reportfiles fetched above
+            foreach($reportfiles as $reportfile){
+                $reporthosts = $reportfile->reporthost()->get();
+                foreach($reporthosts as $reporthost){   
+                    $reporthost_id[] = $reporthost->id;
+                }  
+            }
+            // dd($reporthost_id);
+
+            $reportitems_critical = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','critical')->count();
+            $reportitems_high = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','high')->count();
+            $reportitems_med = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','medium')->count();
+            $reportitems_low = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','low')->count();
+
+
+        // ------------ Top 10 (Potential) Vulnerabilities & their count in descending order ------------ //
+
+
+            $top_ten_vulnerabilities = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->select( DB::raw('plugin_name ,COUNT(*) as count') )->groupBy('plugin_name')->orderBy('count','DESC')->take(10)->get();
+            // dd($top_ten_vulnerabilities->toArray());
+
+            $top_ten_vuln_names = $top_ten_vulnerabilities->lists('plugin_name');
+            // dd($top_ten_vuln_names);
+            $top_ten_vuln_count = $top_ten_vulnerabilities->lists('count');
+
+            // foreach($top_ten_vulnerabilities as $vuln){
+            //     // echo $vuln->plugin_name;
+            //     // echo $vuln->count;
+            //     $top_ten_vuln_names[] =  $vuln->plugin_name;
+            //     $top_ten_vuln_count[] =  $vuln->count;
+                
+            // }
+
+            // echo '<pre>';
+            // var_dump($top_ten_vuln_names);
+            // echo '</pre>';
+            // die();
+
+            // Example of count of repetition
+                // $groups = Group::where(['owner_id' => Auth::user()->id, 'year' => 2016])
+                //     ->groupBy('status')
+                //     ->select( DB::raw('status , COUNT(*) as status_count') )
+                //     ->get();
+
+
+            // Example of lists..not proper
+                // $vulnerabilities_count = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->groupBy('plugin_name')->get();
+                // dd($vulnerabilities->lists('plugin_name'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return view('analytics_dashboard',compact('reportitems_critical','reportitems_high','reportitems_med','reportitems_low','top_ten_vuln_count','top_ten_vuln_names'));
+    
     }
 
     public function projects_tasks()
