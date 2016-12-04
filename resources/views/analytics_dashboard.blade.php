@@ -188,7 +188,13 @@
               <div class="col-md-4 col-sm-6 col-lg-6">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Top 10 (Potential) Vulnerabilities <small>Sessions</small></h2>
+                    <!-- <h2>Critical Severity ka count in each Ip <small>Sessions</small></h2> -->
+                    <!-- <h2>Count of critical severity  <small>Sessions</small></h2> -->
+                    <!-- <h2>Ip's having critical severity<small>Sessions</small></h2> -->
+                    <!-- <h2>Summary Critical Ip <small>Sessions</small></h2> -->
+                    <!-- <h2>Critical Ip Summary<small>Sessions</small></h2> -->
+
+                    <h2>Most Vulnerable Machines <small>Sessions</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -264,6 +270,33 @@
                   </div>
                   <div class="x_content">
                     <canvas id="lineChart"></canvas>
+                  </div>
+                </div>
+              </div>
+    <!-- Added line here -->
+    <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Top 10 Compromised Machines <small>Sessions</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <canvas id="bar_compromised_machines"></canvas>
                   </div>
                 </div>
               </div>
@@ -378,23 +411,26 @@ $(document).ready(function(){
        var ctx = document.getElementById("pieChart");
       var data = {
         datasets: [{
-          data: [120, 50, 140, 180, 100],
-          backgroundColor: [
-            "#455C73",
-            "#9B59B6",
-            "#BDC3C7",
-            "#26B99A",
-            "#3498DB"
-          ],
+          // data: [120, 50, 140, 180, 100],
+          data: {{ $critical_ips_count }},
+          // backgroundColor: [
+          //   "#455C73",
+          //   "#9B59B6",
+          //   "#BDC3C7",
+          //   "#26B99A",
+          //   "#3498DB"
+          // ],
+          backgroundColor: {!! $colors !!},
           label: 'My dataset' // for legend
         }],
-        labels: [
-          "High",
-          "Medium",
-          "Low",
-          "V.Low",
-          "Unknown"
-        ]
+        // labels: [
+        //   "High",
+        //   "Medium",
+        //   "Low",
+        //   "V.Low",
+        //   "Unknown"
+        // ]
+        labels: {!! $critical_ips !!}
       };
 
       var pieChart = new Chart(ctx, {
@@ -469,6 +505,7 @@ $(document).ready(function(){
         },
       });
 
+
       // Top 10 Vulnerabilities Bar chart
       var ctx = document.getElementById("mybarChart");
       var mybarChart = new Chart(ctx, {
@@ -496,17 +533,17 @@ $(document).ready(function(){
         }
       });
 
-      // Top Compromised machines Bar chart
-      var ctx = document.getElementById("mybarChart");
+      // Top 10 Compromised machines Bar chart
+      var ctx = document.getElementById("bar_compromised_machines");
       var mybarChart = new Chart(ctx, {
-        type: 'horizontalBar',
+        type: 'bar',
         data: {
-          labels: {!! $top_ten_vuln_names !!} ,
+          labels: {!! $top_compromised_ip !!} ,
           // labels: ["January", "February", "March", "April", "May", "June", "July", "Jusad","dsafsad","asd"],
           datasets: [{
             label: '# of Vulnerabilities count',
-            backgroundColor: "#26B99A",
-            data: {{$top_ten_vuln_count}}
+            backgroundColor: "#455C73",
+            data: {{$top_compromised_ip_count}}
             // data: ["January", "February", "March", "April", "May", "June", "July", "Jusad","dsafsad","asd"]
           }]
         },
@@ -518,6 +555,11 @@ $(document).ready(function(){
                 beginAtZero: true,
                 barOptions_stacked: true
               }
+            }],
+            xAxes: [{ barPercentage: 0.8,
+              ticks: {
+                fontSize: 10.7
+              } 
             }]
           }
         }

@@ -322,7 +322,7 @@ class HomeController extends Controller
     public function analytics_dashboard()
     {
 
-        
+
 
         // ------------------- Vulnerabilities Summary -------------------- //
 
@@ -352,21 +352,16 @@ class HomeController extends Controller
             // dd($top_ten_vulnerabilities->toArray());
 
             $top_ten_vuln_names = $top_ten_vulnerabilities->lists('plugin_name');
-            // dd($top_ten_vuln_names);
             $top_ten_vuln_count = $top_ten_vulnerabilities->lists('count');
 
-            // foreach($top_ten_vulnerabilities as $vuln){
-            //     // echo $vuln->plugin_name;
-            //     // echo $vuln->count;
-            //     $top_ten_vuln_names[] =  $vuln->plugin_name;
-            //     $top_ten_vuln_count[] =  $vuln->count;
-                
-            // }
-
-            // echo '<pre>';
-            // var_dump($top_ten_vuln_names);
-            // echo '</pre>';
-            // die();
+            // Alternative way of lists() used above
+                // foreach($top_ten_vulnerabilities as $vuln){
+                //     // echo $vuln->plugin_name;
+                //     // echo $vuln->count;
+                //     $top_ten_vuln_names[] =  $vuln->plugin_name;
+                //     $top_ten_vuln_count[] =  $vuln->count;
+                    
+                // }
 
             // Example of count of repetition
                 // $groups = Group::where(['owner_id' => Auth::user()->id, 'year' => 2016])
@@ -383,21 +378,94 @@ class HomeController extends Controller
 
 
 
+        // ------------------- Top 10 Compromised Machines  -------------------- //
+
+            $reportfile_ids = $reportfiles->lists('id');
+            // dd($reporthost_ids);
+            
+            $reporthosts = Reporthost::whereIn('reportfile_id',array_flatten([$reportfile_ids]))->get();
+            // dd($reporthosts->toArray());
+            
+                // Echo ki jagah array mein store kr k phir us ko sort kr sakta...
+                    // foreach($reporthosts as $reporthost){
+                    //     echo $reporthost->host_ip. "   ";
+                    //     echo $reporthost->reportitem()->count();
+                    //     echo '<br>';
+
+                    // }
+                    // die();
+
+
+            // ------------------ One method First eloquent Second raw sql ------------------------ //
+
+                // Eloquent Reportitems walay table say track kia ...reporthost_id and uskay against count agaya ... end peh join add kia in Eloquent to woh bhi chal gya..so i can slect any column from both tables
+
+                $abc = Reportitem::whereIn('reporthost_id',array_flatten([$reporthosts->lists('id')->toArray()]))
+                    ->groupBy('reporthost_id')
+                    ->select( DB::raw('reporthosts.host_ip, reportitems.reporthost_id ,COUNT(*) as count') )
+                    ->orderBy('count', 'DESC')
+                    ->join('reporthosts', 'reportitems.reporthost_id', '=', 'reporthosts.id')
+                    ->limit(5)
+                    ->get();
+                // dd($abc->toArray());
 
 
 
 
+                // Query builder Reportitems walay table say track kia ...reporthosts tbl say host_ip and uskay against count agaya ...
+                $top_compromised_machines = collect(DB::table('reportitems')
+                ->join('reporthosts', 'reportitems.reporthost_id', '=', 'reporthosts.id')
+                ->select('reporthosts.host_ip', DB::raw('count(*) as count'))
+                ->whereIn('reportitems.reporthost_id',array_flatten([$reporthosts->lists('id')->toArray()]))
+                ->groupBy('reporthosts.host_ip')
+                ->orderBy('count', 'DESC')
+                ->limit(10)
+                ->get());
+                // dd($top_compromised_machines);
+
+                $top_compromised_ip = $top_compromised_machines->pluck('host_ip');
+                $top_compromised_ip_count = $top_compromised_machines->pluck('count');
+
+                
+
+
+        // ------------------- Count of Critical severity in each Ip  -------------------- //
+                
+                // No of critical severities found in which Ip's and how many
+                //Critical severity count in Each ip
+                $critical_severity_in_ip = Reportitem::whereIn('reporthost_id',array_flatten([$reporthosts->lists('id')->toArray()]))
+                    ->where('reportitems.severity',4)
+                    ->groupBy('reporthost_id')
+                    ->select( DB::raw('reporthosts.host_ip ,COUNT(*) as count') )
+                    ->join('reporthosts', 'reportitems.reporthost_id', '=', 'reporthosts.id')
+                    // ->limit(5)
+                    ->get();    
+                // dd($critical_severity_in_ip->toArray());   
+
+                $critical_ips = $critical_severity_in_ip->lists('host_ip');
+                $critical_ips_count = $critical_severity_in_ip->lists('count');    
+
+
+
+                //------ Differentiation for colors ... this returns total number of critical ----- //
+
+                    $array_colors = ['#3498DB','lightgrey', '#7FC9D9'];
+                    $colors = collect(array_slice($array_colors, 0,sizeof($critical_severity_in_ip->toArray())));
+
+                        // $count_for_color =  sizeof($critical_severity_in_ip->toArray());
+
+                        // for($i=0; $i<$count_for_color; $i++){
+
+                        //     $colors[] = '#'.substr(md5(rand()), 0, 6);
+                              
+                        // }    
+                        // $colors = collect($colors);
+                        // dd($colors);  
 
 
 
 
-
-
-
-
-
-
-        return view('analytics_dashboard',compact('reportitems_critical','reportitems_high','reportitems_med','reportitems_low','top_ten_vuln_count','top_ten_vuln_names'));
+        return view('analytics_dashboard',compact('reportitems_critical', 'reportitems_high', 'reportitems_med', 'reportitems_low', 'top_ten_vuln_count', 'top_ten_vuln_names', 'top_compromised_ip', 'top_compromised_ip_count', 'critical_ips', 'critical_ips_count', 'colors'));
     
     }
 
