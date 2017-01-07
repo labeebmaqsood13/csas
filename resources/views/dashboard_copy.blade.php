@@ -27,7 +27,7 @@ var something= '';
             success: function(data) {
             	var element =  document.getElementById(id);
             	if(element == null){
-	            	var options = '<div id="'+id+'" class="style-sub-1" style="display: block;" name="stylesub1"><label>Project</label><select onchange="project(this.value)"><option value="">-Choose An Project-</option>';
+	            	var options = '<div id="'+id+'" class="style-sub-1" style="display: block;" name="stylesub1"><label>Project</label><select onchange="project(this.value)" class="form-control"><option value="">-Choose An Project-</option>';
 
 				    $.each(data, function(i, obj) {
       	     			 options += '<option value="/dashboard/'+ id +'/'+ obj.id +'/' +'">'+obj.name+'</option>';
@@ -56,6 +56,7 @@ var something= '';
         $("#fuck").append(data);  
        
         document.getElementById("abc").href=something; 
+ 
       });
   @endif
 
@@ -87,7 +88,7 @@ var something= '';
                   <div class="col-md-8 col-sm-8 col-lg-6" id="project_options">
                       <div class="ccms_form_element cfdiv_custom" id="style_container_div">
                           <label>Client:</label>
-                          <select size="1" id="beerStyle" class=" validate['required']" title="" type="select" name="style" onchange="client(this.value)">
+                          <select id="beerStyle" class="form-control validate['required']" title="" type="select" name="style" onchange="client(this.value)">
                               <option value="0">-Choose A Client-</option>
                               @foreach($clients as $client)
 	                            <option value="{{$client->id}}"> {{$client->name}} </option>
@@ -141,7 +142,7 @@ var something= '';
                   <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Ip Address</th>
                   <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Vulnerablity count</th>
                   <th style="background:#7CB8E2 repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Severity</th>
-                  <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Threat Source</th>
+                  <!-- <th style="background:#7CB8E2  repeat-x scroll center left; color:#fff; padding:5px 15px; text-align:center;">Threat Source</th> -->
                   <tr></tr>
                  </thead>
                  <tbody>
@@ -175,13 +176,13 @@ var something= '';
                             </d>
                         </td>
 
-                        <td>
+<!--                         <td>
                             <d>
                               <div align="center">
                                 <strong  class="Rounded" style="  border-radius:10px 10px 10px 10px; border:solid 3px;color:white; padding:4px; background-color:#FF5B33" >Not Available</strong>
                               </div>
                             </d>
-                        </td>
+                        </td> -->
                       </tr>
 
                       <!-- /First Row -->

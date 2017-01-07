@@ -13,10 +13,16 @@ class CreateTasksTable extends Migration
     public function up()
     {
         Schema::create('tasks', function (Blueprint $table) {
+            
             $table->increments('id');
+
             $table->string('name');
-            $table->enum('phase',['pre-engagement', 'engagement']);
+
+            $table->integer('phase_id')->unsigned();
+            $table->foreign('phase_id')->references('id')->on('phases');
+
             $table->timestamps();
+        
         });
     }
 
@@ -27,6 +33,9 @@ class CreateTasksTable extends Migration
      */
     public function down()
     {
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropForeign('tasks_phase_id_foreign');
+        });        
         Schema::drop('tasks');
     }
 }

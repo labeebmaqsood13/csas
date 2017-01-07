@@ -93,10 +93,10 @@ use App\Client;
 
 // ------------ Nessus routes ----------------- //
 	
-	Route::get('nessus/word','NessusController@word')->name('nessus.word');
-	Route::get('nessus/pdf','NessusController@pdf')->name('nessus.pdf');
-	Route::get('nessus/excel','NessusController@excel')->name('nessus.excel');
-	Route::get('nessus/webpage','NessusController@webpage')->name('nessus.webpage');
+	// Route::get('nessus/word','NessusController@word')->name('nessus.word');
+	// Route::get('nessus/pdf','NessusController@pdf')->name('nessus.pdf');
+	// Route::get('nessus/excel','NessusController@excel')->name('nessus.excel');
+	// Route::get('nessus/webpage','NessusController@webpage')->name('nessus.webpage');
 	Route::post('nessus/upload', 'NessusController@upload')->name('nessus.upload');
 	Route::get('reports', 'NessusController@reports')->name('nessus.reports'); 
 	Route::get('nessus/updated_word','NessusController@updated_word')->name('nessus.updated_word');
@@ -104,11 +104,11 @@ use App\Client;
 
 // --------------- Nmap routes ----------------- //
 	
-	Route::get('nmap/word','NmapController@word')->name('nmap.word');
-	Route::get('nmap/pdf','NmapController@pdf')->name('nmap.pdf');
-	Route::get('nmap/excel','NmapController@excel')->name('nmap.excel');
-	Route::get('nmap/webpage','NmapController@webpage')->name('nmap.webpage');
-	Route::post('nmap/upload', 'NmapController@upload')->name('nmap.upload'); 
+	// Route::get('nmap/word','NmapController@word')->name('nmap.word');
+	// Route::get('nmap/pdf','NmapController@pdf')->name('nmap.pdf');
+	// Route::get('nmap/excel','NmapController@excel')->name('nmap.excel');
+	// Route::get('nmap/webpage','NmapController@webpage')->name('nmap.webpage');
+	// Route::post('nmap/upload', 'NmapController@upload')->name('nmap.upload'); 
 
 
 // --------------- Authentication routes -------------- //

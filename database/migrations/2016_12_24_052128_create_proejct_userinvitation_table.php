@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProjectUserTable extends Migration
+class CreateProejctUserinvitationTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,15 @@ class CreateProjectUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_user', function (Blueprint $table) {
+        Schema::create('project_userinvitation', function (Blueprint $table) {
             $table->increments('id');
+
             $table->integer('project_id')->unsigned();
             $table->foreign('project_id')->references('id')->on('projects');
-            
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
 
-            $table->enum('is_manager', [1,0]);
+            $table->integer('userinvitation_id')->unsigned();
+            $table->foreign('userinvitation_id')->references('id')->on('userinvitations');
+
             $table->timestamps();
         });
     }
@@ -31,7 +31,7 @@ class CreateProjectUserTable extends Migration
      * @return void
      */
     public function down()
-    {
-        Schema::drop('project_user');
+    {      
+        Schema::drop('project_userinvitation');
     }
 }

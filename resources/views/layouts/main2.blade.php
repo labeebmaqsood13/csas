@@ -101,7 +101,7 @@
                     <ul class="nav child_menu">
                       <li><a href="/index_activity">Activity</a></li>
                       <li><a href="/analytics_dashboard">Analytics</a></li>
-                      <li><a href="{{ url('/dashboard') }}" id="abc" onchange="window.location.href = '/dashboard/'">Analysis Dashboard</a></li>
+                      <li><a href="{{ url('/dashboard') }}" id="abc" onclick="window.location.href ='/dashboard'">Analysis Dashboard</a></li>
                         <!--  <li>{{ link_to_action('HomeController@dashboard','Analysis Dashboard', array(null)) }}</li> -->
 
                     </ul>
@@ -138,6 +138,7 @@
                   </li>
                   <li><a><i class="fa fa-bar-chart-o"></i> Generate Reports<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
+                     <li><a href="/reports">Customized Report</a></li>
                      <li><a href="nessus/updated_pdf">Pdf Report</a></li>
                      <li><a href="nessus/updated_word">Word Report</a></li>
                      

@@ -64,7 +64,7 @@ class HomeController extends Controller
             // IF user is assigned that project in project_user tbl or user is a manager 
             if( $user->project()->where('projects.id', $project_id)->where('projects.client_id',$client_id)->exists() || $user->role()->where('name', 'Manager')->count()){
 
-                $projects = $user->project()->where('project_id', $project_id)->where('client_id',$client_id)->first();
+                $projects = Project::where('id',$project_id)->first();
 
                 if($projects->reportfile()->exists()){
 
@@ -139,6 +139,7 @@ class HomeController extends Controller
                         // echo $project->client_id;
                         $clients[] = Client::find($project->client_id);
                     }
+                    
                     $reporthosts = Reporthost::read(1);
                     return view('dashboard_copy',compact('clients','reporthosts'));
                 
@@ -232,7 +233,11 @@ class HomeController extends Controller
 
         $user = Auth::user();
         $pluginid_count = Pluginid::count('id');
-        $projects = $user->project()->get();
+        if($projects = $user->project()->exists()){
+            $projects = $user->project()->get();
+        }else{
+            return \Redirect::action('HomeController@dashboard')->with('message', 'Sorry you cannot upload any resource file as no project currently assigned to you');         
+        }
         return view('file_upload',compact('projects','pluginid_count'));
     
 
@@ -321,6 +326,27 @@ class HomeController extends Controller
     
     public function analytics_dashboard()
     {
+
+        // ------------------- Top Information Row  -------------------- //
+            
+            $user = Auth::user();
+            // Fetching reportfiles by project_id
+            $reportfiles = Reportfile::where('project_id',1)->where('user_id', $user->id)->get();
+            $reportfiles_id = $reportfiles->lists('id');
+
+            $reporthosts = Reporthost::whereIn('reportfile_id', $reportfiles_id)->get();
+            $reporthosts_id = $reporthosts->lists('id');
+            $reporthosts_count = $reporthosts->count();
+            // dd($reporthosts->toArray());
+
+            $open_ports = Reportitem::whereIn('reporthost_id',$reporthosts_id)->count();
+
+            $systems_at_risk= Reportitem::where('risk_factor', 'critical')->groupBy('reporthost_id')->count();
+
+
+
+            $reportitems = Reportitem::whereIn('reporthost_id',$reporthosts_id)->groupBy('port')->distinct('reporthost_id');
+            // dd($reportitems);
 
 
 
@@ -465,7 +491,7 @@ class HomeController extends Controller
 
 
 
-        return view('analytics_dashboard',compact('reportitems_critical', 'reportitems_high', 'reportitems_med', 'reportitems_low', 'top_ten_vuln_count', 'top_ten_vuln_names', 'top_compromised_ip', 'top_compromised_ip_count', 'critical_ips', 'critical_ips_count', 'colors'));
+        return view('analytics_dashboard',compact('reportitems_critical', 'reportitems_high', 'reportitems_med', 'reportitems_low', 'top_ten_vuln_count', 'top_ten_vuln_names', 'top_compromised_ip', 'top_compromised_ip_count', 'critical_ips', 'critical_ips_count', 'colors', 'open_ports' ,'reporthosts_count', 'systems_at_risk'));
     
     }
 

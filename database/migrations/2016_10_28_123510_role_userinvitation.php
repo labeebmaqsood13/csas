@@ -13,12 +13,15 @@ class RoleUserinvitation extends Migration
     public function up()
     {
         Schema::create('role_userinvitation', function (Blueprint $table) {
+            
             $table->increments('id');
+
             $table->integer('role_id')->unsigned();
             $table->foreign('role_id')->references('id')->on('roles');
             
             $table->integer('userinvitation_id')->unsigned();
             $table->foreign('userinvitation_id')->references('id')->on('userinvitations');
+            
             $table->timestamps();
         });
     }

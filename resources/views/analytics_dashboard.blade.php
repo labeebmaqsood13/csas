@@ -8,6 +8,12 @@
 
 @section('scripts')
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+
+
+
+
 
 <style type="text/css">
     .bs-example{
@@ -103,7 +109,7 @@
             <div class="col-md-4 col-sm-4 col-lg-4 ">
     
               <div class="ccms_form_element cfdiv_custom" id="style_container_div">
-                <label>Client:</label><select size="1" id="beerStyle"  type="select" name="style">
+                <label>Client:</label><select class="dropdown"  size="1" id="beerStyle"  type="select" name="style">
                 <option value="">-Choose A Client-</option>
                 <option value="Ale">Pepsi /</option>
                 <option value="Lager">Ebryx</option>
@@ -115,7 +121,7 @@
 
                 <div id="Ale"  class="style-sub-1"  style="display: none;" name="stylesub1">
                   <label>Project</label>
-                    <select>
+                    <select class="selectpicker show-menu-arrow">
                       <option value="">-Choose An Project-</option> 
                       <option value="re">1 xyzyz</option>
                       <option value="re">2 xyzxyz</option>
@@ -156,16 +162,20 @@
 
                <div>
                <div class="progress-bar progress-bar-success" role="progressbar" style="width:25%">
-               Open Ports <br /> 90
+               Open Ports <br /> {{ $open_ports }}
                </div>
                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:25%">
-               Vulnerabilities <br /> 22
+               Vulnerabilities <br /> {{ $open_ports }}
+               <!-- This can be count of plugin id's tested for possible vulnerbaility -->
+               <!-- Possible Vulnerabilities -->
                </div>
                <div class="progress-bar progress-bar-danger" role="progressbar" style="width:25%">
-               Active Systems<br /> 212
+               Active Systems<br /> {{ $reporthosts_count }}
                </div>
+<!--                <div class="progress-bar progress-bar-info" role="progressbar" style="width:25%">
+               Systems compromised <br />18 -->
                <div class="progress-bar progress-bar-info" role="progressbar" style="width:25%">
-               Systems compromised <br />18
+               Systems at Critical or Highest Risk <br /> {{ $systems_at_risk }}
                </div>
                </div>
 

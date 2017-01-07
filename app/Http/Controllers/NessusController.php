@@ -14,6 +14,8 @@ use App\User;
 
 use App\Role;
 
+use App\Phase;
+
 use App\Task;
 
 use App\Reportfile;
@@ -58,47 +60,94 @@ class NessusController extends Controller
             'password'  => 'something',
             ]);
 
-        Role::create([
-            'name' => 'Manager',
-            ]);
-
-        Role::create([
-            'name' => 'Analyst',
-            ]);
 
         Role::create([
             'name' => 'Client Representative',
             ]);
 
+        $phase_one = Phase::create([
+            'name' => 'Pre-engagement',
+            'is_default' => '1'
+            ]);
         Task::create([
-            'name' => 'Scope',
-            'phase' => 'pre-engagement'
+            'name' => 'First Task',
+            'phase_id' => $phase_one->id,
+            ]);
+        Task::create([
+            'name' => 'Second Task',
+            'phase_id' => $phase_one->id,
             ]);
 
+        $phase_two = Phase::create([
+            'name' => 'Engagement',
+            'is_default' => '1'
+            ]);
         Task::create([
-            'name' => 'Documentation',
-            'phase' => 'pre-engagement'
+            'name' => 'First Task',
+            'phase_id' => $phase_two->id,
+            ]);
+        Task::create([
+            'name' => 'Second Task',
+            'phase_id' => $phase_two->id,
             ]);
 
+
+        $phase_three = Phase::create([
+            'name' => 'Post-engagement',
+            'is_default' => '1'
+            ]);
         Task::create([
-            'name' => 'Arp Scan',
-            'phase' => 'pre-engagement'
+            'name' => 'First Task',
+            'phase_id' => $phase_three->id,
+            ]);
+        Task::create([
+            'name' => 'Second Task',
+            'phase_id' => $phase_three->id,
             ]);
 
+
+        $phase_four = Phase::create([
+            'name' => 'Reconnaisance',
+            'is_default' => '1'
+            ]);
         Task::create([
-            'name' => 'Idle scanning',
-            'phase' => 'engagement'
+            'name' => 'First Task',
+            'phase_id' => $phase_four->id,
+            ]);
+        Task::create([
+            'name' => 'Second Task',
+            'phase_id' => $phase_four->id,
             ]);
 
-        Task::create([
-            'name' => 'OS detection',
-            'phase' => 'engagement'
-            ]);
+        // Task::create([
+        //     'name' => 'Scope',
+        //     'phase' => 'pre-engagement'
+        //     ]);
 
-        Task::create([
-            'name' => 'Services',
-            'phase' => 'engagement'
-            ]);
+        // Task::create([
+        //     'name' => 'Documentation',
+        //     'phase' => 'pre-engagement'
+        //     ]);
+
+        // Task::create([
+        //     'name' => 'Arp Scan',
+        //     'phase' => 'pre-engagement'
+        //     ]);
+
+        // Task::create([
+        //     'name' => 'Idle scanning',
+        //     'phase' => 'engagement'
+        //     ]);
+
+        // Task::create([
+        //     'name' => 'OS detection',
+        //     'phase' => 'engagement'
+        //     ]);
+
+        // Task::create([
+        //     'name' => 'Services',
+        //     'phase' => 'engagement'
+        //     ]);
 
     }
 
@@ -606,6 +655,8 @@ class NessusController extends Controller
 
                 $section->addText('TABLE 1: List of most vulnerable assets in the client’s network',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
                 $section->addTextBreak(1);
+
+
                 $table =$section->addTable();
                 $table->addRow(900);
                 $table->addCell(1000)->addText('Sr.', array('color'=>'006699'));
@@ -614,16 +665,16 @@ class NessusController extends Controller
                 $table->addCell(3500)->addText('Asset Type*', array('color'=>'006699'));
                 $table->addCell(2500)->addText('Count', array('color'=>'006699'));
 
-                $table_1 = $section->addTable();
+                // $table_1 = $section->addTable();
 
                 $j = 1;
                 foreach($most_vulnerable_assets as $host_property){
-                    $table_1->addRow(900);
-                    $table_1->addCell(1000)->addText($j);
-                    $table_1->addCell(2500)->addText($host_property['ip']);
-                    $table_1->addCell(3000)->addText($host_property['mac']);
-                    $table_1->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
-                    $table_1->addCell(2500)->addText('        '.$host_property['count']);
+                    $table->addRow(900);
+                    $table->addCell(1000)->addText($j);
+                    $table->addCell(2500)->addText($host_property['ip']);
+                    $table->addCell(3000)->addText($host_property['mac']);
+                    $table->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
+                    $table->addCell(2500)->addText('        '.$host_property['count']);
 
                     $j = $j+1;
 

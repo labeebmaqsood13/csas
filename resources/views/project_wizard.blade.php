@@ -11,9 +11,20 @@
 
 
 @section('scripts')
-    <link href="{{URL::asset('build/css/create_project.min.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('build/css/datepicker.css')}}">
-    <script type="text/javascript">
+  <!-- Bootstrap select path given -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+
+  <!-- Sweet alerts path given -->
+  <script src="{{URL::asset('sweet_alerts/dist/sweetalert.min.js')}}"></script>
+  <link rel="stylesheet" type="text/css" href="{{URL::asset('sweet_alerts/dist/sweetalert.css')}}">
+
+
+
+  <!-- Custom css paths given -->
+  <link href="{{URL::asset('build/css/create_project.min.css')}}" rel="stylesheet">
+  <link href="{{URL::asset('build/css/datepicker.css')}}">
+  <script type="text/javascript">
 
     //   function post_values(){ console.log('here');
     //     // $.ajaxSetup({
@@ -84,6 +95,78 @@
 
 
     </script>
+    <script type="text/javascript">
+
+
+
+      // function post_values(){
+      
+      // alert('high');
+      //   $('#client_name, #project_name, #subnet_from, #subnet_to, #location, #due_date, #description').bind('keyup', function() {
+      //       if(allFilled()) $('#register').removeAttr('disabled');
+      //   });
+
+      //   function allFilled() {
+      //       var filled = true;
+      //       $('#myform > input').each(function() {
+      //           if($(this).val() == '') filled = false;
+      //       });
+      //       return filled;
+      //   }
+      // }
+
+      function invite_in_project(){
+        
+        var roles = [];
+        var email = document.getElementById('email').value;
+        $('#email').val('');
+        
+        
+        $("input[name='roles[]']").each( function () {
+          if($(this).prop('checked') == true){
+            roles.push($(this).val());
+            $(this).prop('checked', false);
+            // console.log( $(this).val() );
+          }
+        });
+
+        var project_id = '1';
+
+        console.log(email);
+        console.log(roles);
+        console.log(project_id);
+
+        $.ajax({
+            url: '/invite_user',
+            method: 'POST',
+            dataType: 'JSON',
+            data:  {
+            'email': email,
+            'roles': roles,
+            'project_id': project_id
+            },
+            success: function(data) {
+              if(data=='0'){
+                sweetAlert("Oops...", "This email address has already been invited!", "error");
+              }
+              if(data=='1'){
+                swal("Success!", "The invitation has been sent!", "success");
+              }
+              
+            }
+        });
+
+      }  
+
+    </script>
+
+    <style type="text/css">
+      .bootstrap-select>.dropdown-toggle.bs-placeholder, .bootstrap-select>.dropdown-toggle.bs-placeholder:active, .bootstrap-select>.dropdown-toggle.bs-placeholder:focus, .bootstrap-select>.dropdown-toggle.bs-placeholder:hover{
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            background-color: #fff;
+      }
+
+    </style>
 @endsection
 
 @section('scripts_create')
@@ -91,7 +174,7 @@
 <script type="text/javascript">
   function new_task(){
 
-('#new_task_Modal').modal('show');
+    ('#new_task_Modal').modal('show');
 
   }
 </script>
@@ -190,12 +273,14 @@
         <div style="min-height:750px;">
           <div>
 
-                     <div class="page-title">
-                  <div class="title_left">
-                    <h4>Start Creating New Project</h4>
+                <div class="page-title">
+                  <!-- <div class="title_left"> -->
+                  <div class="text-center">
+                    <!-- <h4>Start Creating New Project</h4> -->
+                    <h3 style="line-height: inherit;">Project Wizard</h3>
                   </div>
 
-                  <div class="title_right">
+                  <!-- <div class="title_right">
                     <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                       <div class="input-group">
                         <input type="text" class="form-control" placeholder="Search for...">
@@ -204,28 +289,9 @@
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
-                    <!-- New task Modal start-->
-                     <div id="#new_task_Modal" class="modal fade">  <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                          <h4 class="modal-title" id="myModalLabel">Please enter the name of new task</h4>
-                        </div>
-                        <div class="modal-body">
-                          <strong>Project Created</strong>
-                        </div>
-                        <div class="modal-footer">
-                          <a   href="/users" type="button" class="btn btn-secondary">Close</a>
-                         
-                        </div>
-                       </div>
-                      </div>
-                     </div>
-                    <!-- Modal close-->
+                    
 
                     <!-- Success Modal start-->
                      <div id="success" class="modal fade">  <div class="modal-dialog" role="document">
@@ -248,112 +314,9 @@
                      </div>
                     <!-- Modal close-->
 
-                    
-                           <!-- Modal start-->
-                    <div class="bs-example">
- 
-              <div id="myModal" class="modal fade">
-                  <div class="modal-dialog">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                             <h4 class="modal-title">INVITE USER</h4>
-                          </div>
-                          {!! Form::open(array('method' => 'POST', 'route' => 'clients.create','class' => 'form-horizontal form-label-left')) !!}
-                          <div class="modal-body">
-                            <!-- <form class="form-horizontal form-label-left"> -->
-                              <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-3">Client Name</label>
-                                <div class="col-md-9 col-sm-9 col-xs-9">
-                                   <input type="txt" style="width: 70%;" name="name" class="form-horizontal form-control" placeholder="Client Name">   
-                                </div>
-                              </div>
-                            <!-- </form> -->
-                          </div>
-                          <div class="modal-footer">
-                            <b type="button" class="btn btn-default" data-dismiss="modal">Close</b>
-                            <!-- <b type="submit" class="btn btn-info" data-toggle="modal" data-target="#myMod" data-dismiss="modal">Send Invite</b> -->
-                            <input type="submit" value="Send Invite" class="btn btn-info">
-                          </div>
-                          {!! Form::close() !!}  
-                      </div>
-                  </div>
-                </div>
-            </div>
 
-
-                <div>
- 
-              <div id="mod" class="modal fade" >
-                  <div class="modal-dialog">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                             
-                              <h4 class="modal-title">ADD NOTE</h4>
-                          </div>
-                          <div class="modal-body">
-                              <form class="form-horizontal form-label-left">
-
-                               
-                                <div class="form-group">
-                                 <label class="control-label col-md-3 col-sm-3 col-xs-3">Task Priority</label>
-                                  <div class="col-md-9 col-sm-9 col-xs-9">
-                                            <select name="highest_qualification" id="highest_qualification" class="dropselectsec">
-                                        <option value=""> Select Priority</option>
-                                        <option value="1" style="color:red;">High</option>
-                                        <option value="2" style="color:blue ;">Medium</option>
-                                        <option value="3" style="color:lightgreen;">Low</option>
-                                       
-                                    </select>
-                                  </div>
-                                  <div style="margin-top:4px;">
-                                  <label class="control-label col-md-3 col-sm-3 col-xs-3">Note</label>
-                                  <div class="col-md-9 col-sm-9 col-xs-9">
-                                            <textarea class="area"></textarea>
-                                   
-                                  </div>
-                                  </div>
-                                </div>
-                                <div class="form-group">
-                                  
-                               </form>
-                              
-                          </div>
-
-                          <div >
-                              <b type="button" class="btn btn-primary" data-dismiss="modal">Close / Done</b>
-                              
-                              
-                          </div>
-                      </div>
-                  </div>
-                </div>
-            </div>
-
-
-                    <!-- Modal End-->
 
            
-                    <!-- Modal start-->
-
-           <div id="myMod" class="modal fade">  <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-              </div>
-              <div class="modal-body">
-                <strong>Invitation sent !!</strong>
-              </div>
-              <div class="modal-footer">
-                <a href="create_project.html" type="button" class="btn btn-secondary">Close</a>
-               
-              </div>
-             </div>
-            </div>
-           </div>
-
             
                 <!-- Table Start-->
                 <div class="container">
@@ -395,21 +358,84 @@
             {!! Form::open(array('url'=>'create_project_and_allocate_tasks','method'=>'POST', 'id'=>'myform')) !!}
                 <div class="tab-content">
                     <div class="tab-pane active" role="tabpanel" id="step1">
-                        <h4 class="text-center">Entry</h4>
+                        <!-- <h4 class="text-center">Entry</h4> -->
+                        <br><br>
                           <div  style="padding-right: 130px;">
+
+                            <!-- <a href="#"><u>Invite User in Project</u></a> -->
+                            <a  href="#inviteModal" class="btn btn-primary" data-toggle="modal">Invite User in Project</a>
+
+
+ 
+          <!-- Invite Modal start-->
+ 
+              <div id="inviteModal" class="modal fade">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h4 class="modal-title">Invite User</h4>
+                          </div>
+                          
+                          {!! Form::open(array('method' => 'POST', 'url' => 'invite_user' )) !!}
+                          <div class="modal-body">
+                               
+                                <div class="form-group row">
+                                  <label class="control-label col-md-3 col-sm-3 col-xs-3 text-left">Email</label>
+                                  <div class="col-md-9 col-sm-9 col-xs-9">
+                                      <input type="email" name="email" class="form-control" id="email"></input>
+                                    <br>
+                                  </div>
+                                </div>
+                                
+                                <div class="form-group row">
+                                  <label class="control-label col-md-3 col-sm-3 col-xs-3 text-left">Role</label>
+                                  <div class="col-md-9 col-sm-9 col-xs-9">
+                                      
+                                      @foreach($roles as $role)
+                                        <input type="checkbox" name="roles[]" value="{{$role->id}}">   <label>  {{$role->name}} </label><br />
+                                      @endforeach
+
+                                    <a href="/roles" class="pagination"><u>Create a new Role</u></a>
+                                    <br>Project is 1
+                                  </div>
+                                </div>
+
+                              
+                          </div>
+
+                          <div class="modal-footer">
+                              <b type="button" class="btn btn-default" data-dismiss="modal">Close</b>
+                              <!-- <button type="submit" class="btn btn-info btn-sm pull-left">Send Invite</a> -->
+                              <input type="button" value="Send Invite" class="btn btn-info" onclick="invite_in_project()" data-dismiss="modal">
+                          </div>
+                          <!-- Modal Footer End -->
+                          {!! Form::close() !!}
+                    </div>
+                  </div>
+                </div>
+
+          <!-- Invitation Modal End-->
+
+
+
 
                              <div class="row mar_ned">
                                 <div class="col-md-4 col-xs-3">
                                     <p align="right" style="margin-top:4px"><strong>Choose Client</strong></p>
                                 </div>
-                                <div class="col-md-8 col-xs-9">
-                                    <select name="client_name" id="client_name" class="dropselectsec">
+                                <div class="col-md-5 col-xs-6" style="padding-left: 20px;">
+                                    <select name="client_name" id="client_name" class="selectpicker form-control" title="Choose a client" style="">
+                                          <!-- <option>Choose a client</option> -->
+                                          <!-- <option hidden>Choose a client</option> -->
                                           @foreach($clients as $key => $client)
                                             <option value="{{$client->id}}" name="client_name">{{ $client->name }}</option>
                                           @endforeach
                                     </select>
 
-                     <a href="#myModal" class="glyphicon glyphicon-plus" data-toggle="modal">Create</a>
+                     
+                               </div>
+                               <div class="col-md-1" style="padding-top: 5px;">
+                                <a href="#myModal" class="glyphicon glyphicon-plus" data-toggle="modal">Create</a>
                                </div>
                             </div>
 
@@ -512,7 +538,7 @@
 
                        
                         <ul class="list-inline pull-right">
-                            <li><input type="button" class="btn btn-primary next-step" onclick="post_values()" value="Save and Continue"></li>
+                            <li><input type="button" class="btn btn-primary next-step" value="Continue"></li>
                         </ul>
                     </div>
                     </div>
@@ -522,87 +548,59 @@
 
 
                     <div class="tab-pane" role="tabpanel" id="step2">
-                        <h4>Assign Tasks</h4>
-                        <div style="padding: 6px 10px;border: 1px solid #ccc;">
+                        <!-- <h4>Add Members</h4> -->
+                        <br><br>
+                        <div style="padding: 6px 10px 3px;border: 1px solid #ccc; margin-left: 20px; margin-right: 20px;">
 
                        <div class="clearfix"> </div>
                               
-                              <div class="row mar_ned">
-                                <div class="col-md-2">
-
-                                    <h5 class="text-center"><u>Tasks</u></h5>
-                                    <!-- <h5 class="text-center"><u>Pre-Engagement</u></h5> -->
+                            <div class="row mar_ned">
+                                <div class="col-md-6 col-md-offset-3">
+                                <!-- <div class="col-md-12"> -->
+                                  <br>  
+                                  <h4 class="text-center"><u>Add Members</u></h4>
+                                  <br>
+                                  <select name="users[]" class="selectpicker text-center form-control" multiple>
+                                    @foreach($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                  </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <h5 style="margin-left:68px"><u>Member</u></h5>
-                                </div>
-                                <div class="col-md-2">
-                                    <h5 style="margin-left:80px"><u>Due Date</u></h5>
-                                </div>
-                                <div class="col-md-3">
-                                    <h5 align="center" style="margin-left:150px"><u>Optional Action</u></h5>
-                                </div>
-                            </div>    
+                            </div> <br><br>    
                         
 
-                             
+                        <!-- <a id="#new_task_modal" onclick="new_task()">    
+                          <h5><span class="glyphicon glyphicon-plus"></span>&nbsp;<u>Invite User</u></h5>                             
+                        </a>   -->
 
 
-                            @foreach($tasks as $task)
-                              <div class="row mar_ned">
-                                <div class="col-md-2">
-                                    <h5 align="center"><strong>{{$task->name}}</strong></h5>
-                                    <input type="hidden" name="task[{{$task->id}}]" value="{{$task->id}}">
-                                </div>
-                               
-                                <div class="col-md-3">
-                                    <select align="center" name="member[{{$task->id}}]" id="member" class="dropselectsec1 form-control">
-                                      <option value="0">Choose Member</option>
-                                      @foreach($users as $user)
-                                        <option value="{{$user->id}}">{{$user->name}}</option>
-                                      @endforeach
-                                    </select>
-                                </div>
-                                 <div class="col-md-3 form-group form-horizontal" >
-                                    <p align="center">
-                                 <input class="datepicker form-control" name="due_date_task[{{$task->id}}]" id="due_date_task" placeholder="MM/DD/YYYY" data-date-format="mm/dd/yyyy">
-                                    </p>
-                                </div>
-                                <div class="col-md-3">
-                                     <!-- <a  href="#mod" class="btn btn btn-default" data-toggle="modal">Add note</a> -->  
-                                     <textarea rows="2" class="form-control" placeholder="Optional Note/Description" name="description_task[{{$task->id}}]" id="description"></textarea>
-                                </div>
-                               </div>    
-                        
-                            @endforeach
-
-                        <a id="#new_task_modal" onclick="new_task()">    
-                          <span class="pull-left glyphicon glyphicon-plus">
-                          </span>
-                          <h5>&nbsp;Create a new task</h5>                             
-                        </a>  
-
-
-                            <!-- Enter here deleted code -->
-                        
-                        <div style="margin-top:5px">
-                        <ul class="list-inline pull-right">
+                        <div style="margin-top:13px">
+                        <ul class="list-inline pull-right" style="margin-top: 32px;">
                             <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
-                            <li><button type="button" class="btn btn-primary next-step">continue</button></li>
+                            <li><button type="button" class="btn btn-primary next-step" onclick="update_summary()">continue</button></li>
                         </ul>
                         </div>
                     </div>
                     </div>
 
+
+
+
+
+
+
+
+
                     <div class="tab-pane" role="tabpanel" id="step3">
-                        <h3>Summary</h3><br />
-                              <div style="border: 1px solid; padding: 25px; margin: 25px;">
+                        <!-- <h3>Summary</h3><br /> -->
+                        <br>
+                              <div style="border: 1px solid #ccc; padding: 25px; margin: 25px;">
                               <div class="row mar_ned">
                                 <div class="col-md-3">
                                   <strong style="color: black"> Client</strong>
                                 </div>
                                 <div class="col-md-3">
-                                   <p align="center">Ebryx </p>
+                                   <p align="center" id="client"></p>
                                 </div>
                                 
                             </div>    
@@ -662,10 +660,10 @@
                                 
                             </div> </div>   
 
-                            <ul class="list-inline pull-right">
+                            <ul class="list-inline pull-right" style="margin-right: 18px;">
                                 <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
 
-                                <li><input type="submit" value="Done" class="btn btn-primary btn-info-full"></li>
+                                <li><input type="submit" value="Done" id="register" class="btn btn-primary btn-info-full"></li>
 
                                 <!-- <li><a href="/index_activity" type="button" class="btn btn-primary btn-info-full ">Done</a></li> -->
                             </ul>

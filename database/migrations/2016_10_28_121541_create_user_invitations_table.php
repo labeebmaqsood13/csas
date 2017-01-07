@@ -15,7 +15,7 @@ class CreateUserInvitationsTable extends Migration
         Schema::create('userinvitations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code')->index();
-            $table->string('email');
+            $table->string('email')->unique();
             $table->enum('status', ['pending', 'successful','canceled','expired']);
             $table->datetime('valid_till');
             $table->timestamps();

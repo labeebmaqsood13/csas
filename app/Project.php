@@ -24,4 +24,13 @@ class Project extends Model
     public function reportfile(){
         return $this->hasMany('App\Reportfile');
     }
+    
+    public function sop(){
+        return $this->hasMany('App\Sop');
+    }
+
+    public function userinvitation(){
+        return $this->belongsToMany('App\Userinvitation');
+    }
+
 }

@@ -23,5 +23,11 @@ class Userinvitation extends Model
         return $this->belongsToMany('App\Role');
     
     }
+
+    public function project(){
+
+        return $this->belongsToMany('App\Project');
+    
+    }
     
 }

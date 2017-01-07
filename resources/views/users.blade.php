@@ -128,7 +128,7 @@
 				                              	<input type="checkbox" name="roles[]" value="{{$role->id}}">   <label>  {{$role->name}} </label><br />
 				                              @endforeach
 
-				                            <a href="/roles" class="pagination">Create a new Role</a>
+				                            <a href="/roles" class="pagination"><u>Create a new Role</u></a>
 
 					                         
 					                        </div>
