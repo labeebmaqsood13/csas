@@ -7,16 +7,24 @@ use Illuminate\Http\Response;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
+
 use App\Reporthost;
 use App\Reportitem;
-
+use App\Assignment;
 use App\User;
 use App\Role;
 use App\Pluginid;
 use App\Client;
 use App\Project;
 use App\Test;
+use App\Phase;
+use App\Task;
+use App\Sop;
 use App\Reportfile;
+use Input;
+use Schema;
+use Redirect;
+
 
 use Session;
 use Auth;
@@ -244,36 +252,13 @@ class HomeController extends Controller
     }
 
 
-
-    public function update(Request $request, $id)
-    {
-        $test = Dummy::find($id);
-         Dummy::create([
-            'name' => 'faisal',
-            ]);
-        $column_name = Input::get('name');
-       
-        
-        if( Input::has('name')) {
-            $test = Dummy::select()
-                ->where('id', '=', $id)
-                ->update([$column_name]);
-            return response()->json([ 'code'=>200], 200);
-        }
-        
-        return response()->json([ 'error'=> 400, 'message'=> 'Not enought params' ], 400);
-    }  
-
-
-
-
     public function permissions(){
 
         return view('permissions');
 
     }
 
- public function roles()
+    public function roles()
     {
         // return response()->view('errors.503');
         // abort(403, 'Unauthorized action.');
@@ -354,22 +339,26 @@ class HomeController extends Controller
 
             $user = Auth::user();
             // Fetching reportfiles by project_id
-            $reportfiles = Reportfile::where('project_id',1)->where('user_id', $user->id)->get();
 
-            // Fetching all reporthost_id in all those reportfiles fetched above
-            foreach($reportfiles as $reportfile){
-                $reporthosts = $reportfile->reporthost()->get();
-                foreach($reporthosts as $reporthost){   
-                    $reporthost_id[] = $reporthost->id;
-                }  
-            }
-            // dd($reporthost_id);
+            if($reportfiles = Reportfile::where('project_id',1)->where('user_id', $user->id)->exists()){
+                $reportfiles = Reportfile::where('project_id',1)->where('user_id', $user->id)->get();
 
-            $reportitems_critical = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','critical')->count();
-            $reportitems_high = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','high')->count();
-            $reportitems_med = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','medium')->count();
-            $reportitems_low = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','low')->count();
+                // Fetching all reporthost_id in all those reportfiles fetched above
+                foreach($reportfiles as $reportfile){
+                    $reporthosts = $reportfile->reporthost()->get();
+                    foreach($reporthosts as $reporthost){   
+                        $reporthost_id[] = $reporthost->id;
+                    }  
+                }
+                // dd($reporthost_id);
 
+                $reportitems_critical = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','critical')->count();
+                $reportitems_high = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','high')->count();
+                $reportitems_med = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','medium')->count();
+                $reportitems_low = Reportitem::whereIn('reporthost_id', array_flatten([$reporthost_id]))->where('risk_factor','low')->count();
+            }else{
+                return 'No file uploaded in this project';
+            }    
 
         // ------------ Top 10 (Potential) Vulnerabilities & their count in descending order ------------ //
 
@@ -495,24 +484,437 @@ class HomeController extends Controller
     
     }
 
-    public function projects_tasks()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* -------------------- SOP Controller-------------------- */
+
+
+
+    public function edit_clients_projects($id=null)
     {
-         $test = Test::select()
-            ->orderBy('id')
-            ->get()
-            ;
+        if($id)
+        {
+           // return "id is here";
+        $projects=Project::where('client_id', '=', $id)->get();
+        $pid=$projects->lists('id');
         
-        // $test_columns = Schema::getColumnListing('tests');
-        $test_model = new Test();
+        //return $pid;
+        $member=array();
+        foreach($pid as $project){
+         $member[]= Project::find($project)->user()->wherePivot('project_id', $project)->first(); 
+       
+        }
+        $m=$member[0];
+      
+    
+        $clients = Client::all();
+        $client = Client::where('id',$id)->get();
+
+        $client_name= $client->lists('name');
+        $client_id= $client->lists('id');
+
+        $iamzeo=1;
+
+        $link = "/edit_clients_projects/".$id;
+                 
+        return view('edit_clients_projects',compact('projects','iamzeo','client_name','m','client_id','clients', 'link','id'));
+
+
+        }
+        else{   
+            
+            $iamzeo=0;
+            $clients = Client::all();
+            $link="/edit_clients_projects";
+            return view('edit_clients_projects',compact('clients','iamzeo','link'));
+            }
+        }
+
+        public function updatee(Request $request, $id)
+        {
+            $test = Client::find($id);
+            // $column_name = Input::get('name');
+            // $column_value = Input::get('value');
+
+            $column_name = $request->input('name');
+            $column_value = $request->input('value');
+            
+            
+            if( $request->has('name') && $request->has('value')) {
+                $test = Client::select()
+                    ->where('id', '=', $id)
+                    ->update([$column_name => $column_value]);
+        return response()->json([ 'code'=>200], 200);
+        }
+        
+        return response()->json([ 'error'=> 400, 'message'=> 'Not enought params' ], 400);
+    }
+
+
+
+    public function projects_tasks($id=null)
+    {
+       
+
+
+        if($id){
+
+            
+         $link = "/projects_tasks/".$id;
+
+        $proj_sop=Sop::select()->where('project_id',$id)->get();
+        
+        $proj_sop_phase=$proj_sop->lists('phase_id');
+
+       
+        $phase=array();
+        foreach($proj_sop_phase as $pj){    
+        $phase[] =Phase::select()
+            ->where('id',$pj)
+            ->first();
+        }
+    
+          
+
+        $test=array();
+        foreach($proj_sop_phase as $pj){    
+        $test[] =Task::select()
+            ->where('phase_id',$pj)
+            ->get();
+        }
+
+        $testt= array();
+     
+        $i=0;
+        $r=0;
+
+        for($i;$i<count($test);$i=$i+1  ){
+            
+            foreach($test[$i] as $key =>$value){
+
+                $testt[$r]=$test[$i][$key];
+                $r=$r+1;
+            }
+        } 
+        
+        $idi=$id;
+        $member= Project::find($idi)->user()->wherePivot('project_id', $idi)->get();  
+        $names = $member->lists('name');
+        $id=$member->lists('id');
+
+        $is_manger= Project::find($idi)->user()->wherePivot('is_manager', '1')->get();  
+        $is_manager=$is_manger->lists('id');
+        $user = User::whereNotIn('id', $id)->get();
+        $test_model = new Task();
         $fillable_columns = $test_model->getFillable();
+        
         foreach ($fillable_columns as $key => $value) {
             $test_columns[$value] = $value;
         }
         
-        return view('projects_tasks')
-            ->with('test', $test)
+        $assign=Assignment::all();
+        $pproject=Project::select()->where('id',$idi)->get();
+
+        $allproject=Project::all();
+
+        $users = User::orderBy('id','DESC')->paginate(5);
+        //return $users;
+        $roles = Role::all();
+        
+        $userId = Auth::id();
+        //return $userId;
+        $logedin_project= User::find($userId)->project()->wherePivot('user_id', $userId)->get();
+        $p=$logedin_project->lists('pivot');
+          $p=$p->lists('is_manager');
+        
+        $mytask=Assignment::select('task_id')->where('user_id',$userId)->where('project_id',$idi)->get();
+         $chekedtask=Assignment::select('task_id')->where('status','completed')->where('project_id',$idi)->get();
+         $chekedtas=Assignment::select('task_id')->where('status','completed')->where('project_id',$idi)->count();
+         if($chekedtas==0){
+           if($chekedtask->isEmpty()){
+           $chekedtask=['task_id'=>-1];
+            $emptty=0;}
+         }
+         
+        $idd=$mytask->lists('task_id');
+        $idp= Task::select('phase_id')->whereIn('id', $idd)->groupby('phase_id')->get();
+    
+        $iam=1;
+        return view('projects_tasks',compact('users','roles','iam','link','mytask','idd','idp','chekedtask'))
+            ->with('loggedin_project',$logedin_project)
+            ->with('allprojects',$allproject)
+            ->with('pproject',$pproject)
+            ->with('test', $testt)
             ->with('test_columns', $test_columns)
+            ->with('names',$names)
+            ->with('user',$user)
+            ->with('id',$id)
+            ->with('member',$member)
+            ->with('phase',$phase)
+            ->with('assign',$assign)
+            ->with('is_manager',$p)
         ;
+            }
+
+        else {
+        $iam=0;
+        $allproject=Project::all();
+       $allproject=$allproject->lists("id");
+        $page=array();
+        $percentage=array();
+        $percent = array();
+        $o=0;
+        foreach($allproject as $project)
+        {
+
+         $page[]=Assignment::select('project_id')->where('status','completed')->where('project_id',$project)->groupby('project_id','status')->count();
+            $percentage[]=$cbh=Assignment::select('project_id')->where('project_id',$project)->groupby('project_id')->count();
+            // var_dump($percentage);
+            // echo '<br>';
+            if($cbh != 0){
+
+                  $percent[]=$page[$o]/$percentage[$o]*100;
+            }
+            elseif($cbh == 0){
+                $percent[] = 0;
+            }
+                  $o=$o+1;
+       
+        }
+            
+       // die();
+        $users = User::orderBy('id','DESC')->paginate(5);
+        $roles = Role::all();
+        $userId = Auth::id();
+        $link = "/projects_tasks";
+        $logedin_project= User::find($userId)->project()->wherePivot('user_id', $userId)->get(); 
+        
+       
+
+         return view('projects_tasks',compact('users','roles','iam','link','percent'))
+                    ->with('loggedin_project',$logedin_project)
+                    ->with('allprojects',$allproject)
+
+                  
+                ;
+
+
+        }
+
     }
+
+     public function delete_member($id,$pr)
+    
+    {
+        $member = Project::find($pr)->user()->wherePivot('user_id', $id)->detach(); 
+    
+        return \Redirect::route('projects_tasks')->with('message', 'Success! task Deleted');   
+    }
+
+    public function user_add(Request $request)
+    {
+
+  $user = User::find($request->x);
+        $project=$request->y;
+      $user_roles = $user->role()->where('user_id', $request->x)->get();
+                foreach($user_roles as $user_role){
+                    if($user_role->name == 'Manager'){
+                         $s= User::find($request->x)->project()->attach($project,['is_manager' => '1']);
+
+
+                    }
+                    else {
+                        $s= User::find($request->x)->project()->attach($project,['is_manager' => '0']);
+
+                    }}
+ 
+      
+
+     
+        return response()->json($s);
+            // return \Redirect::route('projects_tasks')->with('message', 'Success! task Deleted'); 
+    }
+        
+    
+
+    
+    public function create_task_sop(Request $request){
+          
+        $task = Task::create([
+            'name' => $request->x,
+            'phase_id'=>$request->y,
+            ]);
+
+      
+
+
+        return response()->json($task);
+
+    }
+
+    public function create_task_sop_custom(Request $request){
+          
+        $task = Task::create([
+            'name' => $request->x,
+            'phase_id'=>$request->y,
+            ]);
+
+      
+
+
+        return response()->json($task);
+
+    }    
+    public function create_phase_sop(Request $request){
+          $req=0;
+        $task = Phase::create([
+            'name' => $request->x,
+            'is_default' => $req,
+        ]);
+
+
+        $m= Phase::select('id')->where('name',$request->x)->get();
+        $m=$m->lists('id');
+        $s=$request->projectid;
+
+        Sop::create([
+            'phase_id'=> $m['0'],
+            'project_id'=>$s,
+            ]);
+
+      
+
+
+        return response()->json($task);
+
+    }  
+     public function create_phase_sop_custom(Request $request){
+             $req=1;
+        $task = Phase::create([
+            'name' => $request->x,
+             'is_default' => $req,
+            ]);
+
+      
+
+
+        return response()->json($task);
+
+    }  
+     public function assign_member(Request $request){
+          
+        $task = Assignment::create([
+            'user_id' => $request->membr,
+            'task_id' => $request->taskid,
+            'project_id' => $request->projectid,
+            'due_date' => $request->dat,
+            
+            ]);
+
+      
+
+           return $request->membr;
+        return response()->json($task);
+
+    } 
+
+    public function delete_task($id,$x)
+    {
+        $task = Task::find($id);
+        $assignment=Assignment::select()->where('task_id',$id)->delete();
+        $task->delete();
+        if($x==0){
+        return \Redirect::route('sop')->with('message', 'Success! task Deleted');   
+    }
+
+         return \Redirect::route('projects_tasks');   
+    }
+
+    public function delete_phase($id)
+    {
+
+
+        $phase = Phase::find($id);
+
+        $task = Task::select()->where('phase_id',$id)->get();
+         $idd=$task->lists('id');
+         //return $idd;
+        foreach($idd as $idw){
+           $assignment=Assignment::select('id')->where('task_id',$idw)->delete();
+        
+        }
+
+
+       foreach($idd as $idw){
+        $task=Task::select('id')->where('id',$idw)->delete();
+        
+     }
+
+        $phase->delete();
+
+
+        
+        
+        return \Redirect::route('sop')->with('message', 'Success! task Deleted');   
+      
+    }
+
+      public function sop()
+    {
+        $test = Task::select()
+            ->orderBy('id')
+            
+            ->get()
+            ;
+       
+      
+        $phase = Phase::select()
+            ->orderBy('id')
+            ->where('is_default','1')
+            
+            ->get()
+            ;
+         
+        return view('sop')
+            ->with('task', $test)
+            ->with('phase',$phase)
+         ;
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $test = Task::find($id);
+        // $column_name = Input::get('name');
+        // $column_value = Input::get('value');
+
+        $column_name = $request->input('name');
+        $column_value = $request->input('value');
+        
+        
+        if( $request->has('name') && $request->has('value')) {
+            $test = Test::select()
+                ->where('id', '=', $id)
+                ->update([$column_name => $column_value]);
+            return response()->json([ 'code'=>200], 200);
+        }
+        
+        return response()->json([ 'error'=> 400, 'message'=> 'Not enought params' ], 400);
+    }
+
 
 }

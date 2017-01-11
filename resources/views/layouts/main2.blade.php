@@ -101,11 +101,14 @@
                     <ul class="nav child_menu">
                       <li><a href="/index_activity">Activity</a></li>
                       <li><a href="/analytics_dashboard">Analytics</a></li>
-                      <li><a href="{{ url('/dashboard') }}" id="abc" onclick="window.location.href ='/dashboard'">Analysis Dashboard</a></li>
-                        <!--  <li>{{ link_to_action('HomeController@dashboard','Analysis Dashboard', array(null)) }}</li> -->
-
+                      <li><a href="dashboard">Analysis Dashboard</a></li>
                     </ul>
                   </li>
+                   <li><a><i class="glyphicon glyphicon-cog"></i> Projects & TASKS <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                      <li><a onclick="hreff();" id="projects_tasks" href="/projects_tasks">View / Choose Project</a></li>
+                      </ul>
+                      </li>
                   <li><a><i class="fa fa-edit"></i> Administrator Settings<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/users">Users</a></li>
@@ -113,7 +116,14 @@
                       <!-- <li><a href="invite_user">Invite Users</a></li> -->
                       <li><a href="file_upload">Upload File</a></li>
                       <li><a href="form_validation.html">Organization</a></li>
-                      <li><a href="form_wizards.html">Customization</a></li>
+                      
+                      <li><a><i class="glyphicon glyphicon-cog"></i> Customization <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                      <li><a href="/sop">S O P</a></li>
+                      </ul>
+                      </li>
+                     
+                      <li><a id="projects_edit" href="/edit_clients_projects" onclick="hreff();">Edit Clients / Project Details</a></li>
                       <li><a href="form_upload.html">Threat Source</a></li>
                       <li><a href="form_buttons.html">Notification</a></li>
                       <li><a href="/permissions">Manage Permissions</a></li>

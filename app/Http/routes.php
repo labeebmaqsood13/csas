@@ -97,8 +97,9 @@ use App\Client;
 	// Route::get('nessus/pdf','NessusController@pdf')->name('nessus.pdf');
 	// Route::get('nessus/excel','NessusController@excel')->name('nessus.excel');
 	// Route::get('nessus/webpage','NessusController@webpage')->name('nessus.webpage');
-	Route::post('nessus/upload', 'NessusController@upload')->name('nessus.upload');
+	// Route::post('nessus/upload', 'NessusController@upload')->name('nessus.upload');
 	Route::get('reports', 'NessusController@reports')->name('nessus.reports'); 
+	Route::post('generate_report', 'NessusController@generate_report')->name('nessus.generate_report');
 	Route::get('nessus/updated_word','NessusController@updated_word')->name('nessus.updated_word');
 	Route::get('nessus/updated_pdf','NessusController@updated_pdf')->name('nessus.updated_pdf');
 
@@ -132,8 +133,56 @@ use App\Client;
 
 
 
-// -------------- Project wizard test page jo faisal nay bnaya us say routes and main2 ki file update kro and action and view dekho -----------//
-Route::get('projects_tasks', 'HomeController@projects_tasks')->name('projects_tasks');
+
+
+
+
+
+
+
+
+
+
+// ------------- Customize/sop ------------------ //
+    Route::get('sop','HomeController@sop')->name('sop');
+
+	Route::post('sop/update/{id}','HomeController@update')->name('sop/update');
+	Route::delete('sop/{id}/{x}','HomeController@delete_task')->name('delete_task');
+
+	Route::delete('sop/{id}','HomeController@delete_phase')->name('delete_phase');
+	Route::post('{id?}/create_task_sop','HomeController@create_task_sop');
+	Route::post('create_task_sop_custom','HomeController@create_task_sop_custom');
+    Route::post('{id?}/create_phase_sop','HomeController@create_phase_sop');
+       Route::post('create_phase_sop_custom','HomeController@create_phase_sop_custom');
+
+// ------------- projects_tasks ------------------ //
+
+    // Route::get('projects_tasks', 'HomeController@projects_tasks')->name('projects_tasks');
+    Route::get('projects_tasks/{id?}', 'HomeController@projects_tasks')->name('projects_tasks');
+    Route::delete('projects_tasks/{name}/{pr}','HomeController@delete_member')->name('delete_member');
+    Route::post('{id?}/user_add', 'HomeController@user_add');
+    Route::post('{id?}/assign_member','HomeController@assign_member');
+	//Route::delete('projects_tasks/{id}','HomeController@delete_task_sop')->name('delete_task_sop');
+	
+// ------------- edit_clients_projects ------------------ //
+
+    Route::get('edit_clients_projects/{id?}', 'HomeController@edit_clients_projects')->name('edit_clients_projects');
+    Route::post('edit_clients_projects/updatee/{id}','HomeController@updatee')->name('edit_clients_projects/updatee');
+	
+
+// ------------- Project Wizard routes ------------------ //
+
+	// Project wizard main page
+	Route::get('project_wizard', 'ProjectWizard\ProjectClientController@project_wizard')->name('project_wizard');
+
+	// Create client
+	Route::post('create_client','ProjectWizard\ProjectClientController@create_client')->name('clients.create');
+
+	// Create Project
+	Route::post('create_project_and_allocate_tasks', 'ProjectWizard\ProjectClientController@create_project_and_allocate_tasks')->name('create_project_and_allocate_tasks');
+
+	// Create Tasks
+	Route::post('create_new_task','ProjectWizard\ProjectClientController@create_new_task');
 
 
 

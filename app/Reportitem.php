@@ -44,7 +44,7 @@ class Reportitem extends Model
     }
 
 
-    public function get_vulnerabilities(){
+    public function get_vulnerabilities($project_id){
 
         // -- Manually fetching all and making assoc array which gets each plugin_name's count
         // $new_array = [];
@@ -53,25 +53,32 @@ class Reportitem extends Model
         //     $new_array[$each->plugin_name] = Reportitem::where('plugin_name',$each->plugin_name)->count();
         // }
 
+        $reportfiles = Reportfile::where('project_id', $project_id)->get();
+        $reportfile_ids = $reportfiles->lists('id');
+        $reporthosts = Reporthost::whereIn('reportfile_id', $reportfile_ids)->get();
+        $reporthost_ids = $reporthosts->lists('id');
+
         $new_array = DB::table('reportitems')
                  ->select('plugin_name', DB::raw('count(*) as total'))
                  ->groupBy('plugin_name')
                  ->orderBy('total','DESC')
                  ->limit('10')
-                 ->get();
+                 ->whereIn('reporthost_id', $reporthost_ids)
+                 ->get();         
         return $new_array;
 
     }
 
-    public function read_reportitems_having_unique_reporthost_id(){
+    public function read_reportitems_having_unique_reporthost_id($project_id){
 
-        // // Getting all records
-        // $reportitem = Reportitem::all();
+        $reportfiles = Reportfile::where('project_id', $project_id)->get();
+        $reportfile_ids = $reportfiles->lists('id');
+        $reporthosts = Reporthost::whereIn('reportfile_id', $reportfile_ids)->get();
+        $reporthost_ids = $reporthosts->lists('id');
 
         // Get distinct plugin_name against distinct reporthost_id using groupBy()
         $reportitem = DB::table('reportitems')
-            // ->select('id','plugin_name', 'reporthost_id')
-            // ->distinct('reporthost_id')
+            ->whereIn('reporthost_id', $reporthost_ids)
             ->groupBy('reporthost_id', 'plugin_name')
             ->orderBy('reportitems.id', 'asc')
             ->get();

@@ -119,10 +119,13 @@ class Reporthost extends Model
 
 	}
 
-	public function get_most_vulnerable_assets(){
+	public function get_most_vulnerable_assets($project_id){
 
+		$reportfiles = Reportfile::where('project_id', $project_id)->get();
+		$reportfile_ids = $reportfiles->lists('id');
+		$array = Reporthost::whereIn('reportfile_id', $reportfile_ids)->get();
+		// dd($array->toArray());
 		$new_array = [];
-		$array = Reporthost::all();
 		foreach($array as $each){
 
 			$count = Reportitem::where('reporthost_id', $each->id)->count();

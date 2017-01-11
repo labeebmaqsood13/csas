@@ -20,6 +20,8 @@ use App\Task;
 
 use App\Reportfile;
 
+use App\Project;
+
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -119,35 +121,6 @@ class NessusController extends Controller
             'phase_id' => $phase_four->id,
             ]);
 
-        // Task::create([
-        //     'name' => 'Scope',
-        //     'phase' => 'pre-engagement'
-        //     ]);
-
-        // Task::create([
-        //     'name' => 'Documentation',
-        //     'phase' => 'pre-engagement'
-        //     ]);
-
-        // Task::create([
-        //     'name' => 'Arp Scan',
-        //     'phase' => 'pre-engagement'
-        //     ]);
-
-        // Task::create([
-        //     'name' => 'Idle scanning',
-        //     'phase' => 'engagement'
-        //     ]);
-
-        // Task::create([
-        //     'name' => 'OS detection',
-        //     'phase' => 'engagement'
-        //     ]);
-
-        // Task::create([
-        //     'name' => 'Services',
-        //     'phase' => 'engagement'
-        //     ]);
 
     }
 
@@ -571,21 +544,10 @@ class NessusController extends Controller
 
             }
 
-            
-
-
-
-            // return $lastinsertedid;
-
 
     }
 
 
-    public function reports(){
-
-        return view ('reports');
-
-    }    
 
 
     public function array_orderby(){
@@ -609,1045 +571,3046 @@ class NessusController extends Controller
     }
 
 
-    public function updated_word(){
 
-        if(Reporthost::all() == '[]'){
-            return \Redirect::route('file_upload')->with('message', 'Please upload a nessus report file first');;
 
+
+
+
+
+    public function reports(){
+
+        $user = Auth::user();
+
+        // If user is a manager or suepr manager
+        if($user->role()->where('name', 'Manager')->orWhere('name', 'Super Manager')->exists() ){
+
+            $projects = Project::all();
+        
         }
         else{
 
-            // ---------------- PHPWord ---------------------- //    
+           $users_projects = $user->project()->get();
+           $project_ids = $users_projects->lists('pivot.project_id');
+           $projects = Project::whereIn('id', $project_ids)->get();
             
-                $reading = File::get(public_path('includes/nessus_input_file/faisal_sc.nessus'));
-                // \PhpOffice\PhpWord\Autoloader::register();  
-                $phpWord = new \PhpOffice\PhpWord\PhpWord();
-                $section = $phpWord->createSection();
+        }
+        return view('reports', compact('projects'));
 
-                $section->addText('CSAS Report.',array('name' => 'Tahoma', 'size' => 18, 'italic'=>true, 'color'=>'006699') );
-                $section->addTextBreak(1);
+    }    
 
 
 
 
-            // ------------------ Table 1 Data Fetch ----------------------//
 
-                $Reporthost = new Reporthost();
-                $most_vulnerable_assets = $Reporthost->get_most_vulnerable_assets();
+    public function generate_report(Request $request){
 
-                // $new_array = array();
-                // foreach ($most_vulnerable_assets as $key => $value)
-                // {
-                    // $new_array[$key] = $value['count'] 
-                    // $new_array[] = $value['4'];
+        $report_items = $request->report;
+        $report_table = $request->table;
 
-                // }
-                // array_multisort($new_array, SORT_DESC, $most_vulnerable_assets);
 
-                $most_vulnerable_assets = $this->array_orderby($most_vulnerable_assets, 'count', SORT_DESC);
+        if($request->word){
 
-                // echo '<pre>';
-                // var_dump($most_vulnerable_assets);
-                // echo '</pre>';
+            $project_id = $request->project_id[sizeof($request->project_id)-1];
+            $reportfiles = Reportfile::where('project_id', $project_id)->get();
+            $reportfile_ids = $reportfiles->lists('id');
 
+
+            if(Reporthost::whereIn('reportfile_id', $reportfile_ids)->count() == 0){
+
+                return \Redirect::route('file_upload')->with('message','Please upload a nessus report file');
+
+            }
+            else{
+
+
+                // ---------------- PHPWord ---------------------- //    
             
-            // ------------------- PHPWORD Table 1 --------------------------------------//
+                    // $reading = File::get(public_path('includes/nessus_input_file/faisal_sc.nessus'));
+                    // \PhpOffice\PhpWord\Autoloader::register();  
+                    $phpWord = new \PhpOffice\PhpWord\PhpWord();
+                    $phpWord->setDefaultFontName('Times New Roman');
+                    $phpWord->setDefaultFontSize(12);
 
-                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
-                $section->addTextBreak(1);
+                    $section = $phpWord->createSection();
+
+                    $section->addText('CSAS Report.',array('align'=>'center', 'name' => 'Arial', 'size' => 16, 'bold'=>true, 'color'=>'FB0009') );
+                    $section->addTextBreak(1);
 
 
-                $table =$section->addTable();
-                $table->addRow(900);
-                $table->addCell(1000)->addText('Sr.', array('color'=>'006699'));
-                $table->addCell(2500)->addText('IP Address', array('color'=>'006699'));
-                $table->addCell(3000)->addText('MAC Address', array('color'=>'006699'));
-                $table->addCell(3500)->addText('Asset Type*', array('color'=>'006699'));
-                $table->addCell(2500)->addText('Count', array('color'=>'006699'));
-
-                // $table_1 = $section->addTable();
-
-                $j = 1;
-                foreach($most_vulnerable_assets as $host_property){
-                    $table->addRow(900);
-                    $table->addCell(1000)->addText($j);
-                    $table->addCell(2500)->addText($host_property['ip']);
-                    $table->addCell(3000)->addText($host_property['mac']);
-                    $table->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
-                    $table->addCell(2500)->addText('        '.$host_property['count']);
-
-                    $j = $j+1;
-
-                }
+                    // -------- Custom Styles -------/    
+                        $tableStyle = array(
+                            'borderColor' => '050002',
+                            'borderSize'  => 6
+                            // 'cellMargin'  => 50
+                        );
+                        $firstRowStyle = array('bgColor' => 'a8a8a8');
+                        $phpWord->addTableStyle('myTable', $tableStyle, $firstRowStyle);
+                        // $table = $section->addTable('myTable');
 
 
 
+                        $centered = array('align'=>'center', 'color'=>'050002', 'bold' => true, 'size' =>12, 'name' => 'Arial');
+                        $centered_small = array('align'=>'center', 'color'=>'050002', 'size' =>12, 'name' => 'Arial');
+                        $left = array('align'=>'left', 'color'=>'050002', 'bold' => true, 'size' =>12, 'name' => 'Arial');
+                        $left_10 = array('align'=>'left', 'color'=>'050002', 'bold' => true, 'size' =>10, 'name' => 'Arial');
+                        $left_10_wb = array('align'=>'left', 'color'=>'050002', 'size' =>10, 'name' => 'Arial');
+                        $center = array('align'=>'left', 'color'=>'050002', 'size' =>12, 'name' => 'Arial');                    
 
 
-            // ------------------ Table 2 Data Fetch ----------------------//
-
-                $Reportitem = new Reportitem();
-                $vulnerabilities = $Reportitem->get_vulnerabilities();
-                
-                // Used when assoc array was returned
-                // arsort($vulnerabilities);
-
-                    // echo '<pre>';
-                    // var_dump($vulnerabilities);
-                    // echo '</pre>';
- 
-
-            //------------------- PHP WORD Table 2 --------------------------------------//
-
-                $section->addTextBreak(1);
-                $section->addText('TABLE 2: Top 10 Vulnerability names with its total count / occurrence',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
-                $section->addTextBreak(1);
-                $table2 = $section->addTable();
-                $table2->addRow(100);
-                $table2->addCell(15000)->addText('Exploit Category', array('color'=>'006699'));
-                $table2->addCell(2500)->addText('Infected Assets', array('color'=>'006699'));
-
-                $table_3 = $section->addTable();
-
-                $counter=0;
-
-                foreach($vulnerabilities as $each){
-                // foreach($vulnerability as $key => $new){    
-                    if($counter<10){
-                        $table_3->addRow(100);
-                        // $table_3->addCell(15000)->addText(htmlspecialchars($key));
-                        // $table_3->addCell(2500)->addText('          '.htmlspecialchars($new));
-                        $table_3->addCell(15000)->addText(htmlspecialchars($each->plugin_name));
-                        $table_3->addCell(2500)->addText('          '.htmlspecialchars($each->total));
-                    }
-                    $counter = $counter + 1;
-                }    
-
-
-
-
-
-            // ---------------- Table 3 Data Fetch -----------------//
-
-                $Reporthost = new Reporthost();
-                $Reportitem = new Reportitem();
-
-                // Fetcching all records in reportitems table
-                $vulnerability_details = $Reportitem->read_reportitems_having_unique_reporthost_id();
-
-
-                // Creating new arrays to store data
-                $new_array = array();
-                $ip_mac = array();
-
-                foreach($vulnerability_details as $detail){
-
-                    // Fetching ip and mac from reporthosts table by reporthost_id from reportitems
-                    $reporthosts = $Reporthost->ip_mac_by_reporthost_id($detail->reporthost_id);
-                   
-                    // // Testing total ip and mac received from function above                   
-                    // echo '<pre>'; 
-                    // foreach($reporthosts as $reporthost){
-                    //     // var_dump($reporthosts);
-                    //     echo $reporthost->host_ip. '   '. $reporthost->mac;
-                    // }
-                    // echo '</pre>';
-                    // die();
-
-                    if(!array_key_exists($detail->plugin_name, $new_array)){
-
-                        $new_array[$detail->plugin_name]['plugin_name'] = $detail->plugin_name;
-                        $new_array[$detail->plugin_name]['description'] = $detail->description;
-                        $new_array[$detail->plugin_name]['solution']    = $detail->solution;
+                if(in_array("table1", $report_table)){        
                         
-                        foreach($reporthosts as $reporthost){
+                    // ------------------ Table 1 Data Fetch ----------------------//
 
-                            $new_array[$detail->plugin_name]['ip']      = [$reporthost->host_ip];
-                            $new_array[$detail->plugin_name]['mac']     = [$reporthost->mac];
-                          
-                            // Storing combination of ip mac in $ip_mac array to check if next data set matches then dont write into array                         
-                            // $ip_mac[$detail->plugin_name]               = [$reporthost->ip,$reporthost->mac];
+                        $Reporthost = new Reporthost();
+                        $most_vulnerable_assets = $Reporthost->get_most_vulnerable_assets($project_id);
 
-                            // Retrieving ports 
-                            // $ports = $Reportitem->get_port_by_plugin_name_and_reporthost_id($detail->plugin_name,$detail->reporthost_id);                            
-                            // foreach($ports as $port){
-                            //     $new_array[$detail->plugin_name]['port'] = [$port->port];
-                            // }
+                        // $new_array = array();
+                        // foreach ($most_vulnerable_assets as $key => $value)
+                        // {
+                            // $new_array[$key] = $value['count'] 
+                            // $new_array[] = $value['4'];
+
+                        // }
+                        // array_multisort($new_array, SORT_DESC, $most_vulnerable_assets);
+
+                        $most_vulnerable_assets = $this->array_orderby($most_vulnerable_assets, 'count', SORT_DESC);
+
+                        // echo '<pre>';
+                        // var_dump($most_vulnerable_assets);
+                        // echo '</pre>';
+
+                    
+                   
+                    //------------------------- Table 1 - 4 Selected -------------------------------------- //
+
+                        if(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) && in_array("Asset Type", $report_items) &&  in_array("Vulnerability Count", $report_items))
+                        {
+
+
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(3000, $firstRowStyle)->addText('MAC Address', $centered, array('align' => 'center'));
+                                $table->addCell(3500, $firstRowStyle)->addText('Asset Type*', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('Count', $centered, array('align' => 'center'));
+
+                                // $table_1 = $section->addTable();
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(3000)->addText($host_property['mac']);
+                                    $table->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
+                                    $table->addCell(2500)->addText($host_property['count'], $centered_small, array('align' => 'center'));
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+                                
                         }
+
+
+                    //------------------------- Table 1 - 3 Selected -------------------------------------- //
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) && in_array("Asset Type", $report_items) )
+                        {
                             
-                    }
-                    elseif(array_key_exists($detail->plugin_name, $new_array)){
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
 
-                        foreach($reporthosts as $reporthost){
 
-                            array_push($new_array[$detail->plugin_name]['ip'], $reporthost->host_ip);
-                            array_push($new_array[$detail->plugin_name]['mac'], $reporthost->mac);
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(3000, $firstRowStyle)->addText('MAC Address', $centered, array('align' => 'center'));
+                                $table->addCell(3500, $firstRowStyle)->addText('Asset Type*', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(3000)->addText($host_property['mac']);
+                                    $table->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) && in_array("Vulnerability Count", $report_items) )
+                        {
+
+
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(3000, $firstRowStyle)->addText('MAC Address', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('Count', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(3000)->addText($host_property['mac']);
+                                    $table->addCell(2500)->addText($host_property['count'], $centered_small, array('align' => 'center'));
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+                        
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("Asset Type", $report_items) && in_array("Vulnerability Count", $report_items) )
+                        {
                             
-                            // Storing combination of ip mac in $ip_mac array to check if next data set matches then dont write into array 
-                            // if(!in_array([$detail->ip,$detail->mac], $ip_mac[$detail->plugin_name])){
-                            //     array_push($ip_mac[$detail->plugin_name], [$reporthost->host_ip, $reporthost->mac]);
-                            // }
 
-                            // Retrieving ports 
-                            // $ports = $Reportitem->get_port_by_plugin_name_and_reporthost_id($detail->plugin_name,$detail->reporthost_id);
-                            // foreach($ports as $port){
-                            //     array_push($new_array[$detail->plugin_name]['port'], $port->port);
-                            // }
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(3500, $firstRowStyle)->addText('Asset Type*', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('Count', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
+                                    $table->addCell(2500)->addText($host_property['count'], $centered_small, array('align' => 'center'));
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+                   
+                        
+                        }
+
+
+                    //------------------------- Table 1 - 2 Selected -------------------------------------- //
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) )
+                        {
+                            
+
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(3000, $firstRowStyle)->addText('MAC Address', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(3000)->addText($host_property['mac']);
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+           
+                        
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("Asset Type", $report_items) )
+                        {
+                            
+
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(3500, $firstRowStyle)->addText('Asset Type*', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(3000)->addText($host_property['system_type'].'                                        '.$host_property['operating_system']);
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+                  
+                        
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("Vulnerability Count", $report_items))
+                        {
+                            
+
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('Count', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+                                    $table->addCell(2500)->addText($host_property['count'], $centered_small, array('align' => 'center'));
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                // $section->addText(' ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>0.1) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+
+                                $section->addPageBreak();
+
+
+           
+                        
+                        }     
+
+
+                    //------------------------- Table 1 - 1 Selected -------------------------------------- //
+
+                        elseif(in_array("IP Address 1", $report_items))
+                        {
+                            
+
+                            // ------------------- PHPWORD Table 1 --------------------------------------//
+
+
+
+                                $table = $section->addTable('myTable');
+                                $table->addRow(450);
+                                $table->addCell(1000, $firstRowStyle)->addText('Sr.', $centered, array('align' => 'center'));
+                                $table->addCell(2500, $firstRowStyle)->addText('IP Address', $centered, array('align' => 'center'));
+
+
+                                $j = 1;
+                                foreach($most_vulnerable_assets as $host_property){
+                                    $table->addRow();
+                                    $table->addCell(1000)->addText($j.'.');
+                                    $table->addCell(2500)->addText($host_property['ip'], array('bold'=>true));
+
+                                    $j = $j+1;
+
+                                }
+                                $section->addTextBreak(1);
+
+                                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network ',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15) );
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('Facility to be decided form the subnet defined by the analyst.',array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15) );
+                                $section->addTextBreak(1);
+                                $section->addPageBreak();
+
+
+                
+                        
+                        }                   
+
+                }        
+                
+                if(in_array("table2", $report_table)){      
+
+                    // ------------------ Table 2 Data Fetch ----------------------//
+
+                        $Reportitem = new Reportitem();
+                        $vulnerabilities = $Reportitem->get_vulnerabilities($project_id);
+                        
+
+                    //------------------------- Table 2 - 2 Selected -------------------------------------- //
+
+                        if(in_array("Exploit Category", $report_items) && in_array("Infected Assets Count", $report_items)){
+
+                            //------------------- PHP WORD Table 2 --------------------------------------//
+
+                                $section->addText('TABLE 2: Top 10 Vulnerability names with its total count / occurrence',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true) );
+                                $table2 = $section->addTable('myTable');
+                                $table2->addRow();
+                                $table2->addCell(15000, $firstRowStyle)->addText('Exploit Category', $left, array('align' => 'left'));
+                                $table2->addCell(4500, $firstRowStyle)->addText('Infected Assets', $left, array('align' => 'left'));
+
+
+                                $counter=0;
+
+                                foreach($vulnerabilities as $each){
+                                    if($counter<10){
+                                        $table2->addRow(100);
+                                        $table2->addCell(15000)->addText(htmlspecialchars($each->plugin_name));
+                                        $table2->addCell(4500)->addText(htmlspecialchars($each->total), $center, array('align' => 'center'));
+                                    }
+                                    $counter = $counter + 1;
+                                }    
+
+
+                        }
+
+
+                    //------------------------- Table 2 - 1 Selected -------------------------------------- //
+
+                        elseif(in_array("Exploit Category", $report_items)){
+
+                            //------------------- PHP WORD Table 2 --------------------------------------//
+
+                                $section->addText('TABLE 2: Top 10 Vulnerability names with its total count / occurrence',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true) );
+                                $table2 = $section->addTable('myTable');
+                                $table2->addRow();
+                                $table2->addCell(15000, $firstRowStyle)->addText('Exploit Category', $left, array('align' => 'left'));
+
+                                $counter=0;
+
+                                foreach($vulnerabilities as $each){
+                                    if($counter<10){
+                                        $table2->addRow(100);
+                                        $table2->addCell(15000)->addText(htmlspecialchars($each->plugin_name));
+                                    }
+                                    $counter = $counter + 1;
+                                }    
+
                         }                        
 
-                    }
+                } 
 
-                }    
+                if(in_array("table3", $report_table)){             
 
-                // // Testing final data inserted in custom structure array - $new_array 
-                // echo '<pre>';
-                // var_dump($new_array);
-                // echo '</pre>';
-                // die();
+                    // ------------------ Table 3 Data Fetch -----------------//
 
+                        $Reporthost = new Reporthost();
+                        $Reportitem = new Reportitem();
 
-            //------------------- PHP WORD Table 3 --------------------------------------//
-
-                $section->addTextBreak(1);
-                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
-                $section->addTextBreak(1);
-                $section->addTextBreak(1);
+                        // Fetcching all records in reportitems table
+                        $vulnerability_details = $Reportitem->read_reportitems_having_unique_reporthost_id($project_id);
 
 
-                $counter = 1;
+                        // Creating new arrays to store data
+                        $new_array = array();
 
-                foreach($new_array as $each){
+                        foreach($vulnerability_details as $detail){
 
-                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Tahoma', 'size' => 12, 'color'=>'black', 'bold'=>true) );
-                    $section->addTextBreak(1);
+                            // Fetching ip and mac from reporthosts table by reporthost_id from reportitems
+                            $reporthosts = $Reporthost->ip_mac_by_reporthost_id($detail->reporthost_id);
+     
 
+                            if(!array_key_exists($detail->plugin_name, $new_array)){
 
-                    $table4 = $section->addTable();
-                    $table4->addRow(100);
-                    $table4->addCell(3000)->addText('           Description', array('color'=>'black', 'bold'=>true));
-                    $table4->addCell(13000)->addText($each['description'], array('color'=>'006699'));
+                                $new_array[$detail->plugin_name]['plugin_name'] = $detail->plugin_name;
+                                $new_array[$detail->plugin_name]['description'] = $detail->description;
+                                $new_array[$detail->plugin_name]['solution']    = $detail->solution;
+                                
+                                foreach($reporthosts as $reporthost){
 
-                    $table4->addRow(100);
-                    $table4->addCell(3000)->addText('           Remediation', array('color'=>'black', 'bold'=>true));
-                    $table4->addCell(13000)->addText($each['solution'], array('color'=>'006699'));
-                
+                                    $new_array[$detail->plugin_name]['ip']      = [$reporthost->host_ip];
+                                    $new_array[$detail->plugin_name]['mac']     = [$reporthost->mac];
+                                  
+                                }
+                                    
+                            }
+                            elseif(array_key_exists($detail->plugin_name, $new_array)){
 
+                                foreach($reporthosts as $reporthost){
 
-                    $section->addTextBreak(1);
-                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Tahoma', 'size' => 12, 'color'=>'black') );
-                    $section->addTextBreak(1);
+                                    array_push($new_array[$detail->plugin_name]['ip'], $reporthost->host_ip);
+                                    array_push($new_array[$detail->plugin_name]['mac'], $reporthost->mac);
+                                    
+             
+                                }                        
 
-                    $table5 = $section->addTable();
-                    $table5->addRow(100);
-                    $table5->addCell(2000)->addText('S. No.', array('color'=>'black', 'italic'=>true, 'bold'=>true));
-                    $table5->addCell(8000)->addText('IP', array('color'=>'black', 'italic'=>true, 'bold'=>true));
-                    $table5->addCell(6000)->addText('MAC', array('color'=>'black', 'italic'=>true, 'bold'=>true));
-                    $section->addTextBreak(1);
+                            }
 
-
-
-                        $j = 1;
-                        $jcount = sizeof($each['ip']);
-                        for($i=0; $i<$jcount; $i++){
-                        // foreach($each['plugin_name'] as $reporthost){
-                        
-                            $table5->addRow(100);
-                            $table5->addCell(2000)->addText($j.' ', array('color'=>'006699'));
-                            $table5->addCell(8000)->addText($each['ip'][$i], array('color'=>'006699'));
-                            $table5->addCell(6000)->addText($each['mac'][$i], array('color'=>'006699'));
-                            $j = $j+1;
-                            
                         }    
 
 
-                        $section->addTextBreak(1);
-                        $counter = $counter + 1;
+                    //------------------------- Table 3 - 5 Selected -------------------------------------- //
 
-                }
 
+                        if(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
 
+                            //------------------- PHP WORD Table 3 --------------------------------------//
 
-            // ------------PHPWORD Writer - Output Word Document ----------------------//
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
 
-                $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                $file = 'HelloWorld.docx';
-                $objWriter->save($file);
-                
-                header('Content-Description: File Transfer');
-                header('Content-Type: application/octet-stream');
-                header('Content-Disposition: attachment; filename='.$file);
-                header('Content-Transfer-Encoding: binary');
-                header('Expires: 0');
-                header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-                header('Pragma: public');
-                header('Content-Length: ' . filesize($file));
-                flush();
-                readfile($file);
-                unlink($file); // deletes the temporary file
-                exit;
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
 
-        }
 
-    }
+                                $counter = 1;
 
+                                foreach($new_array as $each){
 
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
 
-    public function updated_pdf(){
 
-        if(Reporthost::all() == '[]'){
-            return \Redirect::route('file_upload')->with('message', 'Please upload a nessus report file first');;
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
 
-        }
-        else{
 
-            // ---------------- Fpdf Addpage ---------------------- //              
-                Fpdf::AddPage();            
-                Fpdf::SetFont("Arial","B","14");
-                Fpdf::SetTitle('Report CSAS.');
-                Fpdf::Cell(0, 10, "Report CSAS.",0,1,"C");
-                Fpdf::Cell(0, 10, "",0,1,"C");
 
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
 
-            // ----------------- Table 1 Data Fetch ----------------------//
 
-                $Reporthost = new Reporthost();
-                $most_vulnerable_assets = $Reporthost->get_most_vulnerable_assets();
-                $most_vulnerable_assets = $this->array_orderby($most_vulnerable_assets, 'count', SORT_DESC);
 
-            // ----------------- Table 1 Data Pdf Output -----------------//
-            
-                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,1);
-                Fpdf::ln();
-                Fpdf::SetFont("Arial","I","10");
-                Fpdf::Cell(12,10, 'ID',1);
-                Fpdf::Cell(30,10, 'IP',1);
-                Fpdf::Cell(33,10, 'MAC',1);
-                Fpdf::Cell(29,10, 'System Type',1);
-                Fpdf::Cell(78,10, 'Opeating System',1);
-                Fpdf::Cell(12,10, 'Count',1,1,'C'); 
 
 
-                foreach($most_vulnerable_assets as $each){
 
-                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
-                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
-                    Fpdf::Cell(33,10,$each['mac'],1,0,'C');
-                    Fpdf::Cell(29,10,$each['system_type'],1,0,'L');
-                    Fpdf::Cell(78,10,$each['operating_system'],1,0,'L');
-                    Fpdf::Cell(12,10,$each['count'],1,1,'C');
 
-                }
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
 
-                Fpdf::Cell(0, 20, "",0,1,"C");
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
 
 
-            // ----------------- Table 2 Data Fetch ----------------------//
 
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
 
-                $Reportitem = new Reportitem();
-                $vulnerabilities = $Reportitem->get_vulnerabilities();
 
-            // ----------------- Table 2 Data Pdf Output -------------------//
-
-                Fpdf::SetFont("Arial","B","14");
-                Fpdf::Cell(0,10,'TABLE 2: Top 10 Vulnerability names with its total count / occurrence',0,1);
-                Fpdf::ln();
-                Fpdf::SetFont("Arial","I","10");
-                Fpdf::Cell(12,10, 'ID' , 1);
-                Fpdf::Cell(150,10, 'Vulnerability Name',1);
-                Fpdf::Cell(20,10, 'Count',1,1,'C');
-
-                foreach($vulnerabilities as $key => $each){
-
-                        Fpdf::Cell(12,10, $key+'1', 1);
-                        Fpdf::Cell(150,10, $each->plugin_name ,1);
-                        Fpdf::Cell(20,10, $each->total, 1, 1, 'C');
-                        
-                }
-
-
-
-            // ---------------- Table 3 Data Fetch -----------------//
-
-                $Reporthost = new Reporthost();
-                $Reportitem = new Reportitem();
-
-                // Fetcching all records in reportitems table
-                $vulnerability_details = $Reportitem->read_reportitems_having_unique_reporthost_id();
-
-                // Creating new arrays to store data
-                $new_array = array();
-
-                foreach($vulnerability_details as $detail){
-
-                    // Fetching ip and mac from reporthosts table by reporthost_id from reportitems
-                    $reporthosts = $Reporthost->ip_mac_by_reporthost_id($detail->reporthost_id);
-
-                    if(!array_key_exists($detail->plugin_name, $new_array)){
-
-                        $new_array[$detail->plugin_name]['plugin_name'] = $detail->plugin_name;
-                        $new_array[$detail->plugin_name]['description'] = $detail->description;
-                        $new_array[$detail->plugin_name]['solution']    = $detail->solution;
-                        
-                        foreach($reporthosts as $reporthost){
-
-                            $new_array[$detail->plugin_name]['ip']      = [$reporthost->host_ip];
-                            $new_array[$detail->plugin_name]['mac']     = [$reporthost->mac];
-                          
-                        }
-                            
-                    }
-                    elseif(array_key_exists($detail->plugin_name, $new_array)){
-
-                        foreach($reporthosts as $reporthost){
-
-                            array_push($new_array[$detail->plugin_name]['ip'], $reporthost->host_ip);
-                            array_push($new_array[$detail->plugin_name]['mac'], $reporthost->mac);
-                            
-                        }                        
-
-                    }
-
-                }    
-
-                // // Testing final data inserted in custom structure array - $new_array 
-                // echo '<pre>';
-                // var_dump($new_array);
-                // echo '</pre>';
-                // die();
-
-
-
-            // ----------------- Table 3 Data Pdf Output -------------------//
-
-                Fpdf::ln();
-                Fpdf::SetFont("Arial","B","14");
-                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,1);
-                Fpdf::ln();
-                
-                $k=1;
-                foreach($new_array as $each){
-
-                    Fpdf::SetFont('Arial','B',"11");
-                    Fpdf::Cell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
-
-                    Fpdf::Cell(40,10, 'Description',0,0);                    
-                    Fpdf::SetFont("Arial","I","10");
-                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
-                    Fpdf::SetFont('Arial','B',"11");
-                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
-                    Fpdf::SetFont("Arial","I","10");
-                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
-                    Fpdf::SetFont('Arial','B',"11");
-                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
-                    Fpdf::Cell(0,10, ' ', 0, 1);
-                    Fpdf::SetFont("Arial","I","10");
-                    Fpdf::Cell(20,10, 'S. No.',1);
-                    Fpdf::Cell(70,10, '   IP',1);
-                    Fpdf::Cell(100,10, '   MAC', 1, 1);
-
-                    // foreach($each[] as $key => $each){
-                    $jcount = sizeof($each['ip']);
-                    for($i=0; $i<$jcount; $i++){
-
-                            Fpdf::Cell(20,10, $i+'1', 1);
-                            Fpdf::Cell(70,10, $each['ip'][$i] ,1);
-                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
-                            
-                    }
-                    
-                    Fpdf::ln();
-                    Fpdf::ln();
-                    Fpdf::SetAutoPageBreak(1,1);
-                    $k= $k+1;
-
-                }
-
-
-            // ---------------- Fpdf Writer ---------------------- //                  
-
-                Fpdf::Output();
-                exit;
-
-            
-        }        
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function word(){
-
-            // ---------------- PHPWord ---------------------- //    
-            
-                $reading = File::get(public_path('includes/nessus_input_file/faisal_sc.nessus'));
-                // \PhpOffice\PhpWord\Autoloader::register();  
-                $phpWord = new \PhpOffice\PhpWord\PhpWord();
-                $section = $phpWord->createSection();
-
-                $section->addText('NSPR Report.',array('name' => 'Tahoma', 'size' => 18, 'italic'=>true, 'color'=>'006699') );
-                $section->addTextBreak(1);
-
-
-                $xml    = simplexml_load_file(public_path('includes/nessus_input_file/faisal_sc.nessus'));
-                $json   = json_encode($xml);
-                $nessus = json_decode($json,TRUE);
-
-                // Counting ReportHosts
-                $count=0;
-                foreach($nessus['Report']['ReportHost'] as $something){
-                    $count = $count+1;
-                }
-
-
-                // Making Array of counted vulnerabilities
-                $array = [];
-                for($i=0; $i<$count; $i++){
-
-                    if(isset($nessus['Report']['ReportHost'][$i]['ReportItem']['1'])){
-
-                        $jcount = count($nessus['Report']['ReportHost'][$i]['ReportItem']);
-                        $array[$i] = $jcount;
-
-                    }else{
-
-                        $jcount = 1;
-                        $array[$i] = $jcount;
-
-                    }
-
-                }
-
-            // ======================= Table 1 ================================ //
-
-
-                preg_match_all('~(?<=<HostProperties>).*?(?=</HostProperties)~s', $reading, $host_properties);
-
-                $count_out = 0;
-                $count_in  = 0;
-                $array_hostproperties;
-                foreach($host_properties[0] as $host_property){
-
-                    $result_host_ip = preg_match('#(?<=("host-ip">))((?:.|\n)*?)(?=</tag)#', $host_property, $host_ip);
-                    if($result_host_ip){
-
-                        $array_hostproperties[$count_out][$count_in] = $host_ip[0];
-                        $count_in = $count_in + 1;
-
-                    }
-                    else{
-                        // echo " - ";
-                    }
-
-
-                    $result_mac = preg_match('#(?<=("mac-address">))((?:.|\n)*?)(?=</tag)#', $host_property, $mac);
-                    if($result_mac == 1){
-                        // var_dump(htmlspecialchars($mac[0]));
-                        $array_hostproperties[$count_out][$count_in] = $mac[0];
-                        $count_in = $count_in + 1;
-                    }
-                    elseif($result_mac == 0){
-                        $result_os = preg_match('#(?<=("os">))((?:.|\n)*?)(?=</tag)#', $host_property, $os);
-                        if($result_os){
-                            // echo "OS = ";
-                            // var_dump(htmlspecialchars($os[0]));
-                            $array_hostproperties[$count_out][$count_in] = $os[0];
-                            $count_in = $count_in + 1;
-                        }else{
-                            // echo " - ";
-                            $array_hostproperties[$count_out][$count_in] = " - ";
-                            $count_in = $count_in + 1;
-                        }
-                    }
-
-
-
-                    $result_system_type = preg_match('#(?<=("system-type">))((?:.|\n)*?)(?=</tag)#', $host_property, $system_type);
-                    if($result_system_type){
-                        // var_dump(htmlspecialchars($system_type[0]));
-                        $array_hostproperties[$count_out][$count_in] = $system_type[0];
-                        $count_in = $count_in + 1;
-                    }else{
-                        // echo " - ";
-                        $array_hostproperties[$count_out][$count_in] = " - ";
-                        $count_in = $count_in + 1;
-                    }
-
-
-                    $result_operating_system = preg_match('#(?<=("operating-system">))((?:.|\n)*?)(?=</tag)#', $host_property, $operating_system);
-                    if($result_operating_system){
-                        // var_dump(htmlspecialchars($operating_system[0]));
-                        $array_hostproperties[$count_out][$count_in] = $operating_system[0];
-                        $count_in = $count_in + 1;
-                    }else{
-                        // echo " - ";
-                        $array_hostproperties[$count_out][$count_in] = " - ";
-                        $count_in = $count_in + 1;
-                    }
-
-                    $array_hostproperties[$count_out][$count_in] = $array[$count_out];
-                    $count_in = 0;
-
-                    $count_out = $count_out + 1;
-                }
-
-                // ----------- Sorting array according to count of vulnerability -------------//
-
-
-                $new_array = array();
-                foreach ($array_hostproperties as $key => $value)
-                {
-                    $new_array[$key] = $value['4'];
-
-                }
-                array_multisort($new_array, SORT_DESC, $array_hostproperties);
-
-                // echo '<pre>';
-                // return var_dump($array_hostproperties); 
-                // echo '</pre>';
-
-                // ---------- Calling Most_Vulnerable_Asset model function to store most vulnerable assets
-
-                $Most_Vulnerable_Asset = new Most_Vulnerable_Asset();
-                
-                $Most_Vulnerable_Asset->store($array_hostproperties);
-                    
-
-
-        
-
-            // ------------------- PHP WORD table 1 --------------------------------------//
-
-                $section->addText('TABLE 1: List of most vulnerable assets in the client’s network',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
-                $section->addTextBreak(1);
-                $table =$section->addTable();
-                $table->addRow(900);
-                $table->addCell(1000)->addText('Sr.', array('color'=>'006699'));
-                $table->addCell(2500)->addText('IP Address', array('color'=>'006699'));
-                $table->addCell(3000)->addText('MAC Address', array('color'=>'006699'));
-                $table->addCell(3500)->addText('Asset Type*', array('color'=>'006699'));
-                $table->addCell(2500)->addText('Count', array('color'=>'006699'));
-
-                $table_1 = $section->addTable();
-
-                $Most_Vulnerable_Asset = new Most_Vulnerable_Asset();
-                $array_hostproperties = $Most_Vulnerable_Asset->read();
-
-                foreach($array_hostproperties as $host_property){
-                    $table_1->addRow(900);
-                    $table_1->addCell(1000)->addText($host_property->id);
-                    $table_1->addCell(2500)->addText($host_property->ip);
-                    $table_1->addCell(3000)->addText($host_property->mac);
-                    $table_1->addCell(3000)->addText($host_property->asset_type.'                                        '.$host_property->operating_system);
-                    $table_1->addCell(2500)->addText('        '.$host_property->count);
-
-                }
-
-
-
-
-            // ======================= Table 2 ================================ //
-
-
-                // -----------Plugin name extraction from report items using xml json -------------//
-                $count=0;
-                foreach($nessus['Report']['ReportHost'] as $something){
-                    $count = $count+1;
-                }
-
-
-                // Making Array of counted vulnerabilities
-                $report_items = [];
-
-                $plugin_name_array = [];
-                $counter = 0;
-
-
-                for($i=0; $i<$count; $i++){
-
-                    if(isset($nessus['Report']['ReportHost'][$i]['ReportItem']['1'])){
-
-                        $jcount = count($nessus['Report']['ReportHost'][$i]['ReportItem']);
-
-                        for($j=0; $j<$jcount; $j++)
-                        {
-
-                            $plugin_name_array[$counter] = $nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['@attributes']['pluginName'];
-
-                            $counter = $counter + 1;
-
-                        }
-
-                    }else{
-
-                        $jcount = 1;
-
-                        for($j=0; $j<$jcount; $j++)
-                        {
-
-                            $plugin_name_array[$counter] = $nessus['Report']['ReportHost'][$i]['ReportItem']['@attributes']['pluginName'];
-                            $counter = $counter + 1;
-
-                        }
-
-                    }
-
-                }
-
-                $plugin_name_array_count = array_count_values($plugin_name_array);
-
-                $old_plugin_name_array_count = $plugin_name_array_count;
-                rsort($plugin_name_array_count);
-                $new_plugin_name_array_count = [];
-
-                foreach($plugin_name_array_count as $plugin_name => $count){
-                    foreach($old_plugin_name_array_count as $old_plugin_name => $old_count){
-                        if($count == $old_count){
-                            $new_plugin_name_array_count[$old_plugin_name] = $count;
-                        }
-                    }
-                }
-
-                // Making a final array having arrays of vulnerability and count
-                $new_plugin_array = [];
-                $i=0;
-                foreach($new_plugin_name_array_count as $key => $value){
-                    $new_plugin_array[$i] = [$key,$value];
-                    $i = $i + 1;
-                }
-
-                // ---------- Calling Vulnerability model function to store Vulnerability List
-
-                $Vulnerability = new Vulnerability();
-                
-                $Vulnerability->store($new_plugin_array);
-    
-
-
-            //------------------- PHP WORD Table 2 --------------------------------------//
-
-                $section->addTextBreak(1);
-                $section->addText('TABLE 2: Top 10 Vulnerability names with its total count / occurence',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
-                $section->addTextBreak(1);
-                $table2 = $section->addTable();
-                $table2->addRow(100);
-                $table2->addCell(15000)->addText('Exploit Category', array('color'=>'006699'));
-                $table2->addCell(2500)->addText('Infected Assets', array('color'=>'006699'));
-
-                $table_3 = $section->addTable();
-
-
-                // Creating Object of Vulnerability Model Class 
-                $Vulnerability = new Vulnerability();
-                $new_plugin_array = $Vulnerability->read();
-
-                $counter=0;
-
-                foreach($new_plugin_array as $new){
-                    if($counter<10){
-                        $table_3->addRow(100);
-                        $table_3->addCell(15000)->addText(htmlspecialchars($new->vulnerability));
-                        $table_3->addCell(2500)->addText('          '.htmlspecialchars($new->count));
-                    }
-                    $counter = $counter + 1;
-                }    
-        
-
-            // ======================= Table 3 ================================ //
-
-                //--------- Retriveing all the vulnerabilities and its description + solution ------//
-                $count=0;
-                foreach($nessus['Report']['ReportHost'] as $something){
-                    $count = $count+1;
-                }
-
-
-                $plugin_name_array = [];
-                $counter = 0;
-                for($i=0; $i<$count; $i++){
-
-                    $jcount = count($nessus['Report']['ReportHost'][$i]['ReportItem']);
-
-                    for($j=0; $j<$jcount; $j++)
-                    {
-                        if(!in_array([$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name'], $nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['description'], $nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['solution']],$plugin_name_array)){
-
-                                $plugin_name_array[$counter] = [$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name'], $nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['description'], $nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['solution']];
-                                $counter = $counter + 1;
-                        }        
-
-                    }
-
-                }
-
-                $Vulnerabilitydetail = new Vulnerabilitydetail();
-                $Vulnerabilitydetail->store($plugin_name_array);
-
-
-                //--------------Retrieving all the ips and mac that are common in a vulnerability------------//
-
-                $array_ip = [];
-                $array_plugin_name = [];
-
-                for($i=0; $i<$count; $i++){
-
-                        $match_mac="-";
-                        foreach($nessus['Report']['ReportHost'][$i]['HostProperties']['tag'] as $each){
-
-
-                                if(preg_match('~^([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])$~', $each, $mac)){
-
-                                    $match_mac = $mac[0];
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
 
                                 }
 
 
                         }
 
-                        $jcount = count($nessus['Report']['ReportHost'][$i]['ReportItem']);
-                        for($j=0; $j<$jcount; $j++)
+
+                    //------------------------- Table 3 - 4 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }  
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+
+
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }                                            
+
+
+
+                    //------------------------- Table 3 - 3 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) &&  in_array("IP Address 3", $report_items) ){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }  
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items) ){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+
+
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }    
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }                                                                
+
+
+
+                    //------------------------- Table 3 - 2 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Description', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['description'], array('color'=>'050002', 'size' => 10));
+
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+                                    $table3 = $section->addTable('myTable');
+
+
+                                    $table3->addRow(100);
+                                    $table3->addCell(3000, $firstRowStyle)->addText('Remediation', array('color'=>'050002', 'bold'=>true, 'size' => 11, 'bgColor' => 'a8a8a8'));
+                                    $table3->addCell(13000)->addText($each['solution'], array('color'=>'050002', 'size' => 10));
+                                
+
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }  
+
+                        
+                        elseif(in_array("Plugin Name", $report_items) && in_array("IP Address 3",$report_items)){
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(8000)->addText('IP', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(8000)->addText($each['ip'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name",$report_items) && in_array("MAC Address 3",$report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+
+                                    $section->addTextBreak(1);
+                                    $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Arial', 'size' => 10, 'color'=>'050002') );
+                                    $section->addTextBreak(1);
+
+                                    $table5 = $section->addTable('myTable');
+                                    $table5->addRow(100);
+                                    $table5->addCell(2000)->addText('S. No.', $left_10,array('align'=>'left'));
+                                    $table5->addCell(6000)->addText('MAC', $left_10, array('align'=>'left'));
+                                    $section->addTextBreak(1);
+
+
+
+                                        $j = 1;
+                                        $jcount = sizeof($each['ip']);
+                                        for($i=0; $i<$jcount; $i++){
+                                        // foreach($each['plugin_name'] as $reporthost){
+                                        
+                                            $table5->addRow(100);
+                                            $table5->addCell(2000)->addText($j.' ', $left_10_wb);
+                                            $table5->addCell(6000)->addText($each['mac'][$i], $left_10_wb);
+                                            $j = $j+1;
+                                            
+                                        }    
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }                                            
+
+
+
+                    //------------------------- Table 3 - 1 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items)){
+
+
+
+                            //------------------- PHP WORD Table 3 --------------------------------------//
+
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+                                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',array('name' => 'Arial', 'size' => 10, 'color'=>'FB0009', 'bold'=>true, 'lineHeight'=>-15));
+
+                                $section->addTextBreak(1, array('lineHeight'=>-15));
+                                $section->addText('All coming from the scan fields', array('name' => 'Arial', 'size' => 9, 'color'=>'050002', 'lineHeight'=>-15));
+                                $section->addTextBreak(1);
+                                $section->addTextBreak(1);
+
+
+                                $counter = 1;
+
+                                foreach($new_array as $each){
+
+                                    $section->addText($counter.'. '.htmlspecialchars($each['plugin_name']),array('name' => 'Arial', 'size' => 12, 'color'=>'050002', 'bold'=>true) );
+                                    $section->addTextBreak(1);
+
+
+
+                                        $section->addTextBreak(1);
+                                        $section->addTextBreak(1);
+                                        $counter = $counter + 1;
+
+                                }
+
+
+                        }
+
+                }        
+
+                // ------------PHPWORD Writer - Output Word Document ----------------------//
+
+                    $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+                    $file = 'HelloWorld.docx';
+                    $objWriter->save($file);
+
+
+                    // \PhpOffice\PhpWord\Settings::setPdfRendererPath('tcpdf_min');
+                    // \PhpOffice\PhpWord\Settings::setPdfRendererName('TCPDF');
+                    // $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
+                    // $xmlWriter->save('helloworld.pdf');
+                    
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Disposition: attachment; filename='.$file);
+                    header('Content-Transfer-Encoding: binary');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($file));
+                    flush();
+                    readfile($file);
+                    unlink($file); // deletes the temporary file
+                    exit;
+
+            }
+
+
+        }
+
+        elseif($request->pdf){
+            
+            // $this->updated_pdf($request->project_id); die();
+
+            $project_id = $request->project_id[sizeof($request->project_id)-1];
+            $reportfiles = Reportfile::where('project_id', $project_id)->get();
+            $reportfile_ids = $reportfiles->lists('id');
+
+
+            if(Reporthost::whereIn('reportfile_id', $reportfile_ids)->count() == 0){
+
+                return \Redirect::route('file_upload')->with('message','Please upload a nessus report file');
+
+            }
+            else{
+
+                // ---------------- Fpdf Addpage ---------------------- //              
+                  
+                    Fpdf::AddPage();            
+                    Fpdf::SetFont("Times","B","18");
+                    Fpdf::SetTitle('Report CSAS.');
+                    Fpdf::Cell(0, 10, "Report CSAS.",0,1,"L");
+                    // Fpdf::Cell(0, 10, "",0,1,"C");
+                    Fpdf::ln();
+
+
+
+
+                if(in_array("table1", $report_table)){        
+                        
+                    
+                    // ------------------ Table 1 Data Fetch ----------------------//
+
+                        $Reporthost = new Reporthost();
+                        $most_vulnerable_assets = $Reporthost->get_most_vulnerable_assets($project_id);
+                        $most_vulnerable_assets = $this->array_orderby($most_vulnerable_assets, 'count', SORT_DESC);
+                   
+                    
+                    //------------------------- Table 1 - 4 Selected -------------------------------------- //
+
+                        if(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) && in_array("Asset Type", $report_items) &&  in_array("Vulnerability Count", $report_items))
                         {
 
-                            if(array_key_exists($nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name'] ,$array_plugin_name )){
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+                            
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(33,11, 'MAC',1,0,'',true);
+                                Fpdf::Cell(29,11, 'System Type',1,0,'',true);
+                                Fpdf::Cell(78,11, 'Opeating System',1,0,'',true);
+                                Fpdf::Cell(12,11, 'Count',1,1,'C',true); 
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(33,10,$each['mac'],1,0,'C');
+                                    Fpdf::Cell(29,10,$each['system_type'],1,0,'L');
+                                    Fpdf::Cell(78,10,$each['operating_system'],1,0, 'L');
+                                    Fpdf::Cell(12,10,$each['count'],1,1,'C');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+
+                        }
 
 
-                                    if(!in_array($nessus['Report']['ReportHost'][$i]['@attributes']['name'], $array_plugin_name[$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name']]) ){
+                    //------------------------- Table 1 - 3 Selected -------------------------------------- //
 
-                                        array_push($array_plugin_name[$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name']], $nessus['Report']['ReportHost'][$i]['@attributes']['name'], $match_mac);
+                        elseif(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) && in_array("Asset Type", $report_items) )
+                        {
+                            
+                            // ------------------- FPDF Table 1 --------------------------------------//
 
+
+                            
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(33,11, 'MAC',1,0,'',true);
+                                Fpdf::Cell(29,11, 'System Type',1,0,'',true);
+                                Fpdf::Cell(78,11, 'Opeating System',1,1,'',true);
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(33,10,$each['mac'],1,0,'C');
+                                    Fpdf::Cell(29,10,$each['system_type'],1,0,'L');
+                                    Fpdf::Cell(29,10,$each['operating_system'],1,1,'L');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+
+
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) && in_array("Vulnerability Count", $report_items) )
+                        {
+
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(33,11, 'MAC',1,0,'',true);
+                                Fpdf::Cell(12,11, 'Count',1,1,'C',true); 
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(33,10,$each['mac'],1,0,'C');
+                                    Fpdf::Cell(12,10,$each['count'],1,1,'C');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+
+                        
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("Asset Type", $report_items) && in_array("Vulnerability Count", $report_items) )
+                        {
+                            
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(29,11, 'System Type',1,0,'',true);
+                                Fpdf::Cell(78,11, 'Opeating System',1,0,'',true);
+                                Fpdf::Cell(12,11, 'Count',1,1,'C',true); 
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(29,10,$each['system_type'],1,0,'L');
+                                    Fpdf::Cell(78,10,$each['operating_system'],1,0, 'L');
+                                    Fpdf::Cell(12,10,$each['count'],1,1,'C');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+                            
+                        
+                        }
+
+
+                    //------------------------- Table 1 - 2 Selected -------------------------------------- //
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("MAC Address 1", $report_items) )
+                        {
+                            
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(33,11, 'MAC',1,1,'',true);
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(33,10,$each['mac'],1,1,'C');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+
+                        
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("Asset Type", $report_items) )
+                        {
+                            
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(29,11, 'System Type',1,0,'',true);
+                                Fpdf::Cell(78,11, 'Opeating System',1,1,'',true);
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(29,10,$each['system_type'],1,0,'L');
+                                    Fpdf::Cell(78,10,$each['operating_system'],1,1, 'L');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+                  
+                        
+                        }
+
+                        elseif(in_array("IP Address 1", $report_items) && in_array("Vulnerability Count", $report_items))
+                        {
+                            
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,0,'',true);
+                                Fpdf::Cell(12,11, 'Count',1,1,'C',true); 
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,0,'L');
+                                    Fpdf::Cell(12,10,$each['count'],1,1,'C');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+           
+                        
+                        }     
+
+
+                    //------------------------- Table 1 - 1 Selected -------------------------------------- //
+
+                        elseif(in_array("IP Address 1", $report_items))
+                        {
+                            
+
+                            // ------------------- FPDF Table 1 --------------------------------------//
+
+
+                                // Colors, line width and bold font
+                                Fpdf::SetFillColor(168,168,168);
+                                Fpdf::SetTextColor(251,0,9);
+                                // Fpdf::SetDrawColor(128,0,0);
+                                Fpdf::SetLineWidth(.3);
+                                Fpdf::SetFont("Times","","14");
+                                // Fpdf::SetFont('','B');
+
+                                Fpdf::Cell(0,10,'TABLE 1: List of most vulnerable assets in the client\'s network',0,0);
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+                                Fpdf::Cell(12,11, 'ID',1,0,'',true);
+                                Fpdf::Cell(30,11, 'IP',1,1,'',true);
+
+                                Fpdf::SetFont("Times","","10");
+                                foreach($most_vulnerable_assets as $each){
+
+                                    Fpdf::Cell(12,10,$each['id'],1,0,'L');
+                                    Fpdf::Cell(30,10,$each['ip'],1,1,'L');
+
+                                }
+
+                                Fpdf::ln();
+                                Fpdf::ln();
+                
+                        
+                        }                   
+
+                
+                }        
+                
+                if(in_array("table2", $report_table)){      
+
+                    Fpdf::SetFillColor(168,168,168);
+
+                    // ------------------ Table 2 Data Fetch ----------------------//
+
+                        $Reportitem = new Reportitem();
+                        $vulnerabilities = $Reportitem->get_vulnerabilities($project_id);
+                        
+
+                    //------------------------- Table 2 - 2 Selected -------------------------------------- //
+
+                        if(in_array("Exploit Category", $report_items) && in_array("Infected Assets Count", $report_items)){
+
+                            //------------------- FPDF Table 2 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 2: Top 10 Vulnerability names with its total count / occurrence',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+
+                                Fpdf::Cell(12,10, 'ID' , 1, 0, '', true);
+                                Fpdf::Cell(150,10, 'Vulnerability Name',1,0,'',true);
+                                Fpdf::Cell(20,10, 'Count',1,1,'C',true);
+
+
+                                Fpdf::SetFont("Times","","10");
+
+                                foreach($vulnerabilities as $key => $each){
+
+                                        Fpdf::Cell(12,10, $key+'1', 1);
+                                        Fpdf::Cell(150,10, $each->plugin_name ,1);
+                                        Fpdf::Cell(20,10, $each->total, 1, 1, 'C');
+                                        
+                                }
+
+                                Fpdf::ln();
+
+                        }
+
+
+                    //------------------------- Table 2 - 1 Selected -------------------------------------- //
+
+                        elseif(in_array("Exploit Category", $report_items)){
+
+                            //------------------- FPDF Table 2 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 2: Top 10 Vulnerability names with its total count / occurrence',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                Fpdf::SetFont("Times","B","11");
+
+                                Fpdf::Cell(12,10, 'ID' , 1, 0, '', true);
+                                Fpdf::Cell(150,10, 'Vulnerability Name',1,1,'',true);
+
+
+                                Fpdf::SetFont("Times","","10");
+
+                                foreach($vulnerabilities as $key => $each){
+
+                                        Fpdf::Cell(12,10, $key+'1', 1);
+                                        Fpdf::Cell(150,10, $each->plugin_name ,1,1);
+                                        
+                                }
+
+                                Fpdf::ln();
+
+                        }                        
+
+                } 
+
+                if(in_array("table3", $report_table)){   
+
+                    Fpdf::SetFillColor(168,168,168);
+
+                    // ------------------ Table 3 Data Fetch -----------------//
+
+                        $Reporthost = new Reporthost();
+                        $Reportitem = new Reportitem();
+
+                        // Fetcching all records in reportitems table
+                        $vulnerability_details = $Reportitem->read_reportitems_having_unique_reporthost_id($project_id);
+
+
+                        // Creating new arrays to store data
+                        $new_array = array();
+
+                        foreach($vulnerability_details as $detail){
+
+                            // Fetching ip and mac from reporthosts table by reporthost_id from reportitems
+                            $reporthosts = $Reporthost->ip_mac_by_reporthost_id($detail->reporthost_id);
+     
+
+                            if(!array_key_exists($detail->plugin_name, $new_array)){
+
+                                $new_array[$detail->plugin_name]['plugin_name'] = $detail->plugin_name;
+                                $new_array[$detail->plugin_name]['description'] = $detail->description;
+                                $new_array[$detail->plugin_name]['solution']    = $detail->solution;
+                                
+                                foreach($reporthosts as $reporthost){
+
+                                    $new_array[$detail->plugin_name]['ip']      = [$reporthost->host_ip];
+                                    $new_array[$detail->plugin_name]['mac']     = [$reporthost->mac];
+                                  
+                                }
+                                    
+                            }
+                            elseif(array_key_exists($detail->plugin_name, $new_array)){
+
+                                foreach($reporthosts as $reporthost){
+
+                                    array_push($new_array[$detail->plugin_name]['ip'], $reporthost->host_ip);
+                                    array_push($new_array[$detail->plugin_name]['mac'], $reporthost->mac);
+                                    
+             
+                                }                        
+
+                            }
+
+                        }    
+
+
+                    //------------------------- Table 3 - 5 Selected -------------------------------------- //
+
+
+                        if(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
                                     }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
 
-                            }
-
-                            else{
-
-                                $array_plugin_name[$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name']] = [$nessus['Report']['ReportHost'][$i]['@attributes']['name'], $match_mac];
-
-                            }
-
-                            // if(array_key_exists($nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name'] ,$array_plugin_name )){
-
-                            //  array_push($array_plugin_name[$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name']], 'IP'->$nessus['Report']['ReportHost'][$i]['@attributes']['name'], 'MAC'->$match_mac);
-
-                            // }
-
-                            // else{
-
-                            //  $array_plugin_name[$nessus['Report']['ReportHost'][$i]['ReportItem'][$j]['plugin_name']] = ['IP'->$nessus['Report']['ReportHost'][$i]['@attributes']['name'], 'MAC'->$match_mac];
-
-                            // }
+                                }
 
 
                         }
 
 
-                } 
+                    //------------------------- Table 3 - 4 Selected -------------------------------------- //
 
-                $Vulnerabilitydetail_ip_mac = new Vulnerabilitydetail_ip_mac;
-                $Vulnerabilitydetail_ip_mac->store($array_plugin_name);
-
-
-
-            //------------------- PHP WORD Table 3 --------------------------------------//
-
-                $section->addTextBreak(1);
-                $section->addText('TABLE 3: Vulnerability detail with description, remedy(fix), occurances',array('name' => 'Tahoma', 'size' => 14, 'color'=>'red', 'italic'=>true) );
-                $section->addTextBreak(1);
-
-
-                // // --- Retrieving all the details from both models Vulnerabilitydetail $ Vulnerabilitydetail_ip_mac 
-                // $vulnerability = Vulnerabilitydetail_ip_mac::all();
-                // $array_new = array();
-                // $final_array = array();
-                // $count = 0;
-                // foreach($vulnerability as $each){
-                    
-                //     $v = Vulnerabilitydetail::find($each->vulnerability_detail_id);
-                    
-                //     if(!in_array($v->vulnerability, $array_new)){
-
-                //         $array_new[$count] = $v->vulnerability;
-                //         // echo $v->vulnerability.'     ';
-                //         // echo '<br>';
-                //         // echo $v->description.'       ';
-                //         // echo '<br>';
-                //         // echo $v->solution.'        ';
-
-                //         // echo "</pre>";
-                //         // echo '<br>';
-
-                //         $count = $count + 1;
-                //     }    
-                    
-
-                //     echo $each->id.'   '.$each->ip.'    '.$each->mac;
-
-                //     echo '<br>';
-                //     echo '<br>';
-                //     echo '<br>';
-                    
-                // }
-                //------------------------- End ---------------------------//
-
-
-                //------------------------ Experimenting Retrieving Records --------------------------------//
-
-                //     // Creating Object of Vulnerabilitydetail and Vulnerabilitydetail_ip_mac Model Class 
-                //     $Vulnerabilitydetail_ip_mac = new Vulnerabilitydetail_ip_mac();
-                //     $plugin_name_array = $Vulnerabilitydetail_ip_mac->read();
-
-
-                // echo "<pre>";
-                // foreach($plugin_name_array as $each){
-                //     // var_dump($each->ip);
-
-                //     $vulnerabilities_detail = $Vulnerabilitydetail_ip_mac->with('Vulnerabilitydetail')->find($each->vulnerability_detail_id); 
-                //     var_dump($vulnerabilities_detail->Vulnerabilitydetail->description);
-                //     // echo $vulnerabilities_detail->description;
-                //     // echo $vulnerabilities_detail->solution;
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items)){
 
 
 
-                //     echo '<br>';
-                // }
-                // echo "</pre>";
-
-                $vulnerability = Vulnerabilitydetail_ip_mac::all();
-                $array_new = array();
-                $count = 0;
-                $counter = 1;
-
-                foreach($vulnerability as $each){
-
-                        $v = Vulnerabilitydetail::find($each->vulnerability_detail_id);
-                    
-                        if(!in_array($v->vulnerability, $array_new)){
-
-                            $array_new[$count] = $v->vulnerability;
-
-                            $section->addText($v->id.'. '.htmlspecialchars($v->vulnerability),array('name' => 'Tahoma', 'size' => 12, 'color'=>'black', 'bold'=>true) );
-                            $section->addTextBreak(1);
+                            //------------------- FPDF Table 3 --------------------------------------//
 
 
-                            $table4 = $section->addTable();
-                            $table4->addRow(100);
-                            $table4->addCell(3000)->addText('           Description', array('color'=>'black', 'bold'=>true));
-                            $table4->addCell(13000)->addText($v->description, array('color'=>'006699'));
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
 
-                            $table4->addRow(100);
-                            $table4->addCell(3000)->addText('           Remediation', array('color'=>'black', 'bold'=>true));
-                            $table4->addCell(13000)->addText($v->solution, array('color'=>'006699'));
-                        
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,1,'',true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1,1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
 
 
-                            $section->addTextBreak(1);
-                            $section->addText('Following is the list of assets with this vulnerability:',array('name' => 'Tahoma', 'size' => 12, 'color'=>'black') );
-                            $section->addTextBreak(1);
 
-                            $table5 = $section->addTable();
-                            $table5->addRow(100);
-                            $table5->addCell(2000)->addText('S. No.', array('color'=>'black', 'italic'=>true, 'bold'=>true));
-                            $table5->addCell(8000)->addText('IP', array('color'=>'black', 'italic'=>true, 'bold'=>true));
-                            $table5->addCell(6000)->addText('MAC', array('color'=>'black', 'italic'=>true, 'bold'=>true));
-                            $section->addTextBreak(1);
+                        }
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items) &&  in_array("MAC Address 3", $report_items)){
 
 
-                            $count = $count + 1;
-                            $counter = 1;
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+
+                        }  
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+
+                        }                                            
+
+
+
+                    //------------------------- Table 3 - 3 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) && in_array("Remediation", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+
+                        }
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) &&  in_array("IP Address 3", $report_items) ){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,1,'',true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1,1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+
+
+                        }  
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items) &&  in_array("MAC Address 3", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items) &&  in_array("IP Address 3", $report_items) ){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,1,'',true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1,1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
 
                         }    
 
-
-                        $table5->addRow(100);
-                        $table5->addCell(2000)->addText($counter.' ', array('color'=>'006699'));
-                        $table5->addCell(8000)->addText($each->ip, array('color'=>'006699'));
-                        $table5->addCell(6000)->addText($each->mac, array('color'=>'006699'));
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items) &&  in_array("MAC Address 3", $report_items)){
 
 
 
-                        $section->addTextBreak(1);
-                        $counter = $counter + 1;
+                            //------------------- FPDF Table 3 --------------------------------------//
 
-                }
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
 
 
 
-            // ------------PHPWORD Writer - Output Word Document ----------------------//
+                        } 
 
-                $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                $file = 'HelloWorld.docx';
-                $objWriter->save($file);
-                
-                header('Content-Description: File Transfer');
-                header('Content-Type: application/octet-stream');
-                header('Content-Disposition: attachment; filename='.$file);
-                header('Content-Transfer-Encoding: binary');
-                header('Expires: 0');
-                header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-                header('Pragma: public');
-                header('Content-Length: ' . filesize($file));
-                flush();
-                readfile($file);
-                unlink($file); // deletes the temporary file
-                exit;
+                        elseif(in_array("Plugin Name", $report_items) &&  in_array("IP Address 3", $report_items) &&  in_array("MAC Address 3", $report_items)){
 
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+                        }                                                                
+
+
+
+                    //------------------------- Table 3 - 2 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Description", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');                    
+                                    Fpdf::Cell(40,10, 'Description',0,0,'');                    
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['description'], 0, 1);
+
+
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+                        }
+
+                        elseif(in_array("Plugin Name", $report_items) && in_array("Remediation", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont('Times','B',"11");
+                                    Fpdf::Cell(4,10, '',0,0,'');    
+                                    Fpdf::Cell(40,10, 'Remediation',0,0,'L');   
+                                    Fpdf::SetFont("Times","I","11");
+                                    Fpdf::MultiCell(0,10, $each['solution'], 0, 1);
+                                    // Fpdf::ln();
+
+                                  
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+                        }  
+
+                        
+                        elseif(in_array("Plugin Name", $report_items) && in_array("IP Address 3",$report_items)){
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(70,10, '   IP',1,1,'',true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(70,10, $each['ip'][$i] ,1,1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+
+                        } 
+
+                        elseif(in_array("Plugin Name",$report_items) && in_array("MAC Address 3",$report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","B","12");
+                                    Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    Fpdf::SetTextColor(0);
+
+
+                                    Fpdf::SetFont('Times','B',"12");
+                                    // Fpdf::SetTextColor(251,0,9);
+                                    Fpdf::Cell(30,10, 'Following is the list of assets with this vulnerability', 0, 1);
+
+                                    Fpdf::SetTextColor(0);
+                                    Fpdf::SetFont("Times","B","11");
+                                    Fpdf::Cell(20,10, 'S. No.',1,0,'',true);
+                                    Fpdf::Cell(100,10, '   MAC', 1, 1,'', true);
+
+                                    Fpdf::SetFont("Times","","10");
+                                    $jcount = sizeof($each['ip']);
+                                    for($i=0; $i<$jcount; $i++){
+
+                                            Fpdf::Cell(20,10, $i+'1', 1);
+                                            Fpdf::Cell(100,10, $each['mac'][$i], 1, 1);
+                                            
+                                    }
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+                        }                                            
+
+
+
+                    //------------------------- Table 3 - 1 Selected -------------------------------------- //
+
+                        elseif(in_array("Plugin Name", $report_items)){
+
+
+
+                            //------------------- FPDF Table 3 --------------------------------------//
+                                
+                                Fpdf::ln();
+                                Fpdf::SetTextColor(251,0,9);
+                                Fpdf::SetFont("Times","","14");
+
+                                Fpdf::Cell(0,10,'TABLE 3: Vulnerability detail with description, remedy(fix), occurrences',0,0);
+                                Fpdf::ln();
+
+                                Fpdf::SetTextColor(0);
+                                
+                                $k=1;
+                                foreach($new_array as $each){
+
+                                    
+                                    Fpdf::SetFont("Times","","12");
+                                    Fpdf::MultiCell(0, 10, $k.'. '.$each['plugin_name'] , 0, 1);
+                                    
+                                    
+                                    Fpdf::ln();
+                                    Fpdf::SetAutoPageBreak(true,2);
+                                    $k= $k+1;
+
+                                }
+
+                        }
+
+                }        
+
+
+                // ---------------- Fpdf Writer ---------------------- //                  
+
+                    Fpdf::Output();
+                    exit;
+
+
+
+            }
+
+
+        }
 
     }
 
 
-    public function pdf(){
 
-    	return 'pdf file';
 
-    }
-	
-	public function excel(){
 
-    	return 'excel file';
 
-    }
 
-    public function webpage(){
 
-    	return 'Webpage';
-
-    }
 
 }

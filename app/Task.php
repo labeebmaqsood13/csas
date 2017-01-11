@@ -21,4 +21,9 @@ class Task extends Model
 
     }
 
+
+    public function reportfile(){
+        return $this->hasOne('App\Reportfile');
+    }
+
 }

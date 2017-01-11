@@ -9,7 +9,7 @@ class Assignment extends Model
     protected $table = 'assignments';
     protected $hidden = [];
 
-    protected $fillable = ['task_id', 'user_id', 'project_id', 'due_date', 'can_upload', 'status'];
+    protected $fillable = ['task_id', 'user_id', 'project_id', 'due_date', 'can_upload', 'status', 'description'];
 
     public function task(){
     	return $this->belongsTo('App\Task');

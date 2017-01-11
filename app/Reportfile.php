@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Reportfile extends Model
 {
 	protected $table = 'reportfiles';
-    protected $fillable = ['info','name','user_id', 'project_id'];
+    protected $fillable = ['info','name','user_id', 'project_id', 'task_id'];
 
 
-	public static function store($name, $project_id, $information, $user_id){
+	public static function store($name, $project_id, $information, $user_id, $task_id){
 		return Reportfile::create([
 			'name'       => $name,
 			'project_id' => $project_id,
 			'info'       => $information,
 			'user_id'    => $user_id,
+            'task_id'    => $task_id,
 			]);
 	}
 
@@ -34,5 +35,12 @@ class Reportfile extends Model
     public function pluginid(){
 		return $this->hasMany('App\Pluginid');
     }
+
+
+
+    public function task(){
+        return $this->hasOne('App\Task');
+    }
+
 
 }

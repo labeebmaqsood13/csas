@@ -560,7 +560,7 @@
                                   <br>  
                                   <h4 class="text-center"><u>Add Members</u></h4>
                                   <br>
-                                  <select name="users[]" class="selectpicker text-center form-control" multiple>
+                                  <select name="users[]" class="selectpicker text-center form-control" multiple title="Please Choose Analaysts from the list">
                                     @foreach($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
