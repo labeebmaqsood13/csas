@@ -104,7 +104,7 @@
                       <li><a href="dashboard">Analysis Dashboard</a></li>
                     </ul>
                   </li>
-                   <li><a><i class="glyphicon glyphicon-cog"></i> Projects & TASKS <span class="fa fa-chevron-down"></span></a>
+                   <li><a><i class="glyphicon glyphicon-cog" style="padding-right: 10px;"></i> Projects & TASKS <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
                       <li><a onclick="hreff();" id="projects_tasks" href="/projects_tasks">View / Choose Project</a></li>
                       </ul>

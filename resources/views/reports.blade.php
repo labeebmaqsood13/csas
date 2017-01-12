@@ -18,7 +18,7 @@
 
 
     function checkbox(){
-      // alert('haha');
+
       var chkBox = document.getElementById('table1');
       if (chkBox.checked)
       {
@@ -174,6 +174,16 @@
           background-color: #fff;
     }
 
+    .glyphicon:before {
+         visibility: visible;
+    }
+    .glyphicon.glyphicon-remove:checked:before {
+        content: "\e013";
+    }
+    input[type=checkbox].glyphicon{
+         visibility: hidden;        
+    }
+
   </style>
 
 
@@ -199,14 +209,15 @@
       </div>  
 
       <div id="report" class="hidden">
+
         <form role="form" id="myform" action="/generate_report" method="POST" style="margin-top: 75px;">
-            
+            <h3 class="lead text-center" style="font-weight: 400;"><u>Please Choose the attributes from tables to be shown in generated report</u></h3>
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
             <!-- <h4>Table 1: List of most vulnerable assets in the network </h4> -->
-            <div class="checkbox">
+            <div class="checkbox" style="margin-top: 35px;">
               <label>
-                <input type="checkbox" name="table[]" id="table1" value="table1" onclick="checkbox();" checked="checked" class="checkbox"><h4 style="margin-top: 0px;">Table 1: List of most vulnerable assets in the network </h4>
+                <input type="checkbox" name="table[]" id="table1" value="table1" onclick="checkbox();" checked="checked" class="glyphicon glyphicon-remove"><h4 class="lead" style="margin-top: 0px;">Table 1: List of most vulnerable assets in the network </h4>
               </label>
             </div>  
 
@@ -235,7 +246,7 @@
             <!-- <h4>Table 2: Top 10 Vulnerabilities</h4> -->
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="table[]" class="checkbox" id="table2" onclick="checkbox_two();" value="table2" checked="checked"><h4 style="margin-top: 0px;">Table 2: Top 10 Vulnerabilities </h4>
+                <input type="checkbox" name="table[]" class="glyphicon glyphicon-remove" id="table2" onclick="checkbox_two();" value="table2" checked="checked"><h4 class="lead" style="margin-top: 0px;">Table 2: Top 10 Vulnerabilities </h4>
               </label>
             </div>  
 
@@ -254,7 +265,7 @@
             <!-- <h4>Table 3: Vulnerability details</h4> -->
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="table[]" id="table3" value="table3" class="checkbox" onclick="checkbox_three();" checked="checked"><h4 style="margin-top: 0px;">Table 3: Vulnerability details </h4>
+                <input type="checkbox" name="table[]" id="table3" value="table3" class="glyphicon glyphicon-remove" onclick="checkbox_three();" checked="checked"><h4 class="lead" style="margin-top: 0px;">Table 3: Vulnerability details </h4>
               </label>
             </div>  
 

@@ -39,6 +39,17 @@ use Auth;
 
 class NessusController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+
     public function create_user(){
 
         User::create([
@@ -606,6 +617,9 @@ class NessusController extends Controller
 
         $report_items = $request->report;
         $report_table = $request->table;
+        if(is_null($report_table)){
+            return back();
+        }
 
 
         if($request->word){
