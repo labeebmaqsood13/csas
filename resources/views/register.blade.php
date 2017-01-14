@@ -6,6 +6,15 @@
 
 @section('user_role','Guest')
 
+@section('scripts')
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+@endsection
+
 @section('content')
 
 <div class="right_col" role="main">

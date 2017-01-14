@@ -19,18 +19,35 @@ use Auth;
 
 class InviteUserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    
 	public $code;
     
     public function invite_user(Request $request){
 
-        if($request->input('email')){
+        if($request->input('project_id')){
           
             if(Userinvitation::where('email',$request->input('email'))->exists() || User::where('email', $request->input('email'))->exists() ){
                 return response()->json('0');
-            }else if(!Userinvitation::where('email',$request->input('email'))->exists()){
-                $user_id = Auth::user()->id;
-                $code = md5(uniqid());
-                $email = $request->input('email');
+            }
+ 
+            $user_id = Auth::user()->id;
+            $code = md5(uniqid());
+            $email = $request->input('email');
+
+            $data = ['code' => $code, 'email' => $email, 'name' => Auth::user()->name];
+            Mail::send('emails.register', $data, function($message) use($data){
+                $message->from('labeebmaqsood13@gmail.com');
+                $message->to($data['email']);
+                $message->subject('This is an invitation email');
+            });            
+
+            if(!Userinvitation::where('email',$request->input('email'))->exists()){
+
                 $user_invited = Userinvitation::create([
                     'code'       => $code,
                     'email'      => $email,
@@ -52,48 +69,51 @@ class InviteUserController extends Controller
             }
 
 
-            $data = ['code' => $code, 'email' => $email, 'name' => Auth::user()->name];
-            Mail::send('emails.register', $data, function($message) use($data){
-                $message->from('labeebmaqsood13@gmail.com');
-                $message->to($data['email']);
-                $message->subject('This is an invitation email');
-            });
 
             return response()->json('1');
         
         }
+        if($request->email){
 
-
-        $user_id = Auth::user()->id;
-
-        // $code = Hash::make(str_random(8));
-        $code = md5(uniqid());
-
-        $email = $request->email;
-
-        $user_invited = Userinvitation::create([
-            'code'       => $code,
-            'email'      => $email,
-            'status'     => 'pending',
-            'valid_till' => date("Y-m-d H:i:s", strtotime('+1 hours')),
-            'user_id'    => $user_id,
-            ]);
-
-        if(!is_null($request->roles)){
-            foreach($request->roles as $role_id){   
-                $user_invited->role()->attach($role_id);
+            if(Userinvitation::where('email',$request->input('email'))->exists() || User::where('email', $request->email)->exists()){
+                return \Redirect::route('users')->with('alert', $request->email.' already exists.');
             }
-        }    
+            else{
+                $user_id = Auth::user()->id;
 
-        $data = ['code' => $code, 'email' => $email , 'name' => Auth::user()->name];
-        Mail::send('emails.register', $data, function($message) use($data){
-            $message->from('labeebmaqsood13@gmail.com');
-            $message->to($data['email']);
-            $message->subject('This is an invitation email');
-        });
+                // $code = Hash::make(str_random(8));
+                $code = md5(uniqid());
 
-        return \Redirect::route('dashboard')->with('message', $email.' has been invited.');
+                $email = $request->email;
 
+
+                $data = ['code' => $code, 'email' => $email , 'name' => Auth::user()->name];
+                Mail::send('emails.register', $data, function($message) use($data){
+                    $message->from('labeebmaqsood13@gmail.com');
+                    $message->to($data['email']);
+                    $message->subject('This is an invitation email');
+                });
+
+
+                $user_invited = Userinvitation::create([
+                    'code'       => $code,
+                    'email'      => $email,
+                    'status'     => 'pending',
+                    'valid_till' => date("Y-m-d H:i:s", strtotime('+1 hours')),
+                    'user_id'    => $user_id,
+                    ]);
+
+                if(!is_null($request->roles)){
+                    foreach($request->roles as $role_id){   
+                        $user_invited->role()->attach($role_id);
+                    }
+                }                    
+
+                return \Redirect::route('users')->with('alert_success', $email.' has been invited.');
+            }    
+                
+        }
+            
     }
 
     public function check_status($code){
@@ -130,6 +150,7 @@ class InviteUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
+
             ]);
 
         $user_invited = Userinvitation::where('email',$request->email)->first();
@@ -147,7 +168,7 @@ class InviteUserController extends Controller
 
 
         $user_invited->update(['status' => 'successful']); 
-        return \Redirect::route('users')->with('success', 'New User has been registered successfully');
+        return \Redirect::route('/')->with('success', 'New User has been registered successfully');
 
 
     }

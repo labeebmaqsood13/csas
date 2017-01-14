@@ -14,6 +14,8 @@ use App\User;
 
 use App\Role;
 
+use DB;
+
 use App\Phase;
 
 use App\Task;
@@ -21,6 +23,8 @@ use App\Task;
 use App\Reportfile;
 
 use App\Project;
+
+use App\Permission;
 
 use Illuminate\Http\Request;
 
@@ -46,37 +50,113 @@ class NessusController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
 
     public function create_user(){
 
-        User::create([
-            'name'      => 'Muhammad',
-            'email'     => 'muhammad@yahoo.com',
-            'password'  => 'something',
-            ]);
-        User::create([
-            'name'      => 'Faisal',
-            'email'     => 'faisal@yahoo.com',
-            'password'  => 'something',
-            ]);
-        User::create([
-            'name'      => 'Labeeb',
-            'email'     => 'labeeb@yahoo.com',
-            'password'  => 'something',
-            ]);
-        User::create([
+        // User::create([
+        //     'name'      => 'Muhammad',
+        //     'email'     => 'muhammad@yahoo.com',
+        //     'password'  => 'something',
+        //     'image_url' => 'profile.png',
+
+        //     ]);
+        // User::create([
+        //     'name'      => 'Faisal',
+        //     'email'     => 'faisal@yahoo.com',
+        //     'password'  => 'something',
+        //     'image_url' => 'profile.png',
+        //     ]);
+        // User::create([
+        //     'name'      => 'Labeeb',
+        //     'email'     => 'labeeb@yahoo.com',
+        //     'password'  => 'something',
+        //     'image_url' => 'profile.png',
+        //     ]);
+        $user = User::create([
             'name'      => 'Mustafa',
             'email'     => 'mustafa@yahoo.com',
             'password'  => 'something',
+            'image_url' => 'profile.png',
             ]);
+
 
 
         Role::create([
             'name' => 'Client Representative',
             ]);
+        $role = Role::create([
+            'name' => 'Super Manager',
+            ]);
+        Role::create([
+            'name' => 'Manager',
+            ]);
+        Role::create([
+            'name' => 'Analyst',
+            ]);
+
+        $user->role()->attach($role->id);
+
+        Permission::create([
+            'name' => 'Activity Dashboard',
+            ]);
+        Permission::create([
+            'name' => 'Analytics Dashboard',
+            ]);        
+        Permission::create([
+            'name' => 'Analysis Dashboard',
+            ]);        
+        Permission::create([
+            'name' => 'Manage Projects',
+            ]);                       
+        Permission::create([
+            'name' => 'Edit Users',
+            ]);                  
+        Permission::create([
+            'name' => 'Edit Roles',
+            ]);
+        Permission::create([
+            'name' => 'Customize Sop',
+            ]);
+        Permission::create([
+            'name' => 'Edit Clients Projects',
+            ]);        
+        Permission::create([
+            'name' => 'Manage Permissions',
+            ]);        
+        Permission::create([
+            'name' => 'Project Wizard',
+            ]);
+        Permission::create([
+            'name' => 'Customized Report', // Sab dekh saktay  clientrep jin projects mein add unhain dekh sakta
+            ]);
+        Permission::create([
+            'name' => 'My Tasks', // Client Representative ko na dikhain sirf
+            ]);
+        // Permission::create([
+        //     'name' => 'Profile', // Everyone can see their profile
+        //     ]);
+        
+
+
+        
+
+        $super_manager = Role::where('name','Super Manager')->first();
+        $super_manager->permission()->attach([1,2,3,4,5,6,7,8,9,10,11,12]);
+
+        $super_manager = Role::where('name','Manager')->first();
+        $super_manager->permission()->attach([1,2,3,4,5,6,7,8,9,10,11,12]);      
+
+
+        $super_manager = Role::where('name','Analyst')->first();
+        $super_manager->permission()->attach([1,2,3,4,11,12]);     
+
+
+        $super_manager = Role::where('name','Client Representative')->first();
+        $super_manager->permission()->attach([2,11]);     
+
 
         $phase_one = Phase::create([
             'name' => 'Pre-engagement',
@@ -135,14 +215,57 @@ class NessusController extends Controller
 
     }
 
-    public function upload(UploadNessusRequest $request){
 
-            $reportfile = Reportfile::store($request->name, $request->project, $request->information, Auth::user()->id);
 
+
+
+public function upload_update_file(Request $request){
+        // DB::table('assignments')
+        //             ->where('task_id', $request->tskid)
+        //             ->update(array('status' => 'completed'));
+                 $reportfile = Reportfile::find($request->id);
+                // to be checked on labeeb  $pluginids=Pluginid::select('id')->where('reportfile_id',$req->x)->get();
+                $reporthost=Reporthost::select('id')->where('reportfile_id',$request->x)->get();
+               
+        foreach($reporthost as $rpid){
+         Reportitem::select()->where('reporthost_id',$rpid->id)->delete();
+
+        }
+        foreach($reporthost as $rp){
+
+         Reporthost::select()->where('id',$rp->id)->delete();
+
+        }
+
+               
+            $reportfile = Reportfile::select()
+                    ->where('id', '=', $request->id)
+                    ->update(['name' => $request->name]);
             $nessus_file_upload = $request->file('nessus_file_upload');
             $nessus_content = File::get($request->file('nessus_file_upload'));
+  // $this->save_plugin_id($nessus_content, $reportfile->id); 
 
-            $this->save_plugin_id($nessus_content, $reportfile->id); 
+            // echo "<pre>";
+            // var_dump($display);
+            // echo "</pre>";
+
+            $this->save_reporthosts_and_reportitems($nessus_content, $request->id); 
+
+            return \Redirect::route('file_upload')->with('message', 'Nessus File Parsed and Stored in Database');
+
+}
+
+
+    public function upload(UploadNessusRequest $request){
+DB::table('assignments')
+            ->where('task_id', $request->tskid)
+            ->update(array('status' => 'completed'));
+            $reportfile = Reportfile::store($request->name, $request->project, $request->information, Auth::user()->id, $request->tskid);
+             
+           
+            $nessus_file_upload = $request->file('nessus_file_upload');
+            $nessus_content = File::get($request->file('nessus_file_upload'));
+  // $this->save_plugin_id($nessus_content, $reportfile->id); 
 
             // echo "<pre>";
             // var_dump($display);
@@ -153,7 +276,6 @@ class NessusController extends Controller
             return \Redirect::route('file_upload')->with('message', 'Nessus File Parsed and Stored in Database');
 
     }
-
     public function save_plugin_id($nessus_content, $reportfile_id){
 
 
@@ -590,10 +712,14 @@ class NessusController extends Controller
 
     public function reports(){
 
+
+        if(Auth::user()->role()->first()->permission()->where('name', 'Customized Report')->count() == 0){
+            abort(403);
+        }        
         $user = Auth::user();
 
         // If user is a manager or suepr manager
-        if($user->role()->where('name', 'Manager')->orWhere('name', 'Super Manager')->exists() ){
+        if($user->role()->first()->name == 'Manager' || $user->role()->first()->name == 'Super Manager' ){
 
             $projects = Project::all();
         
@@ -601,6 +727,9 @@ class NessusController extends Controller
         else{
 
            $users_projects = $user->project()->get();
+           if($user->project()->count() == 0){
+                return \Redirect::action('HomeController@index')->with('message', 'No project is assigned to you');            
+           }
            $project_ids = $users_projects->lists('pivot.project_id');
            $projects = Project::whereIn('id', $project_ids)->get();
             

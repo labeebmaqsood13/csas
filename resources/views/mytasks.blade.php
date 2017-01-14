@@ -3,7 +3,6 @@
 
 @section('title','File Upload')
 
-
 @section('user_name')
   {{ Auth::user()->name }}
 @endsection
@@ -11,7 +10,6 @@
 @section('user_role')
   {{Auth::user()->role()->first()->name}}
 @endsection
-
 
 @section('scripts')
 <link href="{{URL::asset('build/css/dashbord3.min.css')}}">
@@ -47,14 +45,17 @@
     border-radius: 5px;
 }
 .panel-heading{
-    border-radius: 0px;
-    color: black;
+    border-radius: 1px;
+    color: white;
+}
+.txt{
+  color:black;
 }
 .panel-custom>.panel-heading{
-    background-color: #dedfe0;
+    background-color: #374d63;
 }
 .panel-group .panel:last-child{
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid #374d63;
 }
 
 .panel-collapse .collapse.in{
@@ -63,127 +64,65 @@
 
 </style>
 
-<script type="text/javascript">
-var x;
-  function client(id){
-   // alert(id);
-  
-    something = "/edit_clients_projects/" + id;
-
-
-       //alert("asd");
-    window.location.href=something;
-  
-  
-
-
-  }
-
-
 </script>
 @endsection
 
 @section('content')
 
+
  <div class="right_col" role="main">
           <div class="container container-fluid">
     
+
+            @if($notaskassigned == 1)
               <div class="row">
                   <div class="col-md-8 col-sm-8 col-lg-8 ">
-                    <h4>Clients and their Projects</h4>
+                    <h4>No tasks Assigned yet.</h4>
+                  </div>
+              </div>
+
+            @else    
+
+              <div class="row">
+                  <div class="col-md-8 col-sm-8 col-lg-8 ">
+                    <h4>Assignments</h4>
                   </div>
               </div>
 
 
-              <div class="row">
-                  <div class="col-md-8 col-sm-8 col-lg-6 ">
-                      <div class="ccms_form_element cfdiv_custom" id="style_container_div">
-                          
-                         
-                         @if($iamzeo==0)
-                          <select size="1" id="beerStyle" class="form-control" title="" type="select" name="style"
-                           onchange="client(this.value)" >
-                              <option value="0">-Choose A Client-</option>
-                              @foreach($clients as $client) 
-
-
-                              <option value="{{$client->id}}" name="clients[]">{{$client->name}}</option>
-                              @endforeach
-                             
-                          </select>
-                          @endif
-
-
-                         @if($iamzeo==1)
-                          <select size="1" id="beerStyle" class="form-control" title="" type="select" name="style"
-                           onchange="client(this.value)">
-                              <option value="0">-Choose A Client-</option>
-                              @foreach($clients as $client)                              
-                              <option value="{{$client->id}}"<?php if($client->id== $id) echo "selected";?> name="clients[]">{{$client->name}}</option>
-                              @endforeach
-                             
-                          </select>
-                          @endif
-
-                          
-                          <div class="clear"></div>
-                          <div id="error-message-style"></div>
-                      </div>
-                      
-                     
-                     <div class="clear"></div><div id="error-message-style-sub-1"></div>
-
-                  </div>  
-              </div>
-
 
        <br/>
        <br/>
 
-
-       <!--<div id="blah" class="hidden">
-         -->
-         @if($iamzeo!=0)
 
          <div class="panel-group" id="accordion">
             <div class="panel panel">
             <div class="panel-heading">
 
                <div class="row">
-               <div class="col-md-9">
-
-              
-                 <div class="row">
-                            <div class="col-md-3" style="margin-left: 10px">
-                            <LABEL>Client</LABEL>
-                            </div>
-                            <div class="col-md-6">
-                          <!--  <p>{{$client->name}}</p> -->
-                            <a href="#" class="myedit" data-type="text" data-column="name" data-url="{{url('edit_clients_projects/updatee/'.$client_id[0])}}" data-pk="{{$client_id[0]}}" data-name="name" data-token="{{ csrf_token() }}">     
-                            {{$client_name[0]}}
-                   </a>
-                            </div>
-                            </div>
-                 </div>
-                       
-                
-               
-                <div class="col-md-3">
-               <p>**Blue underlined Text is editable **</p>
-                </div>
                 </div>
                 <?php $p=0;?>
-                    @foreach($projects as $project)
+                    @foreach($taskname as $m)
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">    
          
             <div class="panel panel-custom">
                 <div class="panel-heading" role="tab" id="headingOne">
+                  
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" value="{{$project->id}}" name="projects[]"  href="#{{$p}}" aria-expanded="true" aria-controls="collapseOne">
+                        <a data-toggle="collapse" value="{{$m['task_id']}}" name="projects[]"  href="#{{$p}}" aria-expanded="true" aria-controls="collapseOne">
                             <i style="color:white"class="glyphicon glyphicon-plus"></i>
-                             {{$project->name}}
+                             {{$m['name']}}
                         </a>
+                         <span style="margin-left:30px;">
+                      @if($m['status']=='pending')
+                      <m class="badge badge-danger">Pending</m>
+                      @endif</span>
+                      @if($m['status']!='pending')
+                      <m class="badge badge-danger">Completed</m>
+                      @endif</span>
                     </h4>
+
+
                 </div>
                 <div id="{{$p}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                     <div class="panel-body">
@@ -191,13 +130,45 @@ var x;
                        <div class="col-md-9">
                        <form >
 
-                            <div>
+                            <div class="txt">
                             <div class="row">
                             <div class="col-md-3">
-                            <LABEL>Created by</LABEL>
+                            <LABEL>Project</LABEL>
                             </div>
                             <div class="col-md-6">
-                            <p>{{$m->name}}</p>
+                            <p>{{$m['project']}}</p>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-md-3">
+                            <LABEL>Task</LABEL>
+                            </div>
+                            <div class="col-md-6">
+                            <p>{{$m['name']}}</p>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-md-3">
+                            <LABEL>Phase</LABEL>
+                            </div>
+                            <div class="col-md-6">
+                            <p>{{$m['phasename']}}</p>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-md-3">
+                            <LABEL>Due Date</LABEL>
+                            </div>
+                            <div class="col-md-6">
+                            <p>{{$m['date']}}</p>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-md-3">
+                            <LABEL>Status</LABEL>
+                            </div>
+                            <div class="col-md-6">
+                            <p>{{$m['status']}}</p>
                             </div>
                             </div>
                         
@@ -223,32 +194,14 @@ var x;
               </div>
               </div>
               </div>
-                 @endif
+               
 
     </div>
+          @endif
     </div>
 </div>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
 
-
-<script type="text/javascript">
-  var y = "{{$link}}";
-  console.log(y);
- document.getElementById("projects_edit").href= y;
- 
-</script>
-<script type="text/javascript">
-      
-      function hreff(){
-        document.getElementById("projects_edit").href= "/edit_clients_projects";
-        window.location.href="/edit_clients_projects";
-
-      }
-
-    </script>
-
-    
-  
 
 <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>

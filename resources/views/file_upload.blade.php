@@ -2,11 +2,14 @@
 
 @section('title','File Upload')
 
+
 @section('user_name')
   {{ Auth::user()->name }}
 @endsection
 
-@section('user_role','Admin')
+@section('user_role')
+  {{Auth::user()->role()->first()->name}}
+@endsection
 
 @section('content')
 

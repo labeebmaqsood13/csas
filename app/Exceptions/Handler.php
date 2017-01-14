@@ -67,6 +67,9 @@ class Handler extends ExceptionHandler
                 // default:
                     // return $this->renderHttpException($e);
                     // break;
+
+
+        //Something went wrong
             // }
         // }
         // else

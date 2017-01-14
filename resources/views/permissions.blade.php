@@ -2,299 +2,308 @@
 
 @section('title','Activity Dashboard')
 
-@section('user_name','Labeeb')
+@section('user_name')
+	{{Auth::user()->name}}
+@endsection
 
-@section('user_role','Admin')
+@section('user_role')
+	{{Auth::user()->role()->first()->name}}
+@endsection
 
 @section('scripts')
 
+<style type="text/css">
 
-
-  
-<html ng-app="app">
-
-    <link rel="stylesheet" type="text/css" href="http://vitalets.github.io/angular-xeditable/dist/css/xeditable.css">
-
-
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-     <script  src="{{ URL::asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}" ></script>
-   
-    <script  src="{{ URL::asset('build/js/custom.min.js') }}" ></script>
-   
- 
-
-<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
-  
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
-
-
- <script  src="{{ URL::asset('bower_components/angular-xeditable/dist/css/xeditable.css') }}" ></script>
-    <script  src="{{ URL::asset('bower_components/angular-xeditable/dist/js/xeditable.js') }}" ></script>
-   
-
-<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-
-
-<script>
-$.fn.editable.defaults.mode = 'inline';
-$(document).ready(function() {
-    $('#username').editable({
-        params: function(params) {
-            // add additional params from data-attributes of trigger element
-            params.name = $(this).editable().data('name');
-            return params;
-        },
-        error: function(response, newValue) {
-            if(response.status == 500) {
-                return 'Server error. Check entered data.';
-            } else {
-                return response.responseText;
-                // return "Error.";
-            }
-        }
-    });
-});
-</script>
-
- <script type='text/javascript'>
-
- 
-
-   
-  
-
-
-
-
-        var app = angular.module("app", ["xeditable"]);
-
-          app.config(function($interpolateProvider) {
 	
-  $interpolateProvider.startSymbol('<%');
-        $interpolateProvider.endSymbol('%>');
-   
-
-});
-
-
-
-        app.run(function (editableOptions)
-        {
-            editableOptions.theme = 'bs3';
-        });
-
-
-
-
-
-        app.controller('Ctrl', function ($scope, $filter)
-        {
-            $scope.useAll = true;
-            $scope.sup= [true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true];
-        });
-       
-      
-
-
-
-   </script>     
-
-
- <style type='text/css'>
-        div[ng-app] {
-            margin: 50px;
-        }
-    </style>
-
-   
-
+.panel.with-nav-tabs .panel-heading{
+    padding: 5px 5px 0 5px;
+}
+.panel.with-nav-tabs .nav-tabs{
+	border-bottom: none;
+}
+.panel.with-nav-tabs .nav-justified{
+	margin-bottom: -1px;
+}
+/********************************************************************/
+/*** PANEL DEFAULT ***/
+.with-nav-tabs.panel-default .nav-tabs > li > a,
+.with-nav-tabs.panel-default .nav-tabs > li > a:hover,
+.with-nav-tabs.panel-default .nav-tabs > li > a:focus {
+    color: #777;
+}
+.with-nav-tabs.panel-default .nav-tabs > .open > a,
+.with-nav-tabs.panel-default .nav-tabs > .open > a:hover,
+.with-nav-tabs.panel-default .nav-tabs > .open > a:focus,
+.with-nav-tabs.panel-default .nav-tabs > li > a:hover,
+.with-nav-tabs.panel-default .nav-tabs > li > a:focus {
+    color: #777;
+	background-color: #ddd;
+	border-color: transparent;
+}
+.with-nav-tabs.panel-default .nav-tabs > li.active > a,
+.with-nav-tabs.panel-default .nav-tabs > li.active > a:hover,
+.with-nav-tabs.panel-default .nav-tabs > li.active > a:focus {
+	color: #555;
+	background-color: #fff;
+	border-color: #ddd;
+	border-bottom-color: transparent;
+}
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > li > a {
+    color: #777;   
+}
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > li > a:hover,
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > li > a:focus {
+    background-color: #ddd;
+}
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > .active > a,
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > .active > a:hover,
+.with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > .active > a:focus {
+    color: #fff;
+    background-color: #555;
+}
+</style>
 
 @endsection
 
 @section('content')
- <!-- page content -->
-       <div class="right_col" role="main">
-          <div class="">
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Manage Permissions</h3>
-              </div>
+
+<div class="right_col" role="main">
+    <div class="container container-fluid">
+
+	    <div class="page-title">
+	      	<div class="title_left">
+	        	<h3>Manage Permissions</h3><br>
+	        </div>
+        </div>
+        <div class="clearfix"></div>
+               
+        <div class="col-lg-10">      
+
+            <div class="panel with-nav-tabs panel-default">
+                <div class="panel-heading">
+                    <ul class="nav nav-tabs">            
+
+                        @if(Auth::user()->role()->first()->name == 'Analyst')
+                        <li class="active"><a href="#clientrepresentative" data-toggle="tab">Client Representative</a></li>
+                        @endif
 
 
+                        @if(Auth::user()->role()->first()->name == 'Manager')
+                        <li class="active"><a href="#analyst" data-toggle="tab" >Analyst</a></li>
+                        <li><a href="#clientrepresentative" data-toggle="tab">Client Representative</a></li>
+                        @endif
 
-          
+                        @if(Auth::user()->role()->first()->name == 'Super Manager')
+                        <li class="active"><a href="#manager" data-toggle="tab">Manager</a></li>
+                        <li><a href="#analyst" data-toggle="tab">Analyst</a></li>
+                        <li><a href="#clientrepresentative" data-toggle="tab">Client Representative</a></li>                        
+                    	@endif
 
-
-              <div class="title_right">
-                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for...">
-                    <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">Go!</button>
-                    </span>
-                  </div>
+                    </ul>
                 </div>
-              </div>
-            </div>
 
-            <div class="clearfix"></div>
-               <div class="col-lg-10">
-                    <div class="panel panel-default">
-                       
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#admin" data-toggle="tab" aria-expanded="true"  >Admin</a>
-                                </li>
-                                <li class=""><a href="#profile" data-toggle="tab" aria-expanded="false">Analyst Default</a>
-                                </li>
-                                <li class=""><a href="#messages" data-toggle="tab" aria-expanded="false">Pentester Default</a>
-                                </li>
-                                <li class=""><a href="#settings" data-toggle="tab" aria-expanded="false">Observer / Client.Rep Default</a>
-                                </li>
-                            </ul>
-
-                            <!-- Tab panes -->
-                            <div class="tab-content">
-                      <div class="tab-pane fade active in" id="admin" value="abc"  >
+                <div class="panel-body">
+                    <div class="tab-content">
 
 
-												<div ng-controller="Ctrl">
+					@if(Auth::user()->role()->first()->name == 'Analyst')
 
-												    <form editable-form name="editableForm3" onaftersave="">
+                        <div class="tab-pane fade in active" id="clientrepresentative">
+							<form role="form" id="myform" action="change_permissions" method="POST">
+					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+<!-- 					            <div class="checkbox" style="margin-top: 5px;">
+					              <h4 class="lead" style="margin-top: 0px; margin-left: 7px;">Select checkboxes to change Manager's Permission </h4>
+					            </div>  
+ -->
+					            @foreach($permissions as $permission)
+					            <div class="checkbox" style="margin-left: 10px;">
+					              <label class="checkbox-inline" onfocus="">
+									@if(in_array($permission->name, $clientrepresentatives))
 
-												       
-												        <div>
-												           
-
-												            <div>
-												                <span e-title="Dashboard" editable-checkbox="sup[0]" e-name="Dashboard">
-												                 <% sup[0] ? "&#x2714" :  "&#x2718;"%> <b>Dashboard</b> </span>
-												                <br />
-												                --> <span e-title="Activity" editable-checkbox="sup[1]"
-												                e-name="Activity">
-												                    <% sup[1] ? "&#x2714" :  "&#x2718;" %> Activity
-												                </span>
-												                <br />
-												                --> <span e-title="Analytics" editable-checkbox="sup[2]" e-name="Analytics">
-												                    <% sup[2] ? "&#x2714" :  "&#x2718;" %> Analytics
-												                </span>
-												                <br />
-												                --> <span e-title="Analysis" editable-checkbox="sup[3]" e-name="Analytics">
-												                     <% sup[3] ? "&#x2714" :  "&#x2718;" %> Analysis
-												                </span>
-												                <br />
-												                <br />
-
-												                 <span e-title="Administrator Settings" editable-checkbox="sup[4]" e-name="Administrator Settings">
-												                 <% sup[4] ? "&#x2714" :  "&#x2718;" %> <b>Administrator Settings</b> </span>
-												                <br />
-												                --> <span e-title="User" editable-checkbox="sup[5]"
-												                e-name="Users">
-												                    <% sup[5] ? "&#x2714" :  "&#x2718;" %> Users
-												                </span>
-												                <br />
-												                --> <span e-title="Groups" editable-checkbox="sup[6]" e-name="Groups">
-												                    <% sup[6] ? "&#x2714" :  "&#x2718;" %> Groups
-												                </span>
-												                <br />
-												                --> <span e-title="Manage Permissions" editable-checkbox="sup[7]" e-name="Manage Permissions">
-												                     <% sup[7] ? "&#x2714" :  "&#x2718;" %> Manage Permissions
-												                </span>
-
-												                 <br />
-												                --> <span e-title="Organization" editable-checkbox="sup[8]"
-												                e-name="Organization">
-												                    <% sup[8] ? "&#x2714" :  "&#x2718;" %> Organization
-												                </span>
-												                <br />
-												                --> <span e-title="Customization" editable-checkbox="sup[9]" e-name="Customization">
-												                   <% sup[9] ? "&#x2714" :  "&#x2718;" %> Customization
-												                </span>
-												                <br />
-												                --> <span e-title="Threats Scource" editable-checkbox="sup[10]" e-name="Threats Scource">
-												                    <% sup[10] ? "&#x2714" :  "&#x2718;" %> Threats Scource
-												                </span>
-
-
-												                 <br />
-												                <br />
-
-												                 <span e-title="Create Project" editable-checkbox="sup[11]" e-name="Administrator Settings">
-												                 <% sup[11] ? "&#x2714" :  "&#x2718;" %> <b>Create Project</b> </span>
-												                <br />
-												                --> <span e-title="Step-1" editable-checkbox="sup[12]"
-												                e-name="Users">
-												                   <% sup[12] ? "&#x2714" :  "&#x2718;" %> Step-1
-												                </span>
-												                <br />
-												                --> <span e-title="Step-2" editable-checkbox="sup[13]" e-name="Groups">
-												                    <% sup[13] ? "&#x2714" :  "&#x2718;" %> Step-2
-												                </span>
-												                <br />
-												                --> <span e-title="Step-3" editable-checkbox="sup[14]" e-name="step-3">
-												                   <% sup[14] ? "&#x2714" :  "&#x2718;" %> Step-3
-												                </span>
-
-												                 <br />
-
-												                    <br />
-												                <br />
-
-												                 <span e-title="View Project" editable-checkbox="sup[15]" e-name="View Project">
-												                 <% sup[15] ? "&#x2714" :  "&#x2718;" %> <b>View Project</b> </span>
-												                <br />
-												                --> <span e-title="Project Status" editable-checkbox="sup[16]"
-												                e-name="Project Status">
-												                    <% sup[16] ? "&#x2714" :  "&#x2718;" %> Project Status
-												                </span>
-												                <br />
-
-
-
-
-												            </div>
-												        </div>
-
-												       
-												         
-												            <!-- button to show form -->
-												            <button type="button" class="btn btn-default"
-												                    ng-click="editableForm3.$show();disableWndActions('rinexSettingsId')"
-												                    ng-show="!editableForm3.$visible">
-												                Edit
-												            </button>
-												            <!-- buttons to submit / cancel form -->
-												                                  <span ng-show="editableForm3.$visible">
-
-												                                      <button type="submit" class="btn btn-success"
-												                                              ng-disabled="editableForm.$waiting"
-												                                              ng-click=""
-												                                              >
-												                                          Save
-												                                      </button>
-
-												                                      <button type="button" class="btn btn-danger"
-												                                              ng-disabled="editableForm3.$waiting"
-												                                              ng-click="editableForm3.$cancel();">
-												                     q                     Cancel
-												                                      </button>
-												                                  </span>
-												        </div>
-												    </form>
-												</div>
+					                	<input type="checkbox" name="clientrepresentatives[]" value="{{$permission->name}}" id="ip" checked="checked"> {{$permission->name}}
+					               
+					                @else
+					                	<input type="checkbox" name="clientrepresentatives[]" value="{{$permission->name}}" id="ip"> {{$permission->name}}
+					                @endif	
+					              </label>
+					            </div>
+					            @endforeach
+					            <br>
+					           <input type="submit" value="Submit" name="clientrepresentative" class="btn btn-default pull-right">
+					        </form>	                        	
                         </div>
 
-                        <!-- /.panel-body -->
-                    <a href="" id="username" data-type="text" data-column="name" data-url="{{url('update', ['id'=>'1'])}}" data-pk="['id'=>'1']" data-title="change" data-name="name">faisalmax_vp</a>
+					@endif
+
+
+					@if(Auth::user()->role()->first()->name == 'Manager')
+
+                        <div class="tab-pane fade in active" id="analyst">
+							<form role="form" id="myform" action="change_permissions" method="POST">
+					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+<!-- 					            <div class="checkbox" style="margin-top: 5px;">
+					              <h4 class="lead" style="margin-top: 0px; margin-left: 7px;">Select checkboxes to change Manager's Permission </h4>
+					            </div>  
+ -->
+					            @foreach($permissions as $permission)
+					            <div class="checkbox" style="margin-left: 10px;">
+					              <label class="checkbox-inline" onfocus="">
+
+									@if(in_array($permission->name, $analysts))
+
+					                	<input type="checkbox" name="analysts[]" value="{{$permission->name}}" id="ip" checked="checked"> {{$permission->name}}
+					               
+					                @else
+					                	<input type="checkbox" name="analysts[]" value="{{$permission->name}}" id="ip"> {{$permission->name}}
+					                @endif	
+
+
+					              </label>
+					            </div>
+					            @endforeach
+					            <br>
+					           <input type="submit" value="Submit" name="analyst" class="btn btn-default pull-right">
+					        </form>	                        	
+                        </div>
 
 
 
-                    <!-- /.panel -->
-                </div></div></div>
+                        <div class="tab-pane fade" id="clientrepresentative">
+							<form role="form" id="myform" action="change_permissions" method="POST">
+					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+<!-- 					            <div class="checkbox" style="margin-top: 5px;">
+					              <h4 class="lead" style="margin-top: 0px; margin-left: 7px;">Select checkboxes to change Manager's Permission </h4>
+					            </div>  
+ -->
+					            @foreach($permissions as $permission)
+					            <div class="checkbox" style="margin-left: 10px;">
+					              <label class="checkbox-inline" onfocus="">
+									@if(in_array($permission->name, $clientrepresentatives))
+
+					                	<input type="checkbox" name="clientrepresentatives[]" value="{{$permission->name}}" id="ip" checked="checked"> {{$permission->name}}
+					               
+					                @else
+					                	<input type="checkbox" name="clientrepresentatives[]" value="{{$permission->name}}" id="ip"> {{$permission->name}}
+					                @endif	
+					              </label>
+					            </div>
+					            @endforeach
+					            <br>
+					           <input type="submit" value="Submit" name="clientrepresentative" class="btn btn-default pull-right">
+					        </form>	                        	
+                        </div>
+
+
+                    @endif    
+
+
+
+
+                        
+
+ 					@if(Auth::user()->role()->first()->name == 'Super Manager')
+                        <div class="tab-pane fade in active" id="manager">
+							<form role="form" id="myform" action="change_permissions" method="POST">
+					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+<!-- 					            <div class="checkbox" style="margin-top: 5px;">
+					              <h4 class="lead" style="margin-top: 0px; margin-left: 7px;">Select checkboxes to change Manager's Permission </h4>
+					            </div>  
+ -->
+					            @foreach($permissions as $permission)
+					            <div class="checkbox" style="margin-left: 10px;">
+					              <label class="checkbox-inline" onfocus="">
+									@if(in_array($permission->name, $managers))
+
+					                	<input type="checkbox" name="managers[]" value="{{$permission->name}}" id="ip" checked="checked"> {{$permission->name}}
+					               
+					                @else
+					                	<input type="checkbox" name="managers[]" value="{{$permission->name}}" id="ip"> {{$permission->name}}
+					                @endif	
+					              </label>
+					            </div>
+					            @endforeach
+					            <br>
+					           <input type="submit" value="Submit" name="manager" class="btn btn-default pull-right">
+					        </form>	
+                        </div>
+
+
+
+
+                       
+
+
+                        <div class="tab-pane fade" id="analyst">
+							<form role="form" id="myform" action="change_permissions" method="POST">
+					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+<!-- 					            <div class="checkbox" style="margin-top: 5px;">
+					              <h4 class="lead" style="margin-top: 0px; margin-left: 7px;">Select checkboxes to change Manager's Permission </h4>
+					            </div>  
+ -->
+					            @foreach($permissions as $permission)
+					            <div class="checkbox" style="margin-left: 10px;">
+					              <label class="checkbox-inline" onfocus="">
+
+									@if(in_array($permission->name, $analysts))
+
+					                	<input type="checkbox" name="analysts[]" value="{{$permission->name}}" id="ip" checked="checked"> {{$permission->name}}
+					               
+					                @else
+					                	<input type="checkbox" name="analysts[]" value="{{$permission->name}}" id="ip"> {{$permission->name}}
+					                @endif	
+
+
+					              </label>
+					            </div>
+					            @endforeach
+					            <br>
+					           <input type="submit" value="Submit" name="analyst" class="btn btn-default pull-right">
+					        </form>	                        	
+                        </div>
+
+
+
+                        <div class="tab-pane fade" id="clientrepresentative">
+							<form role="form" id="myform" action="change_permissions" method="POST">
+					            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+<!-- 					            <div class="checkbox" style="margin-top: 5px;">
+					              <h4 class="lead" style="margin-top: 0px; margin-left: 7px;">Select checkboxes to change Manager's Permission </h4>
+					            </div>  
+ -->
+					            @foreach($permissions as $permission)
+					            <div class="checkbox" style="margin-left: 10px;">
+					              <label class="checkbox-inline" onfocus="">
+									@if(in_array($permission->name, $clientrepresentatives))
+
+					                	<input type="checkbox" name="clientrepresentatives[]" value="{{$permission->name}}" id="ip" checked="checked"> {{$permission->name}}
+					               
+					                @else
+					                	<input type="checkbox" name="clientrepresentatives[]" value="{{$permission->name}}" id="ip"> {{$permission->name}}
+					                @endif	
+					              </label>
+					            </div>
+					            @endforeach
+					            <br>
+					           <input type="submit" value="Submit" name="clientrepresentative" class="btn btn-default pull-right">
+					        </form>	                        	
+                        </div>
+
+
+                    @endif    
+
+
+
+                    </div>
+                </div>
+            </div>	
+
+        </div>
+    </div>
+</div>
 
 @endsection
 

@@ -1,338 +1,133 @@
-@extends('layouts.main2')
-
-@section('title','Roles')
-
-@section('user_name','Labeeb')
-
-@section('user_role','Admin')
-
-@section('scripts')
-<link href="{{URL::asset('build/css/groups.min.css')}}" rel="stylesheet">
-
-<script type="text/javascript">
-
-  $(document).on('click','#fuck', function(){
-        var role_name = $(this).val();
-        $("#role_name_update").val(role_name); 
-        $('#mdl').modal('show');
-  });
-
-  // $.ajax({
-  //       url: 'edit_role',
-  //       method: 'POST',
-  //       dataType: 'JSON',
-  //       data:  {
-  //        'role_name': role_name
-  //        },
-  //       success: function(data) {
-  //           // swal("Favorite Removed!", "", "success");
-  //           //document.getElementById("fav").className = "fa fa-heart-o";
-  //           console.log('success');
-  //            $("#success").show();
-  //            // $("#preremove").hide();
-  //            // $("#prefav").hide();
-  //            // $("#remove").hide();
-  //       },
-  //       error: function(data) {
-  //           console.log('POST error.');
-  //       }
-  //   });
-
-</script>
+<body>
+<div class="row">
+              <!-- form input mask -->
+          
 
 
-@if(Session::has('success'))
-   <script type='text/javascript'>
-        // alert('Here');
+              <div class="col-md-5" style="margin-left:170px;">
+                <div  class="x_panel">
+                 <div class="x_title">
+                    <h5>User Details</h5>
+                  <div class="clearfix"></div>  
+                  <div class="x_content">
+                    <br />
 
-        // DELETE Window.load from here and only try $('#myMod') wali line
-        $(window).load(function(){
-            console.log('Another Here');
-            $('#myMod').modal('show');
-        });
-  </script>
-@endif
+                    <form class="form-horizontal form-label-left">
 
-@endsection
-
-@section('content')
- <!-- page content -->
-
-        <div class="right_col" role="">
-        @foreach($roles as $role)  
-          {{$role->user}}
-        @endforeach  
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Roles Info</h3>
-              </div>
-
-              <div class="title_right">
-                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for...">
-                    <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">Go</button>
-                    </span>
-                  </div>
-                  <br>
-                 
-                
-               
-                </div>
-              </div>
-            </div>
-                 
-
-
-
-
-
-        <div class="bs-example">
-
-            <div class="modal fade" id="mdl" tabindex="-1" role="dialog" aria-labelledby="purchaseLabel" aria-hidden="true">
-                <div class="modal-dialog ">
-                     <div class="modal-content">
-                          <div class="modal-header">
-                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                              <h4 class="modal-title" id="purchaseLabel">Edit This Role</h4>
-                          </div>
-                        <div class="modal-body" >    
-
-                         <div class="row">
-
-                           <div class="col-md-6">
-                             
-                             <label>Role Name</label>
-                             <input id="role_name_update" class="form-control" type="text" value="example_1" ></input> 
-                             
-                           </div>
-
-                            <div class="col-md-4"  style="margin-left: 100px;"">
-                             
-                             <label>Members Assigned</label>
-
-                               <ul class="checkbox-list">
-                             <li>
-                              <label for="item01">
-                               <input type="checkbox" id="item01" name="io1" checked>
-                               Labeeb
-                              </label>
-                              
-                             </li>
-                             
-                             <li>
-                              <label for="item02">
-                               <input type="checkbox" id="item02" name="io2"> Mustafa
-                              </label>
-                             </li>
-                             
-                             <li>
-                              <label for="item03">
-                               <input type="checkbox" id="item03" name="io3" checked> Faisal
-                              </label>
-                             </li>
-                             
-                             <li>
-                              <label for="item04">
-                               <input type="checkbox" id="item04" name="io4"> Ishaq
-                              </label>
-                             
-                             </li>
-                            </ul>
-                                     
-                             
-                           </div>
-
-                           
-                         </div>          
-                        </div>
-
-                
-                  
-
-                           <div class="modal-footer">
-                            <input type="submit" value="Update" class="btn btn-primary">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                   
-                           </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-   <div class="bs-example">
-    <!-- Button HTML (to Trigger Modal) -->
-  
-    <!-- Add Role Modal HTML -->
-    <div id="myModal" class="modal fade">
-      <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-          <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h5><strong> Create Role </strong></h5>
-          </div>
-
-          {!! Form::open(['route' => 'roles.store', 'method' => 'POST']) !!}                
-              <div class="modal-body">
-                <div class="row">
-                  <div align="middle" class="col-md-3 col-sm-3 col-lg-3">
-                    <h4 class="modal-title">Role Name <h4>
-                  </div>
-                  <div align="right" class="col-md-3 col-sm-3 col-lg-4">
-                    <h4 class="modal-title">Members</h4>
-                  </div>
-                </div>
-                
-                <div class="row">
-                    <div  class="col-md-5 col-sm-5 col-lg-5">
-                      <div class="form-group">                      
-                        <div class="col-md-9 col-sm-9 col-xs-9">
-                          <input type="txt" name="name" class="form-control"></input>
-                          <!-- {!! Form::text('name',null,['class' => 'form-control']) !!} -->
-                        </div>
-                      </div>
-                    </div>
-
-                    <div  class="col-md-5 col-sm-6 col-lg-6">
                       <div class="form-group">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-
-                          @foreach($users as $user)
-                            <input type="checkbox" name="users[]" value="{{$user->id}}"> <label>  {{$user->name}} ({{$user->email}})</label><br />
-                          @endforeach
+                        <label class="control-label col-md-3 col-sm-3 col-xs-3">Full Name</label>
+                        <div class="col-md-9 col-sm-9 col-xs-9">
+                        <w class="form-control" value="{{$userdata->name}}">
+                        {{$userdata->name}}</w>
+                          
                           
                         </div>
                       </div>
-                    </div>
+                     
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-3">Email</label>
+                        <div class="col-md-9 col-sm-9 col-xs-9">
+                          <w  class="form-control" value="{{$userdata->email}}">{{$userdata->email}}</w>
+                          </div>
+                      </div>
+                     
+                       <div class="text-center">
+                      <img hight="290" width="260" style="border-radius: 100px;"src="{{URL::asset('uploads/'.$userdata->image_url)}}"  >
+                        </div>
+                     
+                     
+                    </form>
+                   
+                  </div>                
+                 </div>
                 </div>
               </div>
+              <!-- /form input mask -->
 
-              <div class="modal-footer">
-                  <input type="button" value="Close" class="btn btn-default" data-dismiss="modal">
-                  
-                  <input type="submit" value="Create Role" class="btn btn-info">
-                  <!-- <input type="submit" value="Create Role" class="btn btn-info" data-toggle="modal" data-target="#myMod" data-dismiss="modal"> -->
+              <!-- form color picker -->
+              <div class="col-md-3" >
+                <div class="x_panel" style="min-height: 313px;">
+                  <div class="x_title">
+                    <h5>Edit User's Roles</h5>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br />
+                    
+
+                      
+                                        
+                        
+
+                       
+              <div class="wrapper">
+                <div class="content">
+                <form class="for-group">
+                   <ul class="radio unstyled">
+                     @foreach($allrole as $rol)
+                     <li>
+                       @if($rol->id==$rolee->id)
+                       <input class="form-group" type="radio" id="chk{{$rol->id}}" name="radioo" checked ><span style="margin-left: 10px;">{{$rol->name}}</span>
+                       @endif
+                        @if($rol->id!=$rolee->id)
+                        <input class="form-group" type="radio" id="chk{{$rol->id}}" name="radioo"><span style="margin-left: 10px;">{{$rol->name}}</span>
+                      @endif
+                     </li>
+                    @endforeach
+                    </ul>
+                    </form>
+
+
+               
               </div>
-          {!! Form::close() !!}  
-        </div>
-      </div>
-    </div>
-    <!-- END Add Role Modal HTML -->
-     
-    <!-- Delete Modal HTML -->
-      
-     <div id="deleteModal" class="modal fade">  <div class="modal-dialog" role="document" style="width:500px;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-        </div>
-        <div class="modal-body">
-          <strong>Are you sure you want to Delete this Role?</strong>
-        </div>
-        <div class="modal-footer">
-          <a href="/roles" type="button" class="btn btn-secondary">Confirm</a>
-          <a href="/roles" type="button" class="btn btn-secondary">Close</a>         
-        </div>
-      </div>
-    </div>
+              <div class="clear"></div>
 
-    <!-- End Delete Modal HTML -->
-      
+        
 
-   <div id="myMod" class="modal fade">  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-      </div>
-      <div class="modal-body">
-        <strong>Role Created</strong>
-      </div>
-      <div class="modal-footer">
-        <a href="/roles" type="button" class="btn btn-secondary" >Close</a>
-       
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-</div>
-            <div id="div1" class="">
-              
-             <div class="row">
-              <div class="col-md-8 col-sm-8 col-lg-12">
-                <div class="x_panel">
-
-					<table id="myTable" class="table table-bordered table-striped">
-					  <thead  >
-					      <tr align="center">
-                  <td scope="row" ><b>#</b></td>
-                  <td id="name"><b>Role Name</b></td>
-                  <td><b>Members</b></td>
-                  <td><b>Action</b></td>
-                </tr>
-					  </thead>
-					  
-					  <tbody>
-
-              @foreach($roles as $role)
-  					    <tr align="center">
-  					      <td scope="row">{{$role->id}}</td>
-  				        <td id="name"> {{$role->name}} </a></td>
-                  <td> {{$role->user()->where('role_id',$role->id)->count()}} </td>
-                  <td>
-<!-- 
-                    <a href="#mdl" value="{{$role->id}}" value="{{ $role->id }}" class="btn btn btn-primary btn-sm pull-left" data-toggle="modal" onclick="new()" id="fuck">Edit</a> -->
-                    <button type="button" value="{{$role->name}}" class="btn btn btn-primary btn-sm pull-left" id="fuck"> Edit</button>
-                  
-                    {!! Form::open(array('method' => 'DELETE', 'route' => ['roles.destroy',$role->id])) !!}
-                      <input type="submit" class="btn btn-danger btn-sm pull-left" value="Delete">
-                      <!-- <a href="#deleteModal" value="{{ $role->id }}" class="btn btn-primary" data-toggle="modal">Delete Role</a> -->
-                    {!! Form::close() !!}  
-
-                  </td>
-  					    </tr>
-              @endforeach
-                
-					  </tbody>
-					   
-					</table> 
-  					</div>
-	            <div class="row">
-	              <div class="col-lg-6">
-	                <a  href="#myModal" class="btn btn btn-primary" data-toggle="modal">Add Role</a>
-	              </div>
-	            </div>
-            
-            <!-- Pagination Render -->
-            <div class="text-center">
-              {!! $roles->render() !!}
+                  </div>
+                </div>
+              </div>
+              <!-- /form color picker -->
+             
             </div>
+             <div class="col-md-12 text-center ">
+              <Button  onclick="ckme()" class="btn btn-primary">Save</Button>
+              <Button  class="btn btn-primary">Cancel</Button>
+              </div>
+              </body>
+<script >
 
-	        
-	        </div> 
-	        </div>
-	        </div>           
-         
+   function ckme(){
+    var x=[];
+    var i=0;
+    var id={{$tid}};
+$('input:radio[id^="chk"]').each(function(){
+ var p= this.id.substr(3,this.id.length);
 
-            </div>
-          <div class="clearfix"></div>
-        </div>
+if($('#'+this.id).prop('checked')){
+x[i]=p;
+i=i+1;
+}
+
+    });
+$.ajax({
+            url: "users",
+            method: 'POST',
+            dataType: 'JSON',
+            data:{'data':x,'i':id},
+            success: function(data) {
+               
+                console.log('success');
+                 
+             
+
+            },
+            error: function(data) {
+                console.log("storystory");
+            }
+        });
 
 
+}
 
-
-
-@endsection
-
-
+</script>

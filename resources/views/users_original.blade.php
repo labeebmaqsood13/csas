@@ -2,9 +2,13 @@
 
 @section('title','Users Page')
 
-@section('user_name','Labeeb')
+@section('user_name')
+	{{ Auth::user()->name }}
+@endsection
 
-@section('user_role','Admin')
+@section('user_role')
+  {{Auth::user()->role()->first()->name}}
+@endsection
 
 @section('scripts')
  <link href="{{URL::asset('build/css/user_style.min.css')}}" rel="stylesheet">

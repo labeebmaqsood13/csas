@@ -6,24 +6,32 @@
 	{{ Auth::user()->name }}
 @endsection
 
-@section('user_role','Admin')
+@section('user_role')
+	{{Auth::user()->role()->first()->name}}
+@endsection
 
 @section('scripts')
 
 
-<!-- Sweet alerts -->
-<!-- <link rel="stylesheet" type="text/css" href="{{URL::asset('sweet_alerts/dist/sweetalert.css')}}"> -->
-<!-- @if(Session::has('success')) -->
-<!-- <script type="text/javascript"> -->
-	<!-- $(document).ready(function(){ -->
-		<!-- sweetAlert("Oops...", "Something went wrong!", "error"); -->
-	<!-- }; -->
-<!-- </script>	 -->
-<!-- <script src="{{URL::asset('sweet_alerts/dist/sweetalert.min.js')}}"></script> -->
-<!-- @endif -->
 
-    <!-- <link href="{{URL::asset('build/css/user_style.min.css')}}" rel="stylesheet"> -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.js"></script>
+@if(Session::has('alert'))
+  <script type="text/javascript">
+$(document).ready(function () {
+    swal({title: 'Error!', text: 'This email address has already been invited!', type: 'error', confirmButtonText: 'Close'});
+});
+  </script>
+@endif
+
+@if(Session::has('alert_success'))
+  <script type="text/javascript">
+$(document).ready(function () {
+    swal({title: 'Success!', text: 'This email address has been invited!', type: 'success', confirmButtonText: 'Close'});
+});
+  </script>
+@endif
+
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -41,21 +49,13 @@
 	table tr:nth-child(-n+8) { display: table-row; }
 	</style>
 
-
   <script>
 	$(document).ready(function(){
     // alert("asd");
 	    $("mnm").click(function(){
-
-          	// alert("asd");
-	        // $("#div1").load("users-details.html");
-
-
-	      	$.get("dummy/", function(data){
-	            // console.log(data);
-	            // alert("Success");
-	              // console.log(obj.id);
-	         			
+           
+	      	$.get("users/"+this.id, function(data){
+	          		
 	              $("#div1").empty().append(data);
 
 	        });
@@ -64,7 +64,37 @@
 
 	    });
 	});
-	</script>   
+	</script> 
+	<script type="text/javascript">
+   
+function delme(id){
+ 	
+   var x = id;
+   
+    $.ajax({
+            url: 'delete_user',
+            method: 'POST',
+            dataType: 'JSON',
+            data: {'x':x},
+            success: function(data) {
+               
+             $("#"+x).remove();
+                 
+             
+
+            },
+            error: function(data) {
+                console.log("errr");
+            }
+        });
+
+    
+
+ }
+
+
+
+</script>  
 @endsection
 
 @section('content')
@@ -80,12 +110,7 @@
 
 		              <div class="title_right">
 		                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-		                  <div class="input-group">
-		                    <input type="text" class="form-control" placeholder="Search for...">
-		                    <span class="input-group-btn">
-		                      <button class="btn btn-default" type="button">Go</button>
-		                    </span>
-		                  </div>
+		                 
 		                  <br>
 		                 
 		                 <a  href="#myModal" class="btn btn btn-primary" value="{{Auth::user()->id}}" data-toggle="modal">Invite users</a>
@@ -198,10 +223,11 @@
 							    </tr>
 							  </thead>
 							  <tbody>
+							   <?php $i=1;?>
 								  @foreach($users as $user)
 								    
-								    <tr>
-								      <th scope="row">{{ $user->id }}</th>
+								    <tr id="{{ $user->id }}">
+								      <th scope="row"><?php echo $i;?> </th>
 							          <td id="name">{{ $user->name }}</a></td>
 			                          <td>{{ $user->email }}</td>
 
@@ -220,15 +246,15 @@
 
 								      <!-- <td>Admin</td> -->
 								      <td>
-								      	<mnm class="btn btn-primary btn-sm pull-left" value="{{$user}}"> Edit</mnm>
+								      	<mnm class="btn btn-primary btn-sm pull-left" id="{{$user->id}}" value="{{$user}}"> Edit</mnm>
 									    @if(Auth::user()->id != $user->id)
-									      	{!! Form::open(array('method' => 'DELETE', 'route' => ['users_delete',$user->id])) !!}
-						                      <button type="submit" class="btn btn-danger btn-sm pull-left">Delete</a>
-						                    {!! Form::close() !!} 
-								      	<!-- <mnm class="btn btn-danger btn-sm"> Delete</mnm> -->
+									      	  <input hidden id="id" name="{{ $user->id }}" value="{{ $user->id }}"></input>
+						                      <button onclick="delme($(this).prev().attr('name'))" id="submit" name="submit"class="btn btn-danger btn-sm pull-left">Delete</a>
+						                   
 								      	@endif
 								      </td>
 								    </tr>
+								   <?php $i=$i+1;?>
 								  
 								  @endforeach
 							    

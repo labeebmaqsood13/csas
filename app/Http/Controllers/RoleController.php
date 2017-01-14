@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+use Auth;
+
 use Session;
 
 use App\User;
@@ -27,6 +29,10 @@ class RoleController extends Controller
      */
     public function index()
     {
+
+        if(Auth::user()->role()->first()->permission()->where('name', 'Edit Roles')->count() == 0){
+            abort(403);
+        }        
         $roles = Role::orderBy('id','DESC')->paginate(5);
         $users = User::all();
         return view('roles', compact('users','roles'));
@@ -116,22 +122,23 @@ class RoleController extends Controller
     // if($role->user()->get()){
         //Destroy role_user associations
         foreach($role->user()->get() as $role){
-            // echo $role->pivot->role_id;
-            // $user_id = $role->pivot->user_id;
-            // $user = User::find($user_id);
-            // $user->role()->detach($role->pivot->role_id);
-            $user = User::find($role->pivot->user_id);
+             $user = User::find($role->pivot->user_id);
             $user->role()->detach($role->pivot->role_id);
         }
+ 
 
-        $this->destroy_role_userinvitation($id);
-        $this->destroy_role($id);
+$uv=Userinvitation::all(); 
+foreach($uv as $u)
+{
+Userinvitation::find($u['id'])->role()->wherePivot('role_id',$id)->detach();
+}
+         $this->destroy_role($id);
         return \Redirect::route('roles.index');
         // return \Redirect::route('roles.index')->with('success', 'Success! Role Deleted');
     
 
     }    
-
+     
     public function destroy_role_userinvitation($id){
 
         $role = Role::find($id);
@@ -160,6 +167,7 @@ class RoleController extends Controller
         $role->user->name;
     }
 
+    
 
 
     

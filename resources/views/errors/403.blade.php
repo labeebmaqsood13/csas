@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html> 
+<html>
     <head>
         <title>Page Not Found.</title>
 
@@ -39,9 +39,11 @@
     </head>
     <body>
         <div class="container">
+            <a href="/">CSAS: Cyber Security Assessment Suite</a>
             <div class="content">
-                <div class="title">Page Not Found.</div>
+                <div class="title">Not athorized to view this page.</div>
             </div>
         </div>
     </body>
 </html>
+w

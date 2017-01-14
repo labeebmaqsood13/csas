@@ -2,9 +2,14 @@
 
 @section('title','Create Project')
 
-@section('user_name','Labeeb')
 
-@section('user_role','Admin')
+@section('user_name')
+  {{ Auth::user()->name }}
+@endsection
+
+@section('user_role')
+  {{Auth::user()->role()->first()->name}}
+@endsection
 
 
 
@@ -313,6 +318,41 @@
                       </div>
                      </div>
                     <!-- Modal close-->
+
+
+          <!-- Create Client Modal start-->
+ 
+              <div id="myModal" class="modal fade">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h4 class="modal-title">Create Client</h4>
+                          </div>
+                          
+                          {!! Form::open(array('method' => 'POST', 'url' => 'create_client' )) !!}
+                          <div class="modal-body">
+                               
+                                <div class="form-group row">
+                                  <label class="control-label col-md-3 col-sm-3 col-xs-3 text-left">Name</label>
+                                  <div class="col-md-9 col-sm-9 col-xs-9">
+                                      <input type="text" name="name" class="form-control" id="client" placeholder="Please enter client's name"></input>
+                                    <br>
+                                  </div>
+                                </div>
+                          </div>
+
+                          <div class="modal-footer">
+                              <b type="button" class="btn btn-default" data-dismiss="modal">Close</b>
+                              <!-- <button type="submit" class="btn btn-info btn-sm pull-left">Send Invite</a> -->
+                              <input type="submit" value="Create client" class="btn btn-info">
+                          </div>
+                          <!-- Modal Footer End -->
+                          {!! Form::close() !!}
+                    </div>
+                  </div>
+                </div>
+
+          <!-- Invitation Modal End-->                    
 
 
 

@@ -6,7 +6,9 @@
 	{{ Auth::user()->name }}
 @endsection
 	
-@section('user_role', 'Admin')
+@section('user_role')
+  {{Auth::user()->role()->first()->name}}
+@endsection
 
 @section('scripts')
  
@@ -55,7 +57,10 @@ var something= '';
         data = '<div class="row"><div class="col-md-11 col-sm-11 col-lg-11 text-center"><label>Client: </label> {{$client_name}} &nbsp;&nbsp;&nbsp;&nbsp; <label> Project: </label> {{$project_name}}</div><div class="pull_right row"><a href="/dashboard" class="btn btn-default"> Back </a></div></div>';
         $("#fuck").append(data);  
        
-        document.getElementById("abc").href=something; 
+        document.getElementById("abc").href=something;
+        document.getElementById("abc").onclick = function(){
+          window.location.href="/dashboard/"; return false;
+        }; 
  
       });
   @endif
@@ -70,9 +75,6 @@ var something= '';
 @endsection
 
 @section('content')
-
-
-
 
 
         <div class="right_col" role="main">

@@ -3,9 +3,14 @@
 
 @section('title','File Upload')
 
-@section('user_name','Labeeb')
 
-@section('user_role','Admin')
+@section('user_name')
+  {{ Auth::user()->name }}
+@endsection
+
+@section('user_role')
+  {{Auth::user()->role()->first()->name}}
+@endsection
 
 
 @section('scripts')
@@ -164,7 +169,7 @@ $(document).ready(function() {
             <div class="col-md-10">
             <div style=" " >
             <h5 data-toggle="tooltip" data-placement="left" title="Edit Me !!">
-             <a  style="color: black;" href="#" class="testEdit" data-type="text" data-column="name" data-url="{{url('sop/update/'.$phs->id)}}" data-pk="{{$phs->id}}" data-name="name" data-token="{{ csrf_token() }}">     
+             <a  style="color: black;" href="#" class="testEdit" data-type="text" data-column="name" data-url="{{url('sop/updatep/'.$phs->id)}}" data-pk="{{$phs->id}}" data-name="name" data-token="{{ csrf_token() }}">     
                             <h3 style="color:#757272">{{$phs->name}}</h3>
                    </a></h5>
                    </div>
@@ -182,7 +187,7 @@ $(document).ready(function() {
 
             </div>
               
-              <table class="table table-striped" >
+              <table class="table " >
             
                 
                <tbody id="table_row">
@@ -190,7 +195,7 @@ $(document).ready(function() {
                 @if($phs->id==$t->phase_id)
                 <tr >
                  <td data-toggle="tooltip" data-placement="left" title="Edit Me !!">
-                   <a  href="#" class="testEdit" data-type="text" data-column="name" data-url="{{url('sop/update/'.$t->id)}}" data-pk="{{$t->id}}" data-name="name" data-token="{{ csrf_token() }}">     
+                   <a  href="#" id="{{$t->id}}" class="testEdit" data-type="text" data-column="name" data-url="{{url('sop/update/'.$t->id)}}" data-pk="{{$t->id}}" data-name="name" data-token="{{ csrf_token() }}">     
                             {{$t->name}}
                    </a>
                  </td>

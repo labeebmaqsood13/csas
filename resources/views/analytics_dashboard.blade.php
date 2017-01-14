@@ -2,11 +2,78 @@
 
 @section('title','Analytics Dashboard')
 
-@section('user_name','Labeeb')
 
-@section('user_role','Admin')
+@section('user_name')
+  {{ Auth::user()->name }}
+@endsection
+
+@section('user_role')
+  {{Auth::user()->role()->first()->name}}
+@endsection
 
 @section('scripts')
+
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
+<script type="text/javascript">
+// $(document).ready(function () {
+
+var something= '';
+  function client(id){
+      $.ajax({
+            url: '/dashboard3_get_projects',
+            method: 'POST',
+            dataType: 'JSON',
+            data:  {
+            'client_id': id
+            },
+            success: function(data) {
+              var element =  document.getElementById(id);
+              if(element == null){
+                var options = '<div id="'+id+'" class="style-sub-1" style="display: block;" name="stylesub1"><label>Project</label><select onchange="project(this.value)" class="form-control"><option value="">-Choose An Project-</option>';
+
+            $.each(data, function(i, obj) {
+                   options += '<option value="/analytics_dashboard/'+ id +'/'+ obj.id +'/' +'">'+obj.name+'</option>';
+                  });  
+
+                  options += '</select></div>';
+                  $("#project_options").append(options);  
+              }
+              
+            }
+        });
+
+  }
+
+
+  function project(id){
+    something = id
+    window.location.href=id;
+  }
+
+
+
+
+  @if(Session::has('fuck'))
+      $(document).ready(function(){
+        $('#blah').removeClass('hidden');
+       
+        document.getElementById("fuck").innerHTML = "<hr>";
+        data = '<div class="row"><div class="col-md-11 col-sm-11 col-lg-11 text-center"><label>Client: </label> {{$client_name}} &nbsp;&nbsp;&nbsp;&nbsp; <label> Project: </label> {{$project_name}}</div><div class="pull_right row"><a href="/analytics_dashboard" class="btn btn-default"> Back </a></div></div>';        
+        $("#fuck").append(data);  
+       
+        document.getElementById("abcd").href=something;
+        document.getElementById("abcd").onclick = function(){
+          window.location.href="/analytics_dashboard/"; return false;
+        }; 
+ 
+      });
+  @endif
+
+</script>
+
+
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
@@ -30,12 +97,12 @@
    
     <!-- jQuery Sparklines -->
    
-  <script src="{{URL::asset('vendors/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
+  <!-- <script src="{{URL::asset('vendors/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script> -->
    
 
     <!-- Flot -->
      <!-- Chart.js -->
-    <script src="{{ URL::asset('vendors/Chart.js/dist/Chart.min.js') }}"></script>
+<!--     <script src="{{ URL::asset('vendors/Chart.js/dist/Chart.min.js') }}"></script>
    
    
     <script src="{{URL::asset('vendors/Flot/jquery.flot.js') }}"></script>
@@ -46,9 +113,9 @@
     <script src="{{URL::asset('vendors/Flot/jquery.flot.stack.js') }}"></script>
 
     <script src="{{URL::asset('vendors/Flot/jquery.flot.resize.js') }}"></script>
-
+ -->
     <!-- Flot plugins -->
- 
+<!--  
 
     <script src="{{URL::asset('produtcion/js/flot/jquery.flot.orderBars.js') }}"></script>
 
@@ -58,16 +125,16 @@
       <script src="{{URL::asset('produtcion/js/flot/jquery.flot.spline.js') }}"></script>
 
      <script src="{{URL::asset('produtcion/js/flot/curvedLines.js') }}"></script>
-
+ -->
 
    
     <!-- bootstrap-daterangepicker -->  
-
+<!-- 
      <script src="{{URL::asset('produtcion/js/moment/moment.min.js') }}"></script>
 
      <script src="{{URL::asset('production/js/datepicker/daterangepicker.js') }}"></script>
 
-
+ -->
 
 @endsection
 
@@ -75,113 +142,33 @@
 
  <!-- page content -->
            
-        <div class="right_col" role="main">
-        <div class="container" style="min-height: 1000px;">
-          <div class="row">
-         <div class="col-md-8 col-sm-8 col-lg-8 ">
-
+<div class="right_col" role="main">
+  <div class="container fluid" style="min-height: 1000px;">
+      <div class="row">
+        <div class="col-md-8 col-sm-8 col-lg-8 ">
            <h4>ANALYTICS DASHBOARD</h4>
-
-         </div>
-         </div>
-
-
-              <div class="title_right">
-                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for...">
-                    <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">Go!</button>
-                    </span>
-                  </div>
-                </div>
-              </div>
+        </div>
+      </div>
           
-
-            <div class="clearfix"></div>
-
+      <div class="clearfix"></div>
 
 
 
-
-
-          <div  class="row">
-            <div class="col-md-4 col-sm-4 col-lg-4 ">
-    
+      <div class="row" id="fuck">
+          <div class="col-md-8 col-sm-8 col-lg-6" id="project_options">
               <div class="ccms_form_element cfdiv_custom" id="style_container_div">
-                <label>Client:</label><select class="dropdown"  size="1" id="beerStyle"  type="select" name="style">
-                <option value="">-Choose A Client-</option>
-                <option value="Ale">Pepsi /</option>
-                <option value="Lager">Ebryx</option>
-                <option value="Hybrid">Intel</option>
-                </select><div class="clear"></div><div id="error-message-style"></div></div>
-              </div>  
-
-               <div class="col-md-4 col-sm-4 col-lg-6">
-
-                <div id="Ale"  class="style-sub-1"  style="display: none;" name="stylesub1">
-                  <label>Project</label>
-                    <select class="selectpicker show-menu-arrow">
-                      <option value="">-Choose An Project-</option> 
-                      <option value="re">1 xyzyz</option>
-                      <option value="re">2 xyzxyz</option>
-                      <option value="re">3xyzxyz</option>                     
-                    </select>
-                </div>
-
-                <div id="Lager"  class="style-sub-1"  style="display: none;" name="stylesub1" >
-                  <label>Project:</label>
-                    <select>
-                    <option value="">-Choose A Project-</option>
-                      <option value="re">1_new</option>
-                      <option value="re">2_bro</option>
-                      <option value="re">3_max</option>
-                     
-                    </select>
-                </div>
-                <div id="Hybrid"  class="style-sub-1"  style="display: none;" name="stylesub1" >
-                  <label>Project</label> 
-                    <select>
-                    <option value="">-Choose A Project-</option>
-                      <option value="re">1----zip</option>
-                      <option value="re">2----spicy</option>
-                      <option value="re">3-----bravo</option>
-                    </select>
-                </div><div class="clear"></div><div id="error-message-style-sub-1"></div>
-                </div>
-
-             </div>  
-           
-
-           
-            <div id="blah" class="">
-            <div class="row">
-              <div class="">
-
-              <br />
-
-               <div>
-               <div class="progress-bar progress-bar-success" role="progressbar" style="width:25%">
-               Open Ports <br /> {{ $open_ports }}
-               </div>
-               <div class="progress-bar progress-bar-warning" role="progressbar" style="width:25%">
-               Vulnerabilities <br /> {{ $open_ports }}
-               <!-- This can be count of plugin id's tested for possible vulnerbaility -->
-               <!-- Possible Vulnerabilities -->
-               </div>
-               <div class="progress-bar progress-bar-danger" role="progressbar" style="width:25%">
-               Active Systems<br /> {{ $reporthosts_count }}
-               </div>
-<!--                <div class="progress-bar progress-bar-info" role="progressbar" style="width:25%">
-               Systems compromised <br />18 -->
-               <div class="progress-bar progress-bar-info" role="progressbar" style="width:25%">
-               Systems at Critical or Highest Risk <br /> {{ $systems_at_risk }}
-               </div>
-               </div>
-
-
-
-          
+                  <label>Client:</label>
+                  <select id="beerStyle" class="form-control validate['required']" title="" type="select" name="style" onchange="client(this.value);">
+                      <option value="0">-Choose A Client-</option>
+                      @foreach($clients as $client)
+                      <option value="{{$client->id}}"> {{$client->name}} </option>
+                    @endforeach    
+                  </select>
+                  <div class="clear"></div>
+                  <div id="error-message-style"></div>
+              </div>
+          </div>  
+      </div>
 
 
 
@@ -189,12 +176,47 @@
 
 
 
-               </div>
-               </div>
-               <br />
-                 <div class="row">
 
-                <div class="clearfix"></div>
+
+
+
+
+
+
+
+
+    <div id="blah" class="hidden">            
+    <!-- Charts start here -->
+      <div class="row">
+        <br />
+
+         <div>
+         <div class="progress-bar progress-bar-success" role="progressbar" style="width:25%">
+         Open Ports <br /> {{ $open_ports }}
+         </div>
+         <div class="progress-bar progress-bar-warning" role="progressbar" style="width:25%">
+         Vulnerabilities <br /> {{ $open_ports }}
+         <!-- This can be count of plugin id's tested for possible vulnerbaility -->
+         <!-- Possible Vulnerabilities -->
+         </div>
+         <div class="progress-bar progress-bar-danger" role="progressbar" style="width:25%">
+         Active Systems<br /> {{ $reporthosts_count }}
+         </div>
+                <!--<div class="progress-bar progress-bar-info" role="progressbar" style="width:25%">
+         Systems compromised <br />18 -->
+         <div class="progress-bar progress-bar-info" role="progressbar" style="width:25%">
+         Systems at Highest Risk <small>(Risk Factor)</small> <br /> {{ $systems_at_risk }}
+         </div>
+         </div>
+
+      </div>
+      <br />
+                 
+
+
+
+      <div class="row">
+        <div class="clearfix"></div>
               <div class="col-md-4 col-sm-6 col-lg-6">
                 <div class="x_panel">
                   <div class="x_title">
@@ -204,7 +226,7 @@
                     <!-- <h2>Summary Critical Ip <small>Sessions</small></h2> -->
                     <!-- <h2>Critical Ip Summary<small>Sessions</small></h2> -->
 
-                    <h2>Most Vulnerable Machines <small>Sessions</small></h2>
+                    <h2>Most Vulnerable Machines <small>(Severity)</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -231,7 +253,7 @@
               <div class="col-md-4 col-sm-6 col-lg-6">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Vulnerabilities Summary <small>Sessions</small></h2>
+                    <h2>Vulnerabilities Summary <small>(Risk Factor)</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -283,6 +305,7 @@
                   </div>
                 </div>
               </div>
+    
     <!-- Added line here -->
     <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
@@ -314,7 +337,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Top 10 (Potential) Vulnerabilities <small>Sessions</small></h2>
+                    <h2>Top 10 (Potential) Vulnerabilities <small>(Sessions)</small></h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -339,32 +362,6 @@
               </div>
             </div>
             </div>
-               <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Pie Area Graph <small>Sessions</small></h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
-                    </ul>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-                    <canvas id="polarArea"></canvas>
-                  </div>
-                </div>
-              </div>
                </div>
                </div>
               
@@ -373,48 +370,60 @@
            
 
            
-                    </div> 
-        <!-- /page content -->
-
-        <!-- footer content -->
-        <footer>
-         
-        </footer>
-        <!-- /footer content -->
-      </div>
-      </div>
-      </div>
-
-      <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
-
-<script type="text/javascript">
-$(document).ready(function(){
-    $("select").change(function(){
-        $(this).find("option:selected").each(function(){
-            if($(this).attr("value")=="re"){
-             
-     $('#blah').removeClass('hidden');
-
-} 
-            
            
-            else{
-                $("#b").hide();
-            }
-        });
-    }).change();
-});
-</script>
 
-<script >
-      $("#beerStyle").change ( function () {
-          var targID  = $(this).val ();
-          $("div.style-sub-1").hide ();
-          $('#' + targID).show ();
-      } )
+         </div> <!-- Charts ends -->
+      </div> <!--blah class ends here-->
 
-    </script>
- 
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+
    
  <script>
     

@@ -23,6 +23,9 @@ class ProjectClientController extends Controller
 {
     public function project_wizard(){
         
+        if(Auth::user()->role()->first()->permission()->where('name', 'Project Wizard')->count() == 0){
+            abort(403);
+        }                
         //Authorizing managers to view project_wizard
         $role_id = Role::select('id')->where('name','Manager')->first();
         $user = Auth::user();
